@@ -3,7 +3,7 @@ backend:
   repo: alessandrostevensnz/astro-blog-starter-template
   branch: main
   auth_type: pkce
-  app_id: YOUR_GITHUB_OAUTH_APP_CLIENT_ID
+  app_id:Ov23liak0iYN0YoqGy5a
 
 media_folder: public/images
 public_folder: /images
