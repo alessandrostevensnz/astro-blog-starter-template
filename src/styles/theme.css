@@ -1,6 +1,7 @@
 /*
-  Central brand theme. Replace these tokens with ANDRO's confirmed brand colours
-  when the original identity assets are supplied.
+  Central brand theme. Temporary neutral palette with a richer, readable gold
+  inspired by the supplied ANDRO reference image. Replace these tokens with
+  confirmed original brand colours if needed.
 */
 :root {
   --brand-ink: #1b1b19;
@@ -8,8 +9,8 @@
   --brand-stone: #efede7;
   --brand-muted: #77746e;
   --brand-line: #d9d5cb;
-  --brand-accent: #b19a70;
-  --brand-accent-soft: #d5c7aa;
+  --brand-accent: #987a48;
+  --brand-accent-soft: #c5aa78;
   --brand-overlay: rgba(15, 16, 14, .43);
   --brand-white: #fff;
 }
