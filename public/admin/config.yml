@@ -119,3 +119,23 @@ collections:
               - { label: Descriptive alt text, name: alt, widget: string, required: false }
               - { label: Location (optional), name: location, widget: string, required: false }
               - { label: Before/after label (optional), name: beforeAfter, widget: select, options: [Before, After], required: false }
+  - name: maintenance_services
+    label: Maintenance Support services
+    files:
+      - name: services
+        label: Service descriptions and photos
+        file: content/maintenance-services.json
+        media_folder: public/images/services
+        public_folder: /images/services
+        fields:
+          - label: Service entries
+            name: services
+            widget: list
+            summary: '{{fields.number}} — {{fields.title}}'
+            fields:
+              - { label: Service number, name: number, widget: string }
+              - { label: Service heading, name: title, widget: string }
+              - { label: Detailed description, name: description, widget: text }
+              - { label: Service photo (optional), name: image, widget: image, required: false }
+              - { label: Photo alt text, name: imageAlt, widget: string, required: false }
+              - { label: Photo caption (optional), name: caption, widget: string, required: false }
