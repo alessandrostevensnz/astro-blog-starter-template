@@ -8,37 +8,36 @@ export const site = {
   email: '',
 };
 
-// Temporary editorial images only. These are illustrative stock photos, not ANDRO project photography.
-// Swap the src values for owned project images in one place when they are available.
+// Illustrative interior imagery supplied in public/images. These images do not depict completed ANDRO projects.
 export const imagery = {
   hero: {
-    src: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2400&q=85',
-    alt: 'Illustrative contemporary residential architecture',
+    src: '/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png',
+    alt: 'Sunlit Scandinavian-style apartment living space',
     placeholder: true,
   },
   construction: {
-    src: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85',
-    alt: 'Illustrative construction site with structural framing',
+    src: '/images/Bright%20Minimalist%20U-Shaped%20Kitchen.png',
+    alt: 'Bright minimalist U-shaped kitchen interior',
     placeholder: true,
   },
   home: {
-    src: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85',
-    alt: 'Illustrative contemporary home interior',
+    src: '/images/Bright%20Minimalist%20Living%20Room%20Retreat.png',
+    alt: 'Bright minimalist living room',
     placeholder: true,
   },
   exterior: {
-    src: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1600&q=85',
-    alt: 'Illustrative residential exterior and garden',
+    src: '/images/Bright%20Wainscoted%20Hallway%20with%20Open%20Door.png',
+    alt: 'Bright wainscoted hallway with an open door',
     placeholder: true,
   },
   maintenance: {
-    src: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=85',
-    alt: 'Illustrative building detail for property maintenance',
+    src: '/images/Modern%20Warm-Toned%20Bathroom%20Retreat.png',
+    alt: 'Modern warm-toned bathroom interior',
     placeholder: true,
   },
   detail: {
-    src: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?auto=format&fit=crop&w=2000&q=85',
-    alt: 'Illustrative architectural material detail',
+    src: '/images/Bright%20Minimalist%20Kitchen%20with%20Fruit%20Bowl.png',
+    alt: 'Bright minimalist kitchen with a fruit bowl',
     placeholder: true,
   },
 };
