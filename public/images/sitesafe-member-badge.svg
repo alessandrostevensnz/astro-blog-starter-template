@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 270" role="img" aria-labelledby="title desc">
+  <title id="title">Site Safe Member badge</title>
+  <desc id="desc">Site Safe member badge, with “Member” and “Proud to be safe” lettering.</desc>
+  <rect width="416" height="270" fill="#fff" />
+  <path d="M20 20h150v125L208 165l38-20V20h150v198H20z" fill="#f58a18" />
+  <path d="M20 218h376v32H20z" fill="#21164f" />
+  <path d="M188 20h40v43l-20-20-20 20z" fill="#f58a18" />
+  <path d="M188 63l20-20 20 20-20 20z" fill="none" stroke="#21164f" stroke-width="8" />
+  <text x="208" y="102" fill="#21164f" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" text-anchor="middle">SITESAFE</text>
+  <text x="208" y="192" fill="#21164f" font-family="Arial Narrow, Arial, sans-serif" font-size="70" font-weight="900" text-anchor="middle" letter-spacing="2">MEMBER</text>
+  <text x="208" y="243" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" font-style="italic" text-anchor="middle">› Proud to be safe</text>
+</svg>
