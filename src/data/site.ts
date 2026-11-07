@@ -8,7 +8,7 @@ export const site = {
   email: '',
 };
 
-// Illustrative interior imagery supplied in public/images. These images do not depict completed ANDRO projects.
+// Supplied imagery in public/images. Interior images are illustrative; commercial site photos show construction details.
 export const imagery = {
   hero: {
     src: '/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png',
@@ -16,9 +16,9 @@ export const imagery = {
     placeholder: true,
   },
   construction: {
-    src: '/images/Bright%20Minimalist%20U-Shaped%20Kitchen.png',
-    alt: 'Bright minimalist U-shaped kitchen interior',
-    placeholder: true,
+    src: '/images/commercial%20framing.png',
+    alt: 'Commercial construction framing',
+    placeholder: false,
   },
   home: {
     src: '/images/Bright%20Minimalist%20Living%20Room%20Retreat.png',
@@ -39,6 +39,16 @@ export const imagery = {
     src: '/images/Bright%20Minimalist%20Kitchen%20with%20Fruit%20Bowl.png',
     alt: 'Bright minimalist kitchen with a fruit bowl',
     placeholder: true,
+  },
+  commercialCavity: {
+    src: '/images/Commercial%20cavity.png',
+    alt: 'Commercial wall cavity during construction',
+    placeholder: false,
+  },
+  commercialGib: {
+    src: '/images/comerrical%20GIB.png',
+    alt: 'Commercial interior lining installation',
+    placeholder: false,
   },
 };
 
