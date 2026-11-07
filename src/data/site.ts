@@ -11,9 +11,9 @@ export const site = {
 // Supplied project photos are used for matching construction work; the interior photo is illustrative.
 export const imagery = {
   hero: {
-    src: '/images/residential%20house%20with%20trees.png',
-    alt: 'Residential house set among trees',
-    placeholder: false,
+    src: '/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png',
+    alt: 'Sunlit Scandinavian-style apartment living space',
+    placeholder: true,
   },
   construction: {
     src: '/images/commercial%20framing.png',
