@@ -8,7 +8,7 @@ export const site = {
   email: '',
 };
 
-// Supplied project photos are used for matching construction work; interior renders remain illustrative.
+// Supplied project photos are used for matching construction work; the interior photo is illustrative.
 export const imagery = {
   hero: {
     src: '/images/residential%20house%20with%20trees.png',
@@ -36,9 +36,9 @@ export const imagery = {
     placeholder: false,
   },
   detail: {
-    src: '/images/ballustrade.png',
-    alt: 'Balustrade detail',
-    placeholder: false,
+    src: '/images/Bright%20Minimalist%20Living%20Room%20Retreat.png',
+    alt: 'Beautiful bright minimalist living room interior',
+    placeholder: true,
   },
   commercialCavity: {
     src: '/images/Commercial%20cavity.png',
