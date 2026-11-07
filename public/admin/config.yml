@@ -31,18 +31,52 @@ collections:
               - { label: Maintenance card description, name: maintenanceCardDescription, widget: text }
               - { label: Feature section heading, name: featureHeading, widget: string }
               - { label: Bottom call-to-action heading, name: closingHeading, widget: string }
-          - label: Construction page
+              - { label: Philosophy heading, name: philosophyHeading, widget: string }
+              - { label: Philosophy text, name: philosophyText, widget: text }
+          - label: Construction page copy
             name: construction
             widget: object
             fields:
               - { label: Page description, name: description, widget: text }
               - { label: Banner photo, name: bannerImage, widget: image }
               - { label: Banner photo description (alt text), name: bannerAlt, widget: string }
+              - { label: Introduction heading, name: introHeading, widget: string }
+              - { label: Introduction text, name: introText, widget: text }
+              - { label: Residential heading, name: residentialHeading, widget: string }
+              - { label: Residential description, name: residentialText, widget: text }
+              - { label: Commercial heading, name: commercialHeading, widget: string }
+              - { label: Commercial description, name: commercialText, widget: text }
+              - { label: Process heading, name: processHeading, widget: string }
+              - { label: Process description, name: processText, widget: text }
           - label: Property and asset maintenance page
             name: maintenance
             widget: object
             fields:
               - { label: Page description, name: description, widget: text }
+              - { label: Introduction heading, name: introHeading, widget: string }
+              - { label: Introduction text, name: introText, widget: text }
+              - { label: Preventative heading, name: preventativeHeading, widget: string }
+              - { label: Preventative description, name: preventativeText, widget: text }
+              - { label: Residential heading, name: residentialHeading, widget: string }
+              - { label: Residential description, name: residentialText, widget: text }
+              - { label: Commercial heading, name: commercialHeading, widget: string }
+              - { label: Commercial description, name: commercialText, widget: text }
+              - { label: Asset care heading, name: assetHeading, widget: string }
+              - { label: Asset care description, name: assetText, widget: text }
+              - { label: Repairs heading, name: improvementsHeading, widget: string }
+              - { label: Repairs description, name: improvementsText, widget: text }
+          - label: About page
+            name: about
+            widget: object
+            fields:
+              - { label: Page description, name: description, widget: text }
+              - { label: Hero introduction, name: heroIntro, widget: text }
+              - { label: Who we are heading, name: whoHeading, widget: string }
+              - { label: Who we are text, name: whoText, widget: text }
+              - { label: Craftsmanship heading, name: craftHeading, widget: string }
+              - { label: Craftsmanship text, name: craftText, widget: text }
+              - { label: Vision heading, name: visionHeading, widget: string }
+              - { label: Vision text, name: visionText, widget: text }
           - label: Photos and image descriptions
             name: images
             widget: object
@@ -64,23 +98,24 @@ collections:
               - { label: Category or caption, name: category, widget: string }
               - { label: Photo, name: image, widget: image }
               - { label: Photo description (alt text), name: alt, widget: string }
-  - name: maintenance_services
-    label: Maintenance support services
+  - name: construction_gallery
+    label: Construction project gallery
     files:
-      - name: services
-        label: Service descriptions and photos
-        file: content/maintenance-services.json
-        media_folder: public/images/services
-        public_folder: /images/services
+      - name: projects
+        label: Project photographs and descriptions
+        file: content/construction-gallery.json
+        media_folder: public/images/construction
+        public_folder: /images/construction
         fields:
-          - label: Services
-            name: services
+          - label: Projects
+            name: projects
             widget: list
-            summary: '{{fields.number}} — {{fields.title}}'
+            summary: '{{fields.title}} — {{fields.category}}'
             fields:
-              - { label: Service number, name: number, widget: string }
-              - { label: Heading, name: title, widget: string }
-              - { label: Detailed description, name: description, widget: text }
-              - { label: Service photo (optional), name: image, widget: image, required: false }
-              - { label: Photo alt text, name: imageAlt, widget: string, required: false }
-              - { label: Photo caption (optional), name: caption, widget: string, required: false }
+              - { label: Project title, name: title, widget: string }
+              - { label: Category, name: category, widget: select, options: [Residential, Commercial, Renovations, Carpentry, "Outdoor Construction"] }
+              - { label: Short description, name: description, widget: text, required: false }
+              - { label: Project photograph, name: image, widget: image, required: false }
+              - { label: Descriptive alt text, name: alt, widget: string, required: false }
+              - { label: Location (optional), name: location, widget: string, required: false }
+              - { label: Before/after label (optional), name: beforeAfter, widget: select, options: [Before, After], required: false }

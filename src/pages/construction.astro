@@ -1,15 +1,87 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
 import { imagery, siteContent } from '../data/site';
+import constructionGallery from '../../content/construction-gallery.json';
+
+const projects = constructionGallery.projects;
+const categories = [...new Set(projects.map((project) => project.category).filter(Boolean))];
 ---
 <SiteLayout title="Construction, Carpentry & Renovations Auckland | ANDRO" description={siteContent.construction.description}>
   <section class="construction-hero" aria-labelledby="construction-title"><img class="construction-hero-image" src={siteContent.construction.bannerImage} alt={siteContent.construction.bannerAlt} fetchpriority="high" /><div class="construction-hero-shade"></div><div class="construction-hero-copy"><p class="eyebrow inverse">CONSTRUCTION · AUCKLAND</p><h1 id="construction-title">Built with<br />purpose.</h1><p class="lead">{siteContent.construction.description}</p></div></section>
+
   <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">CONSTRUCTION + RENOVATIONS</p><h2>{siteContent.construction.introHeading}</h2></div><div><p class="body-copy">{siteContent.construction.introText}</p><p class="body-copy">Preparation matters because details that are missed early can affect access, sequencing, material choices and the finished result. We aim to discuss those practicalities before work gets underway.</p><a class="text-link" href="/contact/">Discuss your project <span>↗</span></a></div></div></section>
+
   <section class="content-block"><p class="eyebrow">RESIDENTIAL CONSTRUCTION</p><h2>{siteContent.construction.residentialHeading}</h2><p class="body-copy construction-copy">{siteContent.construction.residentialText}</p><div class="service-list"><article class="service-item"><span>01</span><h3>General carpentry</h3><b aria-hidden="true">↗</b><p>Careful carpentry for practical changes, repairs and improvements, with attention to how new work connects to the existing building.</p></article><article class="service-item"><span>02</span><h3>Decks and fencing</h3><b aria-hidden="true">↗</b><p>Decking and fence work planned around the site, intended use, material exposure and the details that affect durability and everyday function.</p></article><article class="service-item"><span>03</span><h3>Renovations and alterations</h3><b aria-hidden="true">↗</b><p>Thoughtful improvements to existing spaces, balancing appearance, function and the realities of working with an existing structure.</p></article></div></section>
+
+  <section class="construction-photo-feature" aria-label="Residential construction photograph"><img src={imagery.home.src} alt={imagery.home.alt} loading="lazy" decoding="async" /><p class="eyebrow inverse">RESIDENTIAL CONSTRUCTION</p></section>
+
   <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">COMMERCIAL CONSTRUCTION</p><h2>{siteContent.construction.commercialHeading}</h2></div><div><p class="body-copy">{siteContent.construction.commercialText}</p><p class="body-copy">We discuss the sequence of work, site access and any practical requirements before work begins. When specialist trades are needed, we can coordinate with appropriate providers as part of the agreed scope.</p><a class="text-link" href="/contact/">Talk through a commercial brief <span>↗</span></a></div></div></section>
-  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2>{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy">{siteContent.construction.processText}</p><div class="editorial-grid"><div class="editorial-image"><img src={imagery.construction.src} alt={imagery.construction.alt} loading="lazy" /></div><div class="editorial-image"><img src={imagery.home.src} alt={imagery.home.alt} loading="lazy" /></div></div></section>
+
+  <section class="construction-photo-feature construction-photo-feature-alt" aria-label="Commercial construction photograph"><img src={imagery.construction.src} alt={imagery.construction.alt} loading="lazy" decoding="async" /><p class="eyebrow inverse">COMMERCIAL CONSTRUCTION</p></section>
+
+  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2>{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy">{siteContent.construction.processText}</p><div class="editorial-grid"><div class="editorial-image"><img src={imagery.construction.src} alt={imagery.construction.alt} loading="lazy" decoding="async" /></div><div class="editorial-image"><img src={imagery.home.src} alt={imagery.home.alt} loading="lazy" decoding="async" /></div></div></section>
+
+  <section class="construction-showcase" aria-labelledby="construction-showcase-title">
+    <header class="construction-showcase-heading"><p class="eyebrow">PROJECT SHOWCASE · AUCKLAND</p><h2 id="construction-showcase-title">Our Work.<br />In the Details.</h2><p>Construction quality is often found in the finer details—the preparation, material selection, accuracy of workmanship and final finish. This gallery is for genuine ANDRO project photographs and descriptions, added as they are approved for publication.</p></header>
+    {categories.length > 0 && <nav class="gallery-filters" aria-label="Filter construction projects"><button type="button" class="gallery-filter is-active" data-filter="all" aria-pressed="true">All Projects</button>{categories.map((category) => <button type="button" class="gallery-filter" data-filter={category} aria-pressed="false">{category}</button>)}</nav>}
+    {projects.length > 0 ? (
+      <div class="construction-gallery" id="construction-gallery">
+        {projects.map((project, index) => (
+          <article class:list={['construction-gallery-card', { 'gallery-card-wide': index % 5 === 0 }]} data-project-card data-category={project.category}>
+            <button type="button" class="gallery-open" data-gallery-open data-index={index} aria-label={`View ${project.title} photograph`}>
+              {project.image ? <img src={project.image} alt={project.alt || project.title} loading="lazy" decoding="async" /> : <span class="gallery-placeholder"><strong>ANDRO</strong><span>Add an approved project photograph in /admin</span></span>}
+              {project.beforeAfter && <span class="gallery-stage">{project.beforeAfter}</span>}
+            </button>
+            <div class="gallery-caption"><div><h3>{project.title}</h3><p>{project.category}{project.location ? ` · ${project.location}` : ''}</p>{project.description && <p class="gallery-description">{project.description}</p>}</div><span class="card-arrow" aria-hidden="true">↗</span></div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="gallery-empty-state"><span class="gallery-empty-mark" aria-hidden="true">ANDRO</span><h3>Project photographs will appear here.</h3><p>We’re making space for approved construction and renovation photos. Add a project in the Construction project gallery in <a href="/admin/">the site editor</a> to populate the gallery. No example or stock projects are shown as ANDRO work.</p></div>
+    )}
+    {projects.length > 0 && <dialog class="gallery-lightbox" aria-label="Construction photograph viewer"><button class="lightbox-close" type="button" aria-label="Close image viewer">×</button><button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous photograph">‹</button><figure><img class="lightbox-image" alt="" /><figcaption class="lightbox-caption"></figcaption></figure><button class="lightbox-nav lightbox-next" type="button" aria-label="Next photograph">›</button></dialog>}
+  </section>
+
   <section class="cta-section"><div class="cta-row"><h2>Tell us what<br />you’re planning.</h2><a class="text-link" href="/contact/">Start a conversation <span>↗</span></a></div></section>
 </SiteLayout>
+
+<script>
+  const galleryCards = [...document.querySelectorAll<HTMLElement>('[data-project-card]')];
+  const filterButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  filterButtons.forEach((button) => button.addEventListener('click', () => {
+    const filter = button.dataset.filter;
+    filterButtons.forEach((item) => { const active = item === button; item.classList.toggle('is-active', active); item.setAttribute('aria-pressed', String(active)); });
+    galleryCards.forEach((card) => { card.hidden = filter !== 'all' && card.dataset.category !== filter; });
+  }));
+
+  const lightbox = document.querySelector<HTMLDialogElement>('.gallery-lightbox');
+  const openButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-gallery-open]')];
+  const lightboxImage = document.querySelector<HTMLImageElement>('.lightbox-image');
+  const lightboxCaption = document.querySelector<HTMLElement>('.lightbox-caption');
+  let currentIndex = 0;
+  const showImage = (index: number) => {
+    if (!openButtons.length || !lightboxImage || !lightboxCaption) return;
+    currentIndex = (index + openButtons.length) % openButtons.length;
+    const card = openButtons[currentIndex].closest<HTMLElement>('[data-project-card]');
+    const image = openButtons[currentIndex].querySelector('img');
+    lightboxImage.src = image?.src || '';
+    lightboxImage.alt = image?.alt || '';
+    lightboxCaption.textContent = card?.querySelector('.gallery-caption')?.textContent?.trim() || '';
+  };
+  openButtons.forEach((button, index) => button.addEventListener('click', () => { showImage(index); lightbox?.showModal(); }));
+  document.querySelector('.lightbox-close')?.addEventListener('click', () => lightbox?.close());
+  document.querySelector('.lightbox-prev')?.addEventListener('click', () => showImage(currentIndex - 1));
+  document.querySelector('.lightbox-next')?.addEventListener('click', () => showImage(currentIndex + 1));
+  let touchStartX = 0;
+  lightbox?.addEventListener('touchstart', (event) => { touchStartX = event.changedTouches[0]?.screenX || 0; }, { passive: true });
+  lightbox?.addEventListener('touchend', (event) => { const delta = (event.changedTouches[0]?.screenX || 0) - touchStartX; if (Math.abs(delta) > 45) showImage(currentIndex + (delta < 0 ? 1 : -1)); }, { passive: true });
+</script>
+
 <style>
-.construction-hero{min-height:max(580px,min(720px,calc(100svh - 82px)));position:relative;display:flex;align-items:center;overflow:hidden;isolation:isolate;padding:clamp(80px,12vw,150px) 10%;color:#fff;background:#77766f}.construction-hero-image,.construction-hero-shade{position:absolute;inset:0;width:100%;height:100%}.construction-hero-image{z-index:-2;object-fit:cover;object-position:center 48%}.construction-hero-shade{z-index:-1;background:linear-gradient(90deg,rgba(15,16,14,.62),rgba(15,16,14,.12) 85%),linear-gradient(0deg,rgba(15,16,14,.22),transparent 55%)}.construction-hero-copy{max-width:900px}.construction-hero h1{margin:22px 0 25px;color:#fff;font-family:var(--font-display);font-size:clamp(68px,10vw,136px);font-weight:300;line-height:.92;letter-spacing:-.085em}.construction-hero .lead{max-width:700px;margin:0;color:rgba(255,255,255,.92);font-size:16px;line-height:1.85}.construction-copy{max-width:850px;margin:0 0 32px}.content-block .service-list{margin-top:32px}@media(max-width:680px){.construction-hero{min-height:590px;padding:76px 7%}.construction-hero-image{object-position:58% center}.construction-hero h1{font-size:clamp(62px,14vw,92px)}}
+.construction-hero{min-height:max(580px,min(720px,calc(100svh - 82px)));position:relative;display:flex;align-items:center;overflow:hidden;isolation:isolate;padding:clamp(80px,12vw,150px) 10%;color:#fff;background:#77766f}.construction-hero-image,.construction-hero-shade{position:absolute;inset:0;width:100%;height:100%}.construction-hero-image{z-index:-2;object-fit:cover;object-position:center 48%}.construction-hero-shade{z-index:-1;background:linear-gradient(90deg,rgba(15,16,14,.62),rgba(15,16,14,.12) 85%),linear-gradient(0deg,rgba(15,16,14,.22),transparent 55%)}.construction-hero-copy{max-width:900px}.construction-hero h1{margin:22px 0 25px;color:#fff;font-family:var(--font-display);font-size:clamp(68px,10vw,136px);font-weight:300;line-height:.92;letter-spacing:-.085em}.construction-hero .lead{max-width:700px;margin:0;color:rgba(255,255,255,.92);font-size:16px;line-height:1.85}.construction-copy{max-width:850px;margin:0 0 32px}.content-block .service-list{margin-top:32px}
+.construction-photo-feature{height:clamp(340px,58vw,720px);position:relative;overflow:hidden;background:var(--brand-stone)}.construction-photo-feature img{width:100%;height:100%;object-fit:cover}.construction-photo-feature::after{position:absolute;inset:0;content:'';background:linear-gradient(0deg,rgba(15,16,14,.48),transparent 35%)}.construction-photo-feature .eyebrow{position:absolute;z-index:1;bottom:32px;left:10%;color:#fff}.construction-photo-feature-alt{height:clamp(300px,45vw,580px)}
+.construction-showcase{padding:100px 10% 110px;background:var(--brand-paper)}.construction-showcase-heading{max-width:700px;margin-bottom:42px}.construction-showcase-heading h2{margin:16px 0 22px;font-family:var(--font-display);font-size:clamp(48px,7vw,88px);font-weight:300;line-height:.98;letter-spacing:-.075em}.construction-showcase-heading>p:last-child{max-width:650px;margin:0;color:var(--brand-muted);font-size:16px;line-height:1.9}.gallery-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}.gallery-filter{min-height:42px;padding:8px 15px;border:1px solid var(--brand-line);color:var(--brand-muted);background:transparent;cursor:pointer;font-size:12px;transition:color .2s,border-color .2s,background .2s}.gallery-filter:hover,.gallery-filter.is-active{border-color:var(--brand-accent);color:var(--brand-ink);background:var(--brand-stone)}.gallery-filter:focus-visible,.gallery-open:focus-visible,.lightbox-nav:focus-visible,.lightbox-close:focus-visible{outline:2px solid var(--brand-accent);outline-offset:3px}
+.construction-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 20px}.construction-gallery-card{min-width:0}.construction-gallery-card[hidden]{display:none}.gallery-card-wide{grid-column:span 2}.gallery-open{position:relative;display:block;width:100%;aspect-ratio:1.35/1;padding:0;overflow:hidden;border:0;background:var(--brand-stone);cursor:zoom-in}.gallery-open img{width:100%;height:100%;object-fit:cover;transition:transform .65s cubic-bezier(.2,.7,.2,1)}.gallery-open:hover img{transform:scale(1.035)}.gallery-stage{position:absolute;top:12px;left:12px;padding:7px 10px;color:#fff;background:rgba(20,20,19,.68);font-size:10px;letter-spacing:.08em;text-transform:uppercase}.gallery-caption{display:flex;justify-content:space-between;gap:14px;padding-top:13px}.gallery-caption h3{margin:0 0 5px;font-family:var(--font-display);font-size:20px;font-weight:400}.gallery-caption p{margin:0;color:var(--brand-muted);font-size:12px;line-height:1.6}.gallery-caption .gallery-description{margin-top:7px}.gallery-caption .card-arrow{color:var(--brand-accent)}.gallery-placeholder,.gallery-empty-state{display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--brand-muted);background:linear-gradient(135deg,#ece9e1,#d9d4c9)}.gallery-placeholder{width:100%;height:100%;gap:12px;padding:24px}.gallery-placeholder strong,.gallery-empty-mark{color:var(--brand-accent);font-family:var(--font-display);font-weight:300;letter-spacing:.25em}.gallery-placeholder strong{font-size:30px}.gallery-placeholder span{max-width:240px;font-size:12px;line-height:1.6}.gallery-empty-state{min-height:280px;padding:40px 8%;border:1px solid var(--brand-line)}.gallery-empty-mark{font-size:38px}.gallery-empty-state h3{margin:16px 0 8px;color:var(--brand-ink);font-family:var(--font-display);font-size:24px;font-weight:400}.gallery-empty-state p{max-width:600px;margin:0;font-size:14px;line-height:1.8}.gallery-empty-state a{color:var(--brand-accent);text-decoration:underline;text-underline-offset:3px}
+.gallery-lightbox{position:fixed;inset:0;width:min(1100px,94vw);max-width:none;max-height:92svh;padding:50px 70px 28px;border:0;color:#fff;background:#171715}.gallery-lightbox::backdrop{background:rgba(0,0,0,.86)}.gallery-lightbox figure{display:flex;max-height:calc(92svh - 80px);height:100%;margin:0;flex-direction:column;align-items:center;justify-content:center;gap:14px}.lightbox-image{display:block;max-width:100%;max-height:calc(92svh - 140px);object-fit:contain}.lightbox-caption{color:rgba(255,255,255,.86);font-size:13px;line-height:1.6;text-align:center}.lightbox-close,.lightbox-nav{position:absolute;display:grid;place-items:center;border:0;color:#fff;background:rgba(255,255,255,.12);cursor:pointer}.lightbox-close{top:12px;right:14px;width:42px;height:42px;font-size:30px}.lightbox-nav{top:50%;width:44px;height:56px;transform:translateY(-50%);font-size:38px}.lightbox-prev{left:12px}.lightbox-next{right:12px}
+@media(max-width:900px){.construction-showcase{padding-right:7%;padding-left:7%}.construction-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){.construction-hero{min-height:590px;padding:76px 7%}.construction-hero-image{object-position:58% center}.construction-hero h1{font-size:clamp(62px,14vw,92px)}.construction-photo-feature .eyebrow{left:7%;bottom:22px}.construction-showcase{padding:68px 7% 76px}.construction-gallery{gap:24px 12px}.gallery-card-wide{grid-column:span 2}.gallery-caption h3{font-size:16px}.gallery-caption p{font-size:11px}.gallery-lightbox{width:100vw;height:100svh;max-height:100svh;padding:55px 48px 24px}.gallery-lightbox figure{max-height:calc(100svh - 90px)}.lightbox-image{max-height:calc(100svh - 150px)}.lightbox-nav{width:36px;height:48px}.lightbox-prev{left:5px}.lightbox-next{right:5px}}@media(prefers-reduced-motion:reduce){.gallery-open img{transition:none}}
 </style>
