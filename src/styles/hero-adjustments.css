@@ -1,0 +1,15 @@
+.image-placeholder-note {
+  display: none !important;
+}
+
+.hero .round-link {
+  display: none !important;
+}
+
+.hero-copy {
+  top: 42%;
+}
+
+.hero h1 {
+  color: #fff;
+}
