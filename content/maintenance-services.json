@@ -1,67 +1,36 @@
 {
   "services": [
     {
-      "slug": "building-repairs",
-      "title": "Building Repairs",
-      "seoTitle": "Building Repairs in Auckland | ANDRO",
-      "metaDescription": "Residential and commercial building repairs across Auckland, including carpentry, doors, windows, interiors and rental property maintenance.",
-      "intro": "Practical residential and commercial repairs, planned around the property and the work required. ANDRO helps keep buildings functional and cared for, from small repairs through to minor refurbishment.",
-      "description": "We assess the repair needs, agree a clear scope and carry out considered work with attention to the details. For restricted building work or specialist trades, appropriately licensed subcontractors may be engaged where required.",
-      "featuredImage": "/images/preston.png",
-      "featuredImageAlt": "Building repair work at a property in Preston",
-      "items": [
-        "General residential and commercial building repairs",
-        "Interior wall, ceiling and lining repairs",
-        "Door, window and hardware repairs",
-        "Minor carpentry and timber repairs",
-        "Deck, fence and gate repairs",
-        "Rental property and end-of-tenancy repairs",
-        "Minor renovation and refurbishment work",
-        "Repairs identified during property inspections"
-      ],
-      "gallery": []
+      "number": "01",
+      "title": "Residential Property Maintenance",
+      "description": "ANDRO provides practical residential property maintenance across Auckland for homeowners, landlords and property managers. From general repairs, plastering and minor wall repairs to interior and exterior painting, we help keep homes in good condition. Our work can include doors, locks, handles and hardware, deck and fence repairs, gutter cleaning and exterior upkeep, rental and preventative maintenance, and pre-sale or pre-tenancy improvements. We assess the property and agree a clear, practical scope before work begins.",
+      "image": "",
+      "imageAlt": "",
+      "caption": ""
     },
     {
-      "slug": "exterior-upkeep",
-      "title": "Exterior Upkeep",
-      "seoTitle": "Exterior Property Maintenance in Auckland | ANDRO",
-      "metaDescription": "Auckland exterior property maintenance, including cladding, trim, deck and fence repairs, cleaning and general improvements.",
-      "intro": "Thoughtful exterior upkeep helps protect and maintain the places people live and work. We provide practical maintenance and improvements tailored to each property.",
-      "description": "From timber repairs to exterior cleaning and preparation, we can help address visible wear and routine maintenance needs. The scope is agreed before work begins; specialist or restricted work is referred to appropriately licensed subcontractors where required.",
-      "featuredImage": "/images/cladding.png",
-      "featuredImageAlt": "Exterior cladding on a property",
-      "items": [
-        "Exterior building maintenance",
-        "Cladding and exterior trim repairs",
-        "Deck and fence maintenance",
-        "Exterior painting preparation and painting coordination",
-        "Water blasting and exterior cleaning",
-        "Gutter clearing and maintenance",
-        "Timber repairs and replacement",
-        "General exterior property improvements"
-      ],
-      "gallery": []
+      "number": "02",
+      "title": "Commercial Property Maintenance",
+      "description": "We support Auckland offices, retail premises and other commercial properties with general building repairs and planned or reactive maintenance. Work may include interior and exterior upkeep, painting and surface repairs, doors, fixtures and fittings, and minor refurbishment or improvement works. We prioritise reliable delivery and professional communication, plan work with your team to help minimise disruption to business operations, and can coordinate specialist subcontractors when required.",
+      "image": "",
+      "imageAlt": "",
+      "caption": ""
     },
     {
-      "slug": "ongoing-property-care",
-      "title": "Ongoing Property Care",
-      "seoTitle": "Ongoing Property Maintenance in Auckland | ANDRO",
-      "metaDescription": "Scheduled and preventative residential and commercial property maintenance for Auckland owners, landlords and property managers.",
-      "intro": "A dependable maintenance plan can help property owners stay ahead of repairs. ANDRO provides practical ongoing care for residential and commercial properties across Auckland.",
-      "description": "We can support scheduled maintenance, respond to property manager requests and coordinate agreed repairs. Maintenance is scoped to the property and priorities; specialist work and restricted building work may require appropriately licensed subcontractors.",
-      "featuredImage": "/images/asset%20care.png",
-      "featuredImageAlt": "Property asset care and maintenance",
-      "items": [
-        "Scheduled and preventative property maintenance",
-        "Residential and commercial property care",
-        "Rental portfolio maintenance",
-        "Property manager maintenance requests",
-        "Property condition inspections",
-        "Maintenance coordination",
-        "Vacant property upkeep",
-        "General property repairs and improvements"
-      ],
-      "gallery": []
+      "number": "03",
+      "title": "Asset Maintenance",
+      "description": "Our asset maintenance support helps landlords, investors, property managers and commercial property owners look after buildings over time. We can assist with planned preventative maintenance, property condition assessments, maintenance scheduling, identifying deterioration and repair requirements, and prioritising work. From investment properties to portfolios, vacant properties and ongoing upkeep, we help you take a considered approach to protecting and maintaining your assets.",
+      "image": "",
+      "imageAlt": "",
+      "caption": ""
+    },
+    {
+      "number": "04",
+      "title": "Repairs and Improvement Work",
+      "description": "For general building repairs, minor renovations and property upgrades, we assess the work and recommend practical solutions based on the property's needs. Projects may include decking and fencing, interior refurbishment, painting and finishing, repair or replacement of damaged building components, and pre-sale or rental property improvements. Where specialist or restricted building work is required, appropriately qualified or licensed trades may be engaged as needed.",
+      "image": "",
+      "imageAlt": "",
+      "caption": ""
     }
   ]
 }
