@@ -24,13 +24,13 @@ const currentPath = Astro.url.pathname;
   </header>
   <main><slot /></main>
   <footer class="site-footer">
-    <a class="footer-brand" href="/">ANDRO</a>
     <div class="footer-credentials" aria-label="Company and safety credentials">
       <img src="/images/andro%20caps%20copy.png" alt="ANDRO Construction logo" loading="lazy" />
       <img src="/images/MemberSticker_Shop_Image_453x512.width-1000.png" alt="Site Safe Member — Proud to be safe" loading="lazy" />
     </div>
-    <span>{site.descriptor} · EST. {site.established} · Auckland, New Zealand</span>
-    <nav class="footer-links" aria-label="Footer navigation"><a href="/about/">About</a><a href="/projects/">Projects</a><a href="/contact/">Contact</a></nav>
+    <p class="footer-company">{site.legalName}</p>
+    <a class="footer-domain" href="https://andro.co.nz">ANDRO.CO.NZ</a>
+    <p class="footer-established">EST. {site.established}</p>
   </footer>
   <script>
     const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
@@ -81,18 +81,29 @@ const currentPath = Astro.url.pathname;
   .notice, .contact-details, .form-status { font-size: 14px; }
   .form-field label { font-size: 11px; }
   .form-submit { min-height: 48px; font-size: 13px; }
-  .site-footer { font-size: 12px; }
-  .footer-links a { padding: 10px 0; }
-  .footer-credentials { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; }
-  .footer-credentials img { display: block; width: auto; height: 48px; max-width: 120px; object-fit: contain; }
-  .footer-credentials img:first-child { height: 56px; }
+  .site-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 48px 24px 42px;
+    text-align: center;
+  }
+  .footer-credentials { display: flex; align-items: center; justify-content: center; gap: 28px; width: 100%; margin-bottom: 12px; }
+  .footer-credentials img { display: block; width: auto; height: 82px; max-width: 130px; object-fit: contain; }
+  .footer-credentials img:first-child { height: 96px; }
+  .footer-company, .footer-domain, .footer-established { margin: 0; color: #b19a6c; font-weight: 400; letter-spacing: .28em; text-transform: uppercase; }
+  .footer-company { font-size: clamp(14px, 2vw, 20px); }
+  .footer-domain { font-size: clamp(13px, 1.8vw, 18px); text-decoration: none; }
+  .footer-established { font-size: 12px; letter-spacing: .38em; }
+  .footer-domain:hover { color: #8e7547; }
 
   /* The site photos are supplied photos of ANDRO work; remove old stock-photo disclaimers. */
   .image-placeholder-note, .notice { display: none !important; }
 
   @media (max-width: 900px) {
     .desktop-nav a { font-size: 12px; }
-    .site-footer { flex-wrap: wrap; }
   }
   @media (max-width: 680px) {
     .brand-word { font-size: 28px; }
@@ -102,9 +113,10 @@ const currentPath = Astro.url.pathname;
     .page-hero .lead { font-size: 16px; }
     .service-item p { font-size: 14px; }
     .card-meta p, .project-copy p { font-size: 13px; }
-    .footer-links { gap: 16px; }
-    .footer-credentials { order: 4; width: 100%; justify-content: center; }
-    .footer-credentials img { height: 42px; }
-    .footer-credentials img:first-child { height: 48px; }
+    .site-footer { gap: 10px; padding: 38px 18px 34px; }
+    .footer-credentials { gap: 18px; margin-bottom: 8px; }
+    .footer-credentials img { height: 64px; max-width: 110px; }
+    .footer-credentials img:first-child { height: 76px; }
+    .footer-company { font-size: 13px; letter-spacing: .2em; }
   }
 </style>
