@@ -44,3 +44,27 @@ const currentPath = Astro.url.pathname;
     }));
   </script>
 </body>
+
+<style is:global>
+  .brand-lockup {
+    align-items: center;
+    text-align: center;
+  }
+
+  .brand-word {
+    font-size: clamp(29px, 2.5vw, 36px);
+    letter-spacing: .3em;
+  }
+
+  .brand-sub {
+    width: 100%;
+    text-align: center;
+    font-size: 8px;
+    letter-spacing: .12em;
+  }
+
+  @media (max-width: 680px) {
+    .brand-word { font-size: 28px; }
+    .brand-sub { font-size: 7px; }
+  }
+</style>
