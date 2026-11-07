@@ -1,0 +1,26 @@
+---
+import SiteLayout from '../components/SiteLayout.astro';
+import { site } from '../data/site';
+---
+<SiteLayout title="Contact ANDRO — Construction + Projects" description="Contact ANDRO Construction + Projects in Auckland, New Zealand to discuss construction, renovation and maintenance needs.">
+  <section class="page-hero"><p class="eyebrow">CONTACT · AUCKLAND, NEW ZEALAND</p><h1>Let’s make a<br />good start.</h1><p class="lead">Tell us a little about your project or property needs. We’ll review your message once the form is connected to an email service.</p></section>
+  <section class="page-body section-pad"><div class="contact-layout"><div><p class="eyebrow">ANDRO CONSTRUCTION + PROJECTS</p><h2 class="display-heading">A considered<br />conversation.</h2><p class="body-copy">For residential or commercial construction, renovations, property maintenance or asset maintenance, use the form to outline what you have in mind.</p><div class="contact-details"><strong>{site.legalName}</strong><br />Auckland, New Zealand<br />Established {site.established}<br /><br />Email contact details can be added in <code>src/data/site.ts</code> once confirmed.</div></div>
+    <form class="contact-form" id="contact-form">
+      <div class="form-field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required /></div>
+      <div class="form-field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+      <div class="form-field full"><label for="service">What can we help with?</label><select id="service" name="service" required><option value="" disabled selected>Select a service</option><option>Residential construction</option><option>Commercial construction</option><option>Renovation</option><option>Property maintenance</option><option>Asset maintenance</option><option>Other project enquiry</option></select></div>
+      <div class="form-field full"><label for="message">A little about your project</label><textarea id="message" name="message" required></textarea></div>
+      <button class="form-submit" type="submit">Prepare enquiry ↗</button>
+      <p class="form-status" id="form-status" role="status">Preview only: this form is not connected and will not send or store your enquiry.</p>
+    </form>
+  </div></section>
+  <script>
+    const form = document.querySelector<HTMLFormElement>('#contact-form');
+    const status = document.querySelector<HTMLElement>('#form-status');
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      if (status) status.textContent = 'Thanks — the form preview is working, but it is not connected to an email service, so your enquiry has not been sent. Please contact ANDRO directly using your verified contact details.';
+    });
+  </script>
+</SiteLayout>

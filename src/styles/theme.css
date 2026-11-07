@@ -1,0 +1,15 @@
+/*
+  Central brand theme. Replace these tokens with ANDRO's confirmed brand colours
+  when the original identity assets are supplied.
+*/
+:root {
+  --brand-ink: #1b1b19;
+  --brand-paper: #fbfaf7;
+  --brand-stone: #efede7;
+  --brand-muted: #77746e;
+  --brand-line: #d9d5cb;
+  --brand-accent: #b19a70;
+  --brand-accent-soft: #d5c7aa;
+  --brand-overlay: rgba(15, 16, 14, .43);
+  --brand-white: #fff;
+}
