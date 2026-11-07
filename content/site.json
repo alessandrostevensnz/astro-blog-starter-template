@@ -3,22 +3,22 @@
     "title": "Built with purpose.",
     "subtitle": "Construction, renovation and maintenance—delivered with care, clarity and attention to detail.",
     "introHeading": "Good work starts with good thinking.",
-    "introText": "ANDRO Construction + Projects is an Auckland-based company established in 2020. We work across residential and commercial construction, renovations, property maintenance and asset maintenance.",
+    "introText": "ANDRO Construction + Projects is an Auckland-based company established in 2020. We work across residential and commercial construction, renovations, property maintenance and asset care. Our approach is grounded in craftsmanship, quality and dependable service—from the first conversation through to the finished work.",
     "servicesHeading": "Considered work. Practical solutions.",
     "constructionCardTitle": "Construction + renovations",
-    "constructionCardDescription": "Residential and commercial projects",
+    "constructionCardDescription": "Residential and commercial projects, carpentry, fit-outs and new builds.",
     "maintenanceCardTitle": "Property + asset maintenance",
-    "maintenanceCardDescription": "Ongoing care for buildings and spaces",
+    "maintenanceCardDescription": "Practical, responsive care and repairs for residential and commercial properties.",
     "featureHeading": "Quality is in the details.",
     "closingHeading": "Have a project in mind?"
   },
   "construction": {
-    "description": "Residential and commercial construction and renovations, planned carefully and carried out with a focus on quality and clear communication.",
+    "description": "Residential and commercial construction, carpentry, renovations, fit-outs and new builds. We work through each brief with care, clear communication and attention to quality—from early planning through to installation and finishing.",
     "bannerImage": "/images/Residential%20framing.png",
     "bannerAlt": "Residential framing during construction"
   },
   "maintenance": {
-    "description": "Practical maintenance support for residential and commercial properties across Auckland.",
+    "description": "Practical property and asset maintenance for residential and commercial spaces across Auckland, including building repairs and ongoing care. We take a considered approach, communicate clearly and tailor the work to the needs of each property.",
     "bannerImage": "/images/cladding.png",
     "bannerAlt": "Exterior cladding on a property"
   },
