@@ -1,0 +1,46 @@
+{
+  "home": {
+    "title": "Built with purpose.",
+    "subtitle": "Construction, renovation and maintenance—delivered with care, clarity and attention to detail.",
+    "introHeading": "Good work starts with good thinking.",
+    "introText": "ANDRO Construction + Projects is an Auckland-based company established in 2020. We work across residential and commercial construction, renovations, property maintenance and asset maintenance.",
+    "servicesHeading": "Considered work. Practical solutions.",
+    "constructionCardTitle": "Construction + renovations",
+    "constructionCardDescription": "Residential and commercial projects",
+    "maintenanceCardTitle": "Property + asset maintenance",
+    "maintenanceCardDescription": "Ongoing care for buildings and spaces",
+    "featureHeading": "Quality is in the details.",
+    "closingHeading": "Have a project in mind?"
+  },
+  "construction": {
+    "description": "Residential and commercial construction and renovations, planned carefully and carried out with a focus on quality and clear communication.",
+    "bannerImage": "/images/Residential%20framing.png",
+    "bannerAlt": "Residential framing during construction"
+  },
+  "maintenance": {
+    "description": "Practical maintenance support for residential and commercial properties across Auckland.",
+    "bannerImage": "/images/cladding.png",
+    "bannerAlt": "Exterior cladding on a property"
+  },
+  "images": {
+    "hero": { "src": "/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png", "alt": "Sunlit Scandinavian-style apartment living space" },
+    "construction": { "src": "/images/commercial%20framing.png", "alt": "Commercial construction framing" },
+    "home": { "src": "/images/Residential%20framing.png", "alt": "Residential building framing during construction" },
+    "exterior": { "src": "/images/residential%20house%20with%20trees.png", "alt": "Residential house exterior among trees" },
+    "maintenance": { "src": "/images/cladding.png", "alt": "Exterior cladding on a property" },
+    "detail": { "src": "/images/Bright%20Minimalist%20Living%20Room%20Retreat.png", "alt": "Bright minimalist living room interior" },
+    "commercialCavity": { "src": "/images/Commercial%20cavity.png", "alt": "Commercial wall cavity during construction" },
+    "commercialGib": { "src": "/images/comerrical%20GIB.png", "alt": "Commercial GIB interior lining installation" },
+    "commercial": { "src": "/images/commercial.png", "alt": "Commercial construction project" }
+  },
+  "projects": [
+    { "title": "Residential framing", "category": "Construction · Residential", "image": "/images/Residential%20framing.png", "alt": "Residential building framing during construction" },
+    { "title": "Residential home exterior", "category": "Construction · Residential", "image": "/images/residential%20house%20with%20trees.png", "alt": "Residential house exterior among trees" },
+    { "title": "Commercial framing", "category": "Construction · Commercial", "image": "/images/commercial%20framing.png", "alt": "Commercial construction framing" },
+    { "title": "Commercial project", "category": "Construction · Commercial", "image": "/images/commercial.png", "alt": "Commercial construction project" },
+    { "title": "Commercial wall cavity", "category": "Construction · Commercial", "image": "/images/Commercial%20cavity.png", "alt": "Commercial wall cavity during construction" },
+    { "title": "Commercial GIB lining", "category": "Construction · Interior lining", "image": "/images/comerrical%20GIB.png", "alt": "Commercial GIB interior lining installation" },
+    { "title": "Exterior cladding", "category": "Property maintenance · Exterior", "image": "/images/cladding.png", "alt": "Exterior cladding on a property" },
+    { "title": "Balustrade", "category": "Construction · Detail work", "image": "/images/ballustrade.png", "alt": "Balustrade detail" }
+  ]
+}

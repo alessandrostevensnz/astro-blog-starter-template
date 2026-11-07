@@ -1,3 +1,5 @@
+import content from '../../content/site.json';
+
 export const site = {
   name: 'ANDRO',
   descriptor: 'Construction + Projects',
@@ -8,53 +10,19 @@ export const site = {
   email: '',
 };
 
-// Supplied project photos are used for matching construction work; the interior photo is illustrative.
+export const siteContent = content;
+
+// Image paths, alt text and page copy are maintained in content/site.json and editable in /admin.
 export const imagery = {
-  hero: {
-    src: '/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png',
-    alt: 'Sunlit Scandinavian-style apartment living space',
-    placeholder: true,
-  },
-  construction: {
-    src: '/images/commercial%20framing.png',
-    alt: 'Commercial construction framing',
-    placeholder: false,
-  },
-  home: {
-    src: '/images/Residential%20framing.png',
-    alt: 'Residential building framing during construction',
-    placeholder: false,
-  },
-  exterior: {
-    src: '/images/residential%20house%20with%20trees.png',
-    alt: 'Residential house exterior among trees',
-    placeholder: false,
-  },
-  maintenance: {
-    src: '/images/cladding.png',
-    alt: 'Exterior cladding on a property',
-    placeholder: false,
-  },
-  detail: {
-    src: '/images/Bright%20Minimalist%20Living%20Room%20Retreat.png',
-    alt: 'Beautiful bright minimalist living room interior',
-    placeholder: true,
-  },
-  commercialCavity: {
-    src: '/images/Commercial%20cavity.png',
-    alt: 'Commercial wall cavity during construction',
-    placeholder: false,
-  },
-  commercialGib: {
-    src: '/images/comerrical%20GIB.png',
-    alt: 'Commercial GIB interior lining installation',
-    placeholder: false,
-  },
-  commercial: {
-    src: '/images/commercial.png',
-    alt: 'Commercial construction project',
-    placeholder: false,
-  },
+  hero: { ...content.images.hero, placeholder: true },
+  construction: { ...content.images.construction, placeholder: false },
+  home: { ...content.images.home, placeholder: false },
+  exterior: { ...content.images.exterior, placeholder: false },
+  maintenance: { ...content.images.maintenance, placeholder: false },
+  detail: { ...content.images.detail, placeholder: true },
+  commercialCavity: { ...content.images.commercialCavity, placeholder: false },
+  commercialGib: { ...content.images.commercialGib, placeholder: false },
+  commercial: { ...content.images.commercial, placeholder: false },
 };
 
 export const navigation = [

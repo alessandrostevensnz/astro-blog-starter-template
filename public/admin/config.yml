@@ -1,0 +1,66 @@
+backend:
+  name: github
+  repo: alessandrostevensnz/astro-blog-starter-template
+  branch: main
+  auth_type: pkce
+  app_id: YOUR_GITHUB_OAUTH_APP_CLIENT_ID
+
+media_folder: public/images
+public_folder: /images
+
+collections:
+  - name: site_content
+    label: Website content
+    files:
+      - name: site
+        label: Pages, photos and project gallery
+        file: content/site.json
+        fields:
+          - label: Homepage
+            name: home
+            widget: object
+            fields:
+              - { label: Main headline, name: title, widget: string }
+              - { label: Hero description, name: subtitle, widget: text }
+              - { label: Intro heading, name: introHeading, widget: string }
+              - { label: Intro text, name: introText, widget: text }
+              - { label: Services heading, name: servicesHeading, widget: string }
+              - { label: Construction card title, name: constructionCardTitle, widget: string }
+              - { label: Construction card description, name: constructionCardDescription, widget: text }
+              - { label: Maintenance card title, name: maintenanceCardTitle, widget: string }
+              - { label: Maintenance card description, name: maintenanceCardDescription, widget: text }
+              - { label: Feature section heading, name: featureHeading, widget: string }
+              - { label: Bottom call-to-action heading, name: closingHeading, widget: string }
+          - label: Construction page
+            name: construction
+            widget: object
+            fields:
+              - { label: Page description, name: description, widget: text }
+              - { label: Banner photo, name: bannerImage, widget: image }
+              - { label: Banner photo description (alt text), name: bannerAlt, widget: string }
+          - label: Property and asset maintenance page
+            name: maintenance
+            widget: object
+            fields:
+              - { label: Page description, name: description, widget: text }
+          - label: Photos and image descriptions
+            name: images
+            widget: object
+            fields:
+              - { label: Homepage hero photo, name: hero, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Construction photo, name: construction, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Residential photo, name: home, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Exterior photo, name: exterior, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Maintenance photo, name: maintenance, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Homepage feature photo, name: detail, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Commercial cavity photo, name: commercialCavity, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Commercial GIB photo, name: commercialGib, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+              - { label: Commercial project photo, name: commercial, widget: object, fields: [{ label: Image, name: src, widget: image }, { label: Description, name: alt, widget: string }] }
+          - label: Projects gallery
+            name: projects
+            widget: list
+            fields:
+              - { label: Project title, name: title, widget: string }
+              - { label: Category or caption, name: category, widget: string }
+              - { label: Photo, name: image, widget: image }
+              - { label: Photo description (alt text), name: alt, widget: string }
