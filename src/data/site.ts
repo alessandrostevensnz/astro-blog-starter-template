@@ -8,12 +8,12 @@ export const site = {
   email: '',
 };
 
-// Supplied imagery in public/images. Interior images are illustrative; commercial site photos show construction details.
+// Supplied project photos are used for matching construction work; interior renders remain illustrative.
 export const imagery = {
   hero: {
-    src: '/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png',
-    alt: 'Sunlit Scandinavian-style apartment living space',
-    placeholder: true,
+    src: '/images/residential%20house%20with%20trees.png',
+    alt: 'Residential house set among trees',
+    placeholder: false,
   },
   construction: {
     src: '/images/commercial%20framing.png',
@@ -21,24 +21,24 @@ export const imagery = {
     placeholder: false,
   },
   home: {
-    src: '/images/Bright%20Minimalist%20Living%20Room%20Retreat.png',
-    alt: 'Bright minimalist living room',
-    placeholder: true,
+    src: '/images/Residential%20framing.png',
+    alt: 'Residential building framing during construction',
+    placeholder: false,
   },
   exterior: {
-    src: '/images/Bright%20Wainscoted%20Hallway%20with%20Open%20Door.png',
-    alt: 'Bright wainscoted hallway with an open door',
-    placeholder: true,
+    src: '/images/residential%20house%20with%20trees.png',
+    alt: 'Residential house exterior among trees',
+    placeholder: false,
   },
   maintenance: {
-    src: '/images/Modern%20Warm-Toned%20Bathroom%20Retreat.png',
-    alt: 'Modern warm-toned bathroom interior',
-    placeholder: true,
+    src: '/images/fence.png',
+    alt: 'Fence construction and exterior boundary work',
+    placeholder: false,
   },
   detail: {
-    src: '/images/Bright%20Minimalist%20Kitchen%20with%20Fruit%20Bowl.png',
-    alt: 'Bright minimalist kitchen with a fruit bowl',
-    placeholder: true,
+    src: '/images/ballustrade.png',
+    alt: 'Balustrade detail',
+    placeholder: false,
   },
   commercialCavity: {
     src: '/images/Commercial%20cavity.png',
@@ -47,7 +47,12 @@ export const imagery = {
   },
   commercialGib: {
     src: '/images/comerrical%20GIB.png',
-    alt: 'Commercial interior lining installation',
+    alt: 'Commercial GIB interior lining installation',
+    placeholder: false,
+  },
+  commercial: {
+    src: '/images/commercial.png',
+    alt: 'Commercial construction project',
     placeholder: false,
   },
 };

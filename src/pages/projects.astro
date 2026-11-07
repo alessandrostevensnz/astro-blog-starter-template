@@ -3,19 +3,21 @@ import SiteLayout from '../components/SiteLayout.astro';
 import { imagery } from '../data/site';
 
 const entries = [
-  { title: 'Residential construction', category: 'Construction · Residential', image: imagery.home },
-  { title: 'Commercial construction', category: 'Construction · Commercial', image: imagery.construction },
-  { title: 'Commercial fit-out', category: 'Construction · Interior works', image: imagery.commercialCavity },
-  { title: 'Interior lining', category: 'Construction · Commercial', image: imagery.commercialGib },
-  { title: 'Renovations', category: 'Construction · Renovation', image: imagery.exterior },
-  { title: 'Property + asset maintenance', category: 'Maintenance · Residential + commercial', image: imagery.maintenance },
+  { title: 'Residential framing', category: 'Construction · Residential', image: imagery.home },
+  { title: 'Residential home exterior', category: 'Construction · Residential', image: imagery.exterior },
+  { title: 'Commercial framing', category: 'Construction · Commercial', image: imagery.construction },
+  { title: 'Commercial project', category: 'Construction · Commercial', image: imagery.commercial },
+  { title: 'Commercial wall cavity', category: 'Construction · Commercial', image: imagery.commercialCavity },
+  { title: 'Commercial GIB lining', category: 'Construction · Interior lining', image: imagery.commercialGib },
+  { title: 'Fencing', category: 'Exterior works · Residential + commercial', image: imagery.maintenance },
+  { title: 'Balustrade', category: 'Construction · Detail work', image: imagery.detail },
 ];
 ---
-<SiteLayout title="Projects — ANDRO Construction + Projects" description="Explore residential, commercial construction, renovation and maintenance work ANDRO can discuss in Auckland.">
+<SiteLayout title="Projects — ANDRO Construction + Projects" description="Explore residential and commercial construction, interior lining, fencing and balustrade work from ANDRO Construction + Projects in Auckland.">
   <section class="page-hero">
     <p class="eyebrow">PROJECTS · AUCKLAND, NEW ZEALAND</p>
     <h1>Every brief<br />starts somewhere.</h1>
-    <p class="lead">A look at the kinds of construction, renovation and maintenance work we can discuss. These images show examples of our work and design inspiration.</p>
+    <p class="lead">A selection of residential and commercial construction work, including framing, interior lining, fencing and balustrade details.</p>
   </section>
   <section class="page-body section-pad">
     <div class="project-grid">
