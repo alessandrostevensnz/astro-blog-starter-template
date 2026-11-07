@@ -63,8 +63,34 @@ const currentPath = Astro.url.pathname;
     letter-spacing: .12em;
   }
 
+  /* Improve readability and make navigation and actions easier to target. */
+  body { font-size: 16px; }
+  .desktop-nav a, .header-cta { font-size: 13px; }
+  .desktop-nav a { padding: 14px 0; }
+  .header-cta { padding: 12px 0; }
+  .brand-sub { font-size: 10px; }
+  .eyebrow { font-size: 11px; }
+  .hero-subtitle, .intro-copy p, .body-copy { font-size: 16px; }
+  .text-link { min-height: 44px; gap: 18px; font-size: 13px; }
+  .card-meta p, .project-copy p { font-size: 13px; }
+  .service-item > span:first-child, .service-item p { font-size: 14px; }
+  .notice, .contact-details, .form-status { font-size: 14px; }
+  .form-field label { font-size: 11px; }
+  .form-submit { min-height: 48px; font-size: 13px; }
+  .site-footer { font-size: 12px; }
+  .footer-links a { padding: 10px 0; }
+
+  @media (max-width: 900px) {
+    .desktop-nav a { font-size: 12px; }
+  }
   @media (max-width: 680px) {
     .brand-word { font-size: 28px; }
-    .brand-sub { font-size: 7px; }
+    .brand-sub { font-size: 8px; }
+    .mobile-nav a { min-height: 48px; font-size: 16px; }
+    .hero-subtitle, .intro-copy p, .body-copy { font-size: 16px; }
+    .page-hero .lead { font-size: 16px; }
+    .service-item p { font-size: 14px; }
+    .card-meta p, .project-copy p { font-size: 13px; }
+    .footer-links { gap: 16px; }
   }
 </style>
