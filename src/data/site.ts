@@ -31,8 +31,8 @@ export const imagery = {
     placeholder: false,
   },
   maintenance: {
-    src: '/images/fence.png',
-    alt: 'Fence construction and exterior boundary work',
+    src: '/images/cladding.png',
+    alt: 'Exterior cladding on a property',
     placeholder: false,
   },
   detail: {
