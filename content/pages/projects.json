@@ -1,1 +1,38 @@
-{"projects":[{"title":"Residential framing","category":"Construction · Residential","image":"/images/Residential%20framing.png","alt":"Residential building framing during construction"},{"title":"Residential home exterior","category":"Construction · Residential","image":"/images/residential%20house%20with%20trees.png","alt":"Residential house exterior among trees"},{"title":"Commercial framing","category":"Construction · Commercial","image":"/images/commercial%20framing.png","alt":"Commercial construction framing"},{"title":"Commercial project","category":"Construction · Commercial","image":"/images/commercial.png","alt":"Commercial construction project"},{"title":"Commercial wall cavity","category":"Construction · Commercial","image":"/images/Commercial%20cavity.png","alt":"Commercial wall cavity during construction"},{"title":"Commercial GIB lining","category":"Construction · Interior lining","image":"/images/comerrical%20GIB.png","alt":"Commercial GIB interior lining installation"},{"title":"Exterior cladding","category":"Property maintenance · Exterior","image":"/images/cladding.png","alt":"Exterior cladding on a property"},{"title":"Balustrade","category":"Construction · Detail work","image":"/images/ballustrade.png","alt":"Balustrade detail"}],"footerImages":{"logo":{"src":"/images/andro%20caps%20copy.png","alt":"ANDRO Construction logo"},"badge":{"src":"/images/MemberSticker_Shop_Image_453x512.width-1000.png","alt":"Site Safe Member — Proud to be safe"}}}
+{
+  "projects": [
+    {
+      "title": "Residential Construction",
+      "category": "Construction · Residential",
+      "image": "/images/Residential%20framing.png",
+      "alt": "Residential building framing during construction"
+    },
+    {
+      "title": "Commercial Construction",
+      "category": "Construction · Commercial",
+      "image": "/images/commercial%20framing.png",
+      "alt": "Commercial construction framing"
+    },
+    {
+      "title": "Civil and Earthworks ",
+      "category": "Construction · Commercial",
+      "image": "/images/commercial.png",
+      "alt": "Commercial construction project"
+    },
+    {
+      "title": "Asset maintenance ",
+      "category": "Property maintenance · Exterior",
+      "image": "/images/asset care 2.png",
+      "alt": "Exterior cladding on a property"
+    }
+  ],
+  "footerImages": {
+    "logo": {
+      "src": "/images/andro%20caps%20copy.png",
+      "alt": "ANDRO Construction logo"
+    },
+    "badge": {
+      "src": "/images/MemberSticker_Shop_Image_453x512.width-1000.png",
+      "alt": "Site Safe Member — Proud to be safe"
+    }
+  }
+}
