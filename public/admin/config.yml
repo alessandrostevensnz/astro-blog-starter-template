@@ -166,17 +166,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Hero description, name: subtitle, widget: text }
               - label: Hero description formatting
@@ -185,17 +192,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Intro heading, name: introHeading, widget: string }
               - label: Intro heading formatting
@@ -204,17 +218,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Intro text, name: introText, widget: text }
               - label: Intro text formatting
@@ -223,17 +244,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Services heading, name: servicesHeading, widget: string }
               - label: Services heading formatting
@@ -242,17 +270,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Construction card title, name: constructionCardTitle, widget: string }
               - { label: Construction card description, name: constructionCardDescription, widget: text }
@@ -265,17 +300,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Bottom call-to-action heading, name: closingHeading, widget: string }
               - label: Bottom call-to-action heading formatting
@@ -284,17 +326,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Philosophy heading, name: philosophyHeading, widget: string }
               - label: Philosophy heading formatting
@@ -303,17 +352,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Philosophy text, name: philosophyText, widget: text }
               - label: Philosophy text formatting
@@ -322,17 +378,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
           - label: Construction page copy
             name: construction
@@ -348,17 +411,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Introduction text, name: introText, widget: text }
               - label: Introduction text formatting
@@ -367,17 +437,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Residential heading, name: residentialHeading, widget: string }
               - { label: Residential description, name: residentialText, widget: text }
@@ -397,17 +474,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Introduction text, name: introText, widget: text }
               - label: Introduction text formatting
@@ -416,17 +500,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Preventative heading, name: preventativeHeading, widget: string }
               - { label: Preventative description, name: preventativeText, widget: text }
@@ -451,17 +542,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Who we are text, name: whoText, widget: text }
               - label: Who we are text formatting
@@ -470,17 +568,24 @@ collections:
                 collapsed: false
 
                 fields:
-                  - label: Text size
-                    name: size
+                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
+                  - label: Text colour
+                    name: color
                     widget: select
                     required: false
+                    hint: "Choose a preset colour or leave blank for the website default."
                     options:
-                      - { label: Default, value: "100" }
-                      - { label: Small, value: "85" }
-                      - { label: Medium, value: "100" }
-                      - { label: Large, value: "120" }
-                      - { label: Extra large, value: "145" }
-                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+                      - { label: "Website default", value: "" }
+                      - { label: "Black", value: "#000000" }
+                      - { label: "Charcoal", value: "#1B1B19" }
+                      - { label: "Dark grey", value: "#444444" }
+                      - { label: "Grey", value: "#77746E" }
+                      - { label: "Light grey", value: "#C8C8C8" }
+                      - { label: "White", value: "#FFFFFF" }
+                      - { label: "ANDRO gold", value: "#B49B70" }
+                      - { label: "Warm beige", value: "#D6C5AB" }
+                      - { label: "Forest green", value: "#315C48" }
+                      - { label: "Navy", value: "#263B53" }
 
               - { label: Craftsmanship heading, name: craftHeading, widget: string }
               - { label: Craftsmanship text, name: craftText, widget: text }
