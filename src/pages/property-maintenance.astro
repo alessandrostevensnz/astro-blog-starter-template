@@ -1,11 +1,12 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
-import { imagery, siteContent } from '../data/site';
-import maintenanceServices from '../../content/maintenance-services.json';
+import { siteContent } from '../data/site';
+const photos = siteContent.maintenance.photos;
+const services = siteContent.maintenance.services;
 ---
 <SiteLayout title="Property Maintenance Auckland | Residential & Commercial | ANDRO" description={siteContent.maintenance.description}>
   <section class="maintenance-hero" aria-labelledby="maintenance-title">
-    <img class="maintenance-hero-image" src="/images/preston.png" alt="Property maintenance work" fetchpriority="high" />
+    <img class="maintenance-hero-image" src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
     <div class="maintenance-hero-shade"></div>
     <div class="maintenance-hero-copy"><p class="eyebrow inverse">PROPERTY + ASSET MAINTENANCE · AUCKLAND</p><h1 id="maintenance-title">Look after<br />what matters.</h1></div>
   </section>
@@ -31,7 +32,7 @@ import maintenanceServices from '../../content/maintenance-services.json';
   <section class="maintenance-services" aria-labelledby="maintenance-services-heading">
     <div class="maintenance-services-heading"><p class="eyebrow">MAINTENANCE SUPPORT</p><h2 id="maintenance-services-heading">Responsive care, with attention to the details.</h2></div>
     <div class="maintenance-services-list">
-      {maintenanceServices.services.map((service, index) => (
+      {services.map((service, index) => (
         <article class:list={['maintenance-service', { 'maintenance-service-reverse': index % 2 === 1 }]} data-reveal>
           <div class="maintenance-service-copy">
             <span class="maintenance-service-number">{service.number}</span>
@@ -56,7 +57,7 @@ import maintenanceServices from '../../content/maintenance-services.json';
     </div>
   </section>
 
-  <section class="image-band"><img src={imagery.maintenance.src} alt={imagery.maintenance.alt} loading="lazy" /><div class="image-band-copy"><p class="eyebrow inverse">AUCKLAND PROPERTY CARE</p><h2>Practical support for the places you rely on.</h2><a class="text-link" href="/contact/">Talk to ANDRO <span>↗</span></a></div></section>
+  <section class="image-band"><img src={photos.closing.src} alt={photos.closing.alt} loading="lazy" /><div class="image-band-copy"><p class="eyebrow inverse">AUCKLAND PROPERTY CARE</p><h2>Practical support for the places you rely on.</h2><a class="text-link" href="/contact/">Talk to ANDRO <span>↗</span></a></div></section>
 </SiteLayout>
 
 <script>

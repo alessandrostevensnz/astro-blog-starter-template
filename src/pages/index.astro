@@ -1,10 +1,11 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
-import { imagery, site, siteContent } from '../data/site';
+import { site, siteContent } from '../data/site';
+const photos = siteContent.home.photos;
 ---
 <SiteLayout title="ANDRO Construction + Projects | Construction and Property Maintenance Auckland" description={siteContent.home.introText}>
   <section class="hero" aria-labelledby="hero-title">
-    <img class="hero-image" src={imagery.hero.src} alt={imagery.hero.alt} fetchpriority="high" />
+    <img class="hero-image" src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
     <div class="hero-shade"></div>
     <div class="hero-copy reveal">
       <p class="eyebrow inverse">AUCKLAND · NEW ZEALAND · EST. {site.established}</p>
@@ -25,13 +26,13 @@ import { imagery, site, siteContent } from '../data/site';
   <section class="service-strip section-pad" aria-labelledby="services-title">
     <div class="section-heading"><div><p class="eyebrow">WHAT WE DO</p><h2 id="services-title"><span data-style-key="home.servicesHeading">{siteContent.home.servicesHeading}</span></h2></div><a class="text-link" href="/construction/">Explore construction <span>↗</span></a></div>
     <div class="editorial-grid">
-      <a class="editorial-card" href="/construction/"><div class="editorial-image"><img src={imagery.construction.src} alt={imagery.construction.alt} loading="lazy" /></div><div class="card-meta"><div><h3>{siteContent.home.constructionCardTitle}</h3><p>{siteContent.home.constructionCardDescription}</p></div><span class="card-arrow">↗</span></div></a>
-      <a class="editorial-card" href="/property-maintenance/"><div class="editorial-image"><img src={imagery.maintenance.src} alt={imagery.maintenance.alt} loading="lazy" /></div><div class="card-meta"><div><h3>{siteContent.home.maintenanceCardTitle}</h3><p>{siteContent.home.maintenanceCardDescription}</p></div><span class="card-arrow">↗</span></div></a>
+      <a class="editorial-card" href="/construction/"><div class="editorial-image"><img src={photos.constructionCard.src} alt={photos.constructionCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3>{siteContent.home.constructionCardTitle}</h3><p>{siteContent.home.constructionCardDescription}</p></div><span class="card-arrow">↗</span></div></a>
+      <a class="editorial-card" href="/property-maintenance/"><div class="editorial-image"><img src={photos.maintenanceCard.src} alt={photos.maintenanceCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3>{siteContent.home.maintenanceCardTitle}</h3><p>{siteContent.home.maintenanceCardDescription}</p></div><span class="card-arrow">↗</span></div></a>
     </div>
   </section>
 
   <section class="image-band" aria-label="ANDRO craftsmanship and approach">
-    <img src={imagery.detail.src} alt={imagery.detail.alt} loading="lazy" />
+    <img src={photos.feature.src} alt={photos.feature.alt} loading="lazy" />
     <div class="image-band-copy"><p class="eyebrow inverse">THE ANDRO APPROACH</p><h2><span data-style-key="home.featureHeading">{siteContent.home.featureHeading}</span></h2><a class="text-link" href="/about/">How we work <span>↗</span></a></div>
   </section>
 
