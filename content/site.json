@@ -1,48 +1,48 @@
 {
   "home": {
-    "title": "Built with purpose.",
-    "subtitle": "Construction, renovation and property care—thought through carefully, built with purpose and looked after properly.",
-    "introHeading": "Good work starts with understanding the building.",
-    "introText": "ANDRO Construction + Projects is an Auckland-based company established in 2020. We work across residential and commercial construction, carpentry, renovations, property improvements and ongoing maintenance. We listen first, look closely at what the building needs and agree a practical scope before work begins.",
     "servicesHeading": "Considered work. Practical solutions.",
-    "constructionCardTitle": "Construction + renovations",
-    "constructionCardDescription": "Residential and commercial building work, carpentry and considered improvements.",
-    "maintenanceCardTitle": "Property + asset maintenance",
-    "maintenanceCardDescription": "Repairs and planned care to help keep homes and commercial properties in good condition.",
     "featureHeading": "Quality is in the details.",
     "closingHeading": "Have a project in mind?",
     "philosophyHeading": "Craftsmanship, quality and service—put back into the work.",
+    "maintenanceCardTitle": "Property + asset maintenance",
+    "introHeading": "Good work starts with understanding the building.",
+    "constructionCardTitle": "Construction + renovations",
+    "subtitle": "Construction, renovation and property care—thought through carefully, built with purpose and looked after properly.",
+    "title": "Built with purpose.",
+    "introText": "ANDRO Construction + Projects is an Auckland-based company established in 2020. We work across residential and commercial construction, carpentry, renovations, property improvements and ongoing maintenance. We listen first, look closely at what the building needs and agree a practical scope before work begins.",
+    "maintenanceCardDescription": "Repairs and planned care to help keep homes and commercial properties in good condition.",
+    "constructionCardDescription": "Residential and commercial building work, carpentry and considered improvements.",
     "philosophyText": "ANDRO was established with a straightforward purpose: to give people a genuine sense of quality in the work carried out on their property. We believe craftsmanship is not just how a finished job looks; it is the care taken in understanding the brief, preparing properly, choosing suitable materials and attending to the details that affect how the work performs over time."
   },
   "construction": {
-    "description": "Residential and commercial construction, carpentry, renovations and property improvements across Auckland. We take time to understand the existing building, prepare carefully and agree a clear scope so the finished work is practical as well as considered.",
     "bannerImage": "/images/Residential%20framing.png",
-    "bannerAlt": "Residential framing during construction",
-    "introHeading": "From the first conversation onward.",
-    "introText": "Good building work starts before tools come out. We discuss what you need the space to do, look at the existing conditions and work through the details that shape a useful result. Clear communication about scope, access, materials and timing helps everyone understand what is planned.",
-    "residentialHeading": "Residential construction and carpentry",
     "residentialText": "From general carpentry and decks to fencing, minor alterations and interior or exterior improvements, the right approach depends on the property and its intended use. We consider how new work meets existing surfaces, how materials will weather and how details such as junctions, fixings and finishes affect day-to-day function. For renovations, existing structures can reveal unexpected conditions once work begins. If that happens, we explain what has been found and discuss the practical options before proceeding. Work requiring a licensed building practitioner, building consent or specialist trade is undertaken or coordinated in line with applicable requirements.",
-    "commercialHeading": "Commercial construction and fit-outs",
-    "commercialText": "Commercial carpentry, repairs, office improvements, retail and hospitality fit-outs, alterations and refurbishment all need to work around the people using the space. We discuss site requirements, access, sequencing and practical scheduling with owners, businesses and property managers, aiming to keep disruption to a minimum. Where a project needs specialist trades, we can coordinate with appropriately qualified providers as required.",
     "processHeading": "Preparation makes a difference.",
-    "processText": "A well-considered scope helps avoid mismatched expectations and rushed decisions. We talk through the intended outcome, identify visible constraints, consider suitable materials and clarify what is included. The aim is not to overcomplicate a project, but to make informed choices that support a durable, functional finish."
+    "introHeading": "From the first conversation onward.",
+    "commercialText": "Commercial carpentry, repairs, office improvements, retail and hospitality fit-outs, alterations and refurbishment all need to work around the people using the space. We discuss site requirements, access, sequencing and practical scheduling with owners, businesses and property managers, aiming to keep disruption to a minimum. Where a project needs specialist trades, we can coordinate with appropriately qualified providers as required.",
+    "commercialHeading": "Commercial construction and fit-outs",
+    "introText": "Good building work starts before tools come out. We discuss what you need the space to do, look at the existing conditions and work through the details that shape a useful result. Clear communication about scope, access, materials and timing helps everyone understand what is planned.",
+    "processText": "A well-considered scope helps avoid mismatched expectations and rushed decisions. We talk through the intended outcome, identify visible constraints, consider suitable materials and clarify what is included. The aim is not to overcomplicate a project, but to make informed choices that support a durable, functional finish.",
+    "description": "Residential and commercial construction, carpentry, renovations and property improvements across Auckland. We take time to understand the existing building, prepare carefully and agree a clear scope so the finished work is practical as well as considered.",
+    "bannerAlt": "Residential framing during construction",
+    "residentialHeading": "Residential construction and carpentry"
   },
   "maintenance": {
-    "description": "Property maintenance in Auckland is about more than putting things right after they fail. Weather, moisture, movement, use and ageing materials all affect a building over time. We help homeowners, landlords, investors, property managers and commercial owners identify repair needs, plan practical work and keep properties in good working condition.",
-    "bannerImage": "/images/cladding.png",
-    "bannerAlt": "Exterior cladding on a property",
-    "introHeading": "Look for the early signs.",
-    "introText": "Paint weathers. Gutters clog. Timber takes on moisture. Doors and fittings loosen with use. A small problem can become a larger repair when it is left unattended, so maintenance is most useful when it is considered before something fails. We can help assess what needs attention now, what can be planned and where specialist advice or trades are needed.",
-    "preventativeHeading": "Preventative maintenance",
-    "preventativeText": "Auckland buildings face changing weather, moisture, movement, everyday wear and materials that age at different rates. Routine checks can help identify issues such as deteriorating paint, blocked gutters, damaged seals, loose fittings or early timber decay. Timely repairs do not prevent every future problem, but they can help reduce avoidable deterioration and give owners a clearer basis for planning upkeep.",
-    "residentialHeading": "Residential property maintenance",
-    "residentialText": "Homeowners, landlords, investors and property managers often need a reliable way to deal with a growing list of small jobs. We can help with general repairs, interior maintenance, worn doors and hardware, damaged timber, decks, fences, exterior upkeep and pre-sale or pre-tenancy improvements. We consider the condition of the property and how it is used, then agree a practical scope that addresses the priorities.",
-    "commercialHeading": "Commercial property maintenance",
-    "commercialText": "Commercial premises need to remain functional, presentable and properly maintained for the people who work in or visit them. We support building owners, business operators and property managers with repairs and planned maintenance, communicating about access and scheduling so work can be organised around day-to-day operations where practical. Specialist work can be coordinated with appropriate trades when required.",
-    "assetHeading": "Asset maintenance and repair planning",
-    "assetText": "For landlords, investors and commercial property owners, maintenance is part of understanding the condition of an asset and making informed decisions about it. We can assist with condition observations, maintenance scheduling, identifying visible deterioration and prioritising repairs according to property needs and agreed budgets. This supports a considered approach to long-term upkeep rather than relying only on reactive repairs.",
     "improvementsHeading": "Repairs and improvements",
-    "improvementsText": "Small repairs and carefully chosen improvements can make a property work better, look more cared for and remain useful for longer. We assess the issue, discuss options and recommend a practical way forward for the work in scope. Where an issue involves restricted building work, consent or specialist trades, the necessary appropriately licensed or qualified providers are engaged as required."
+    "improvementsText": "Small repairs and carefully chosen improvements can make a property work better, look more cared for and remain useful for longer. We assess the issue, discuss options and recommend a practical way forward for the work in scope. Where an issue involves restricted building work, consent or specialist trades, the necessary appropriately licensed or qualified providers are engaged as required.",
+    "bannerImage": "/images/cladding.png",
+    "residentialText": "Homeowners, landlords, investors and property managers often need a reliable way to deal with a growing list of small jobs. We can help with general repairs, interior maintenance, worn doors and hardware, damaged timber, decks, fences, exterior upkeep and pre-sale or pre-tenancy improvements. We consider the condition of the property and how it is used, then agree a practical scope that addresses the priorities.",
+    "assetHeading": "Asset maintenance and repair planning",
+    "preventativeHeading": "Preventative maintenance",
+    "introHeading": "Look for the early signs.",
+    "commercialText": "Commercial premises need to remain functional, presentable and properly maintained for the people who work in or visit them. We support building owners, business operators and property managers with repairs and planned maintenance, communicating about access and scheduling so work can be organised around day-to-day operations where practical. Specialist work can be coordinated with appropriate trades when required.",
+    "commercialHeading": "Commercial property maintenance",
+    "introText": "Paint weathers. Gutters clog. Timber takes on moisture. Doors and fittings loosen with use. A small problem can become a larger repair when it is left unattended, so maintenance is most useful when it is considered before something fails. We can help assess what needs attention now, what can be planned and where specialist advice or trades are needed.",
+    "preventativeText": "Auckland buildings face changing weather, moisture, movement, everyday wear and materials that age at different rates. Routine checks can help identify issues such as deteriorating paint, blocked gutters, damaged seals, loose fittings or early timber decay. Timely repairs do not prevent every future problem, but they can help reduce avoidable deterioration and give owners a clearer basis for planning upkeep.",
+    "description": "Property maintenance in Auckland is about more than putting things right after they fail. Weather, moisture, movement, use and ageing materials all affect a building over time. We help homeowners, landlords, investors, property managers and commercial owners identify repair needs, plan practical work and keep properties in good working condition.",
+    "assetText": "For landlords, investors and commercial property owners, maintenance is part of understanding the condition of an asset and making informed decisions about it. We can assist with condition observations, maintenance scheduling, identifying visible deterioration and prioritising repairs according to property needs and agreed budgets. This supports a considered approach to long-term upkeep rather than relying only on reactive repairs.",
+    "bannerAlt": "Exterior cladding on a property",
+    "residentialHeading": "Residential property maintenance"
   },
   "about": {
     "description": "Learn about ANDRO Construction + Projects, an Auckland company established in 2020 and guided by craftsmanship, quality and service.",
@@ -55,24 +55,91 @@
     "visionText": "We want ANDRO to be known for craftsmanship, quality and service—not as a slogan, but in the way we communicate, plan and complete work. We value long-term relationships and the reassurance that comes from knowing who is looking after your property."
   },
   "images": {
-    "hero": { "src": "/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png", "alt": "Sunlit Scandinavian-style apartment living space" },
-    "construction": { "src": "/images/commercial%20framing.png", "alt": "Commercial construction framing" },
-    "home": { "src": "/images/Residential%20framing.png", "alt": "Residential building framing during construction" },
-    "exterior": { "src": "/images/Bright%20Wainscoted%20Hallway%20with%20Open%20Door.png", "alt": "Bright hallway with white wainscoting and an open door" },
-    "maintenance": { "src": "/images/cladding.png", "alt": "Exterior cladding on a property" },
-    "detail": { "src": "/images/Bright%20Minimalist%20Living%20Room%20Retreat.png", "alt": "Bright minimalist living room interior" },
-    "commercialCavity": { "src": "/images/Commercial%20cavity.png", "alt": "Commercial wall cavity during construction" },
-    "commercialGib": { "src": "/images/comerrical%20GIB.png", "alt": "Commercial GIB interior lining installation" },
-    "commercial": { "src": "/images/commercial.png", "alt": "Commercial construction project" }
+    "commercialCavity": {
+      "src": "/images/Commercial%20cavity.png",
+      "alt": "Commercial wall cavity during construction"
+    },
+    "commercial": {
+      "src": "/images/commercial.png",
+      "alt": "Commercial construction project"
+    },
+    "detail": {
+      "src": "/images/Bright%20Minimalist%20Living%20Room%20Retreat.png",
+      "alt": "Bright minimalist living room interior"
+    },
+    "construction": {
+      "src": "/images/commercial%20framing.png",
+      "alt": "Commercial construction "
+    },
+    "maintenance": {
+      "src": "/images/cladding.png",
+      "alt": "Exterior cladding on a property"
+    },
+    "commercialGib": {
+      "src": "/images/comerrical%20GIB.png",
+      "alt": "Commercial GIB interior lining installation"
+    },
+    "hero": {
+      "src": "/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png",
+      "alt": "Sunlit Scandinavian-style apartment living space"
+    },
+    "exterior": {
+      "src": "/images/Bright%20Wainscoted%20Hallway%20with%20Open%20Door.png",
+      "alt": "Bright hallway with white wainscoting and an open door"
+    },
+    "home": {
+      "src": "/images/Residential%20framing.png",
+      "alt": "Residential building framing during construction"
+    }
   },
   "projects": [
-    { "title": "Residential framing", "category": "Construction · Residential", "image": "/images/Residential%20framing.png", "alt": "Residential building framing during construction" },
-    { "title": "Residential home exterior", "category": "Construction · Residential", "image": "/images/residential%20house%20with%20trees.png", "alt": "Residential house exterior among trees" },
-    { "title": "Commercial framing", "category": "Construction · Commercial", "image": "/images/commercial%20framing.png", "alt": "Commercial construction framing" },
-    { "title": "Commercial project", "category": "Construction · Commercial", "image": "/images/commercial.png", "alt": "Commercial construction project" },
-    { "title": "Commercial wall cavity", "category": "Construction · Commercial", "image": "/images/Commercial%20cavity.png", "alt": "Commercial wall cavity during construction" },
-    { "title": "Commercial GIB lining", "category": "Construction · Interior lining", "image": "/images/comerrical%20GIB.png", "alt": "Commercial GIB interior lining installation" },
-    { "title": "Exterior cladding", "category": "Property maintenance · Exterior", "image": "/images/cladding.png", "alt": "Exterior cladding on a property" },
-    { "title": "Balustrade", "category": "Construction · Detail work", "image": "/images/ballustrade.png", "alt": "Balustrade detail" }
+    {
+      "title": "Residential framing",
+      "category": "Construction · Residential",
+      "image": "/images/Residential%20framing.png",
+      "alt": "Residential building framing during construction"
+    },
+    {
+      "title": "Residential home exterior",
+      "category": "Construction · Residential",
+      "image": "/images/residential%20house%20with%20trees.png",
+      "alt": "Residential house exterior among trees"
+    },
+    {
+      "title": "Commercial framing",
+      "category": "Construction · Commercial",
+      "image": "/images/commercial%20framing.png",
+      "alt": "Commercial construction framing"
+    },
+    {
+      "title": "Commercial project",
+      "category": "Construction · Commercial",
+      "image": "/images/commercial.png",
+      "alt": "Commercial construction project"
+    },
+    {
+      "title": "Commercial wall cavity",
+      "category": "Construction · Commercial",
+      "image": "/images/Commercial%20cavity.png",
+      "alt": "Commercial wall cavity during construction"
+    },
+    {
+      "title": "Commercial GIB lining",
+      "category": "Construction · Interior lining",
+      "image": "/images/comerrical%20GIB.png",
+      "alt": "Commercial GIB interior lining installation"
+    },
+    {
+      "title": "Exterior cladding",
+      "category": "Property maintenance · Exterior",
+      "image": "/images/cladding.png",
+      "alt": "Exterior cladding on a property"
+    },
+    {
+      "title": "Balustrade",
+      "category": "Construction · Detail work",
+      "image": "/images/ballustrade.png",
+      "alt": "Balustrade detail"
+    }
   ]
 }
