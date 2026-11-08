@@ -14,40 +14,31 @@
     "constructionCardDescription": "Residential and commercial building work, carpentry and considered improvements.",
     "philosophyText": "ANDRO was established with a straightforward purpose: to give people a genuine sense of quality in the work carried out on their property. We believe craftsmanship is not just how a finished job looks; it is the care taken in understanding the brief, preparing properly, choosing suitable materials and attending to the details that affect how the work performs over time.",
     "titleStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "subtitleStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "introHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "introTextStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "servicesHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "featureHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "closingHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "philosophyHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "philosophyTextStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     }
   },
   "construction": {
@@ -63,12 +54,10 @@
     "bannerAlt": "Residential framing during construction",
     "residentialHeading": "Residential construction and carpentry",
     "introHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "introTextStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     }
   },
   "maintenance": {
@@ -88,12 +77,10 @@
     "bannerAlt": "Exterior cladding on a property",
     "residentialHeading": "Residential property maintenance",
     "introHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "introTextStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     }
   },
   "about": {
@@ -106,12 +93,10 @@
     "visionHeading": "A business built on trust over time.",
     "visionText": "We want ANDRO to be known for craftsmanship, quality and service—not as a slogan, but in the way we communicate, plan and complete work. We value long-term relationships and the reassurance that comes from knowing who is looking after your property.",
     "whoHeadingStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     },
     "whoTextStyle": {
-      "size": "100",
-      "color": "#77746e"
+      "size": "100"
     }
   },
   "images": {
