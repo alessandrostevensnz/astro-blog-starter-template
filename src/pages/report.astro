@@ -1,0 +1,21 @@
+---
+// ANDRO Site Reports route.
+// The app asset must be added at public/report/app.html before this is merged.
+// Protect BOTH /report and /report/* with Cloudflare Access before deployment.
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>ANDRO | Site Reports</title>
+    <style is:global>
+      html, body { margin: 0; height: 100%; }
+      iframe { display: block; width: 100%; height: 100dvh; border: 0; }
+    </style>
+  </head>
+  <body>
+    <iframe src="/report/app.html" title="ANDRO Site Reports" allow="camera" loading="eager"></iframe>
+  </body>
+</html>
