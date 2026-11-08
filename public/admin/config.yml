@@ -16,6 +16,145 @@ collections:
         label: Pages, photos and project gallery
         file: content/site.json
         fields:
+          - label: Typography and colours
+            name: typography
+            widget: object
+            collapsed: true
+            fields:
+              - label: Global website typography
+                name: global
+                widget: object
+                fields:
+                  - { label: Heading size (%), name: headingSize, widget: number, value_type: int, min: 70, max: 150, default: 100, hint: "100 is the original website size" }
+                  - { label: Body text size (%), name: bodySize, widget: number, value_type: int, min: 80, max: 150, default: 100 }
+                  - { label: Heading colour, name: headingColor, widget: color, default: "#1b1b19", allowInput: true }
+                  - { label: Body text colour, name: bodyColor, widget: color, default: "#77746e", allowInput: true }
+              - label: Individual text overrides
+                name: overrides
+                widget: object
+                collapsed: true
+                hint: "Leave a field blank to use global styling. Percentages are relative to the original text size."
+                fields:
+                  - label: Homepage main headline
+                    name: home__title
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage hero description
+                    name: home__subtitle
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage intro heading
+                    name: home__introHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage intro text
+                    name: home__introText
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage services heading
+                    name: home__servicesHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage feature heading
+                    name: home__featureHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage philosophy heading
+                    name: home__philosophyHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage philosophy text
+                    name: home__philosophyText
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Homepage closing heading
+                    name: home__closingHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Construction intro heading
+                    name: construction__introHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Construction intro text
+                    name: construction__introText
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Maintenance intro heading
+                    name: maintenance__introHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: Maintenance intro text
+                    name: maintenance__introText
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: About heading
+                    name: about__whoHeading
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
+                  - label: About text
+                    name: about__whoText
+                    widget: object
+                    collapsed: true
+                    required: false
+                    fields:
+                      - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
+                      - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
           - label: Homepage
             name: home
             widget: object
