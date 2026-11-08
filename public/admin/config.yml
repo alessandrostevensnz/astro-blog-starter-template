@@ -160,18 +160,180 @@ collections:
             widget: object
             fields:
               - { label: Main headline, name: title, widget: string }
+              - label: Main headline formatting
+                name: titleStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Hero description, name: subtitle, widget: text }
+              - label: Hero description formatting
+                name: subtitleStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Intro heading, name: introHeading, widget: string }
+              - label: Intro heading formatting
+                name: introHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Intro text, name: introText, widget: text }
+              - label: Intro text formatting
+                name: introTextStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Services heading, name: servicesHeading, widget: string }
+              - label: Services heading formatting
+                name: servicesHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Construction card title, name: constructionCardTitle, widget: string }
               - { label: Construction card description, name: constructionCardDescription, widget: text }
               - { label: Maintenance card title, name: maintenanceCardTitle, widget: string }
               - { label: Maintenance card description, name: maintenanceCardDescription, widget: text }
               - { label: Feature section heading, name: featureHeading, widget: string }
+              - label: Feature section heading formatting
+                name: featureHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Bottom call-to-action heading, name: closingHeading, widget: string }
+              - label: Bottom call-to-action heading formatting
+                name: closingHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Philosophy heading, name: philosophyHeading, widget: string }
+              - label: Philosophy heading formatting
+                name: philosophyHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Philosophy text, name: philosophyText, widget: text }
+              - label: Philosophy text formatting
+                name: philosophyTextStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
           - label: Construction page copy
             name: construction
             widget: object
@@ -180,7 +342,43 @@ collections:
               - { label: Banner photo, name: bannerImage, widget: image }
               - { label: Banner photo description (alt text), name: bannerAlt, widget: string }
               - { label: Introduction heading, name: introHeading, widget: string }
+              - label: Introduction heading formatting
+                name: introHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Introduction text, name: introText, widget: text }
+              - label: Introduction text formatting
+                name: introTextStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Residential heading, name: residentialHeading, widget: string }
               - { label: Residential description, name: residentialText, widget: text }
               - { label: Commercial heading, name: commercialHeading, widget: string }
@@ -193,7 +391,43 @@ collections:
             fields:
               - { label: Page description, name: description, widget: text }
               - { label: Introduction heading, name: introHeading, widget: string }
+              - label: Introduction heading formatting
+                name: introHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Introduction text, name: introText, widget: text }
+              - label: Introduction text formatting
+                name: introTextStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Preventative heading, name: preventativeHeading, widget: string }
               - { label: Preventative description, name: preventativeText, widget: text }
               - { label: Residential heading, name: residentialHeading, widget: string }
@@ -211,7 +445,43 @@ collections:
               - { label: Page description, name: description, widget: text }
               - { label: Hero introduction, name: heroIntro, widget: text }
               - { label: Who we are heading, name: whoHeading, widget: string }
+              - label: Who we are heading formatting
+                name: whoHeadingStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Who we are text, name: whoText, widget: text }
+              - label: Who we are text formatting
+                name: whoTextStyle
+                widget: object
+                collapsed: false
+                required: false
+                fields:
+                  - label: Text size
+                    name: size
+                    widget: select
+                    required: false
+                    options:
+                      - { label: Default, value: "100" }
+                      - { label: Small, value: "85" }
+                      - { label: Medium, value: "100" }
+                      - { label: Large, value: "120" }
+                      - { label: Extra large, value: "145" }
+                  - { label: Text colour, name: color, widget: color, required: false, allowInput: true, hint: "Choose a colour or leave empty for the website default" }
+
               - { label: Craftsmanship heading, name: craftHeading, widget: string }
               - { label: Craftsmanship text, name: craftText, widget: text }
               - { label: Vision heading, name: visionHeading, widget: string }
