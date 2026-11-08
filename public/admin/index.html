@@ -19,7 +19,16 @@
       [class*="ObjectControl"] [class*="TopBar"], [class*="ObjectControl"] [class*="Header"] { border-radius:8px !important; }
       [class*="Editor"] button:focus-visible, #andro-real-preview button:focus-visible { outline:2px solid var(--andro-gold); outline-offset:2px; }
 
-      #andro-real-preview { position: fixed; z-index: 20; top: 62px; right: 0; bottom: 0; width: 50%; background: #fbfaf7; border-left: 1px solid #e0dfda; box-shadow:-8px 0 24px rgba(24,28,23,.045); display: flex; flex-direction: column; }
+      /* Hide Decap's built-in preview content beneath our real-site iframe.
+         The editor form remains visible and functional on the left. */
+      [class*="PreviewPane"], [class*="PreviewContainer"] { visibility: hidden !important; }
+      #andro-real-preview { visibility: visible !important; }
+      /* Softer, more approachable editing surfaces. */
+      [class*="ObjectControl"] { border: 1px solid #e8e7e2 !important; background: #fff !important; box-shadow: 0 2px 9px rgba(20,24,20,.025) !important; }
+      [class*="ObjectControl"] [class*="TopBar"], [class*="ObjectControl"] [class*="Header"] { background: #f2f1ed !important; }
+      [class*="FieldLabel"], [class*="fieldLabel"] { text-transform: none !important; }
+      input, textarea, select { background: #fff !important; }
+      #andro-real-preview { position: fixed; z-index: 20; top: 66px; right: 0; bottom: 0; width: 50%; background: #fbfaf7; border-left: 1px solid #e0dfda; box-shadow:-8px 0 24px rgba(24,28,23,.045); display: flex; flex-direction: column; }
       #andro-real-preview[hidden] { display: none; }
       #andro-real-preview .andro-preview-bar { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 12px 18px; background: #252723; color: #fff; font: 11px Inter,Arial,sans-serif; letter-spacing:.045em; }
       #andro-real-preview .andro-preview-bar span { color: #d8c9ae; }
