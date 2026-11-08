@@ -43,42 +43,90 @@ export function validState(actual: string | null, expected: string | null): bool
   return diff === 0;
 }
 
+function inlineJson(value: unknown): string {
+  return JSON.stringify(value).replace(/</g, "\\u003c")
+    .replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
+}
+
 export function popupResponse(token?: string, failureReason = "unknown_failure"): Response {
-  // Decap's GitHub OAuth popup protocol starts with an "authorizing" handshake.
-  // Do not deliver the token until the opener confirms the expected origin.
+  const reason = /^[a-z0-9_]{1,64}$/.test(failureReason) ? failureReason : "unknown_failure";
+  // Both results must end in JSON: Decap parses the success AND error suffix.
   const message = token
     ? "authorization:github:success:" + JSON.stringify({ token, provider: "github" })
-    : "authorization:github:error:Authentication failed";
-  const safeMessage = JSON.stringify(message).replace(/</g, "\\u003c");
-  const safeReason = JSON.stringify(failureReason);
+    : "authorization:github:error:" + JSON.stringify({ message: "GitHub login failed (" + reason + "). Please start a new login." });
+  const nonce = newState();
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
-<title>ANDRO GitHub login</title></head><body><p>Completing GitHub login…</p>
-<script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANDRO GitHub login</title></head><body>
+<p id="login-status" role="status">Completing GitHub login...</p>
+<p id="login-help" hidden>Close this popup and start a new login from the ANDRO editor. Do not refresh this callback or clear your saved reports.</p>
+<script nonce="${nonce}">
 (function () {
-  const origin = ${JSON.stringify(SITE_ORIGIN)};
-  const result = ${safeMessage};
+  "use strict";
+  const origin = ${inlineJson(SITE_ORIGIN)};
+  let result = ${inlineJson(message)};
   const success = ${Boolean(token)};
-  const reason = ${safeReason};
-  if (!window.opener) {
-    document.body.textContent = "Login window was not opened by the editor.";
-    return;
+  const reason = ${inlineJson(reason)};
+  const opener = window.opener;
+  const status = document.getElementById("login-status");
+  const help = document.getElementById("login-help");
+  let waiting = true;
+  let retryTimer;
+  let deadlineTimer;
+  function show(text, retry) {
+    status.textContent = text;
+    help.hidden = !retry;
+  }
+  function cleanup() {
+    waiting = false;
+    clearInterval(retryTimer);
+    clearTimeout(deadlineTimer);
+    window.removeEventListener("message", receive);
+    window.removeEventListener("pagehide", abandon);
+  }
+  function abandon() { cleanup(); result = ""; }
+  function stop(text) { abandon(); show(text, true); }
+  function openerMissing() {
+    try { return !opener || opener.closed; } catch (_) { return true; }
   }
   function receive(event) {
-    if (event.origin !== origin || event.source !== window.opener ||
+    // Never relax origin/source checks or deliver the token unsolicited.
+    if (!waiting || event.origin !== origin || event.source !== opener ||
         event.data !== "authorizing:github") return;
-    window.removeEventListener("message", receive);
-    window.opener.postMessage(result, origin);
-    if (success) window.close();
+    cleanup();
+    try {
+      opener.postMessage(result, origin);
+      show(success
+        ? "Login response sent to the editor. It will close this window when received."
+        : "GitHub login failed (" + reason + "). Please start a new login.", !success);
+    } catch (_) {
+      show("The editor window is no longer available. Please start a new login.", true);
+    } finally { result = ""; }
+    // IMPORTANT: postMessage is asynchronous. Decap closes its auth window
+    // after parsing the result; closing it here can race that handoff.
+  }
+  function announce() {
+    if (!waiting) return;
+    if (openerMissing()) { stop("The editor window was closed. Please start a new login."); return; }
+    try { opener.postMessage("authorizing:github", origin); }
+    catch (_) { stop("Unable to contact the editor. Please start a new login."); }
+  }
+  // Remove one-use OAuth parameters from the visible address without storing
+  // tokens, using localStorage, or changing the verified origin.
+  try { history.replaceState(null, "", location.pathname); } catch (_) {}
+  if (openerMissing()) {
+    stop("This login window is not connected to the editor. Please start a new login.");
+    return;
   }
   window.addEventListener("message", receive);
-  window.opener.postMessage("authorizing:github", origin);
-  if (!success) {
-    document.body.textContent = "GitHub login failed (reason: " + reason + "). Please report this reason code. No credentials are shown here.";
-  } else {
-    setTimeout(function () {
-      document.body.textContent = "GitHub returned a token, but the ANDRO admin page did not complete the login handshake. Please report this message.";
-    }, 8000);
-  }
+  window.addEventListener("pagehide", abandon);
+  // Retry ONLY the harmless readiness message. Never replay the token or the
+  // GitHub authorization-code exchange. A lost first handshake can recover.
+  retryTimer = setInterval(announce, 500);
+  deadlineTimer = setTimeout(function () {
+    stop("The editor did not acknowledge this login within 30 seconds. Please start a new login.");
+  }, 30000);
+  announce();
 })();
 </script></body></html>`;
   return new Response(html, {
@@ -87,7 +135,7 @@ export function popupResponse(token?: string, failureReason = "unknown_failure")
       "Cache-Control": "no-store",
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
-      "Content-Security-Policy": "default-src 'none'; script-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"
+      "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; base-uri 'none'; frame-ancestors 'none'`
     }
   });
 }
