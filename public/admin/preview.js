@@ -15,7 +15,7 @@
     }
     function val(entry, path, fallback) {
       var value = entry.getIn(['data'].concat(path.split('.')));
-      return value == null || value === '' ? (fallback || '') : value;
+      // React cannot render Immutable.js Map/List objects directly.\n      if (value == null || value === '') return fallback || '';\n      return value;
     }
     function img(entry, getAsset, path, fallback) {
       var raw = val(entry, path, fallback);
