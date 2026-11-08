@@ -141,5 +141,14 @@
       "image": "/images/ballustrade.png",
       "alt": "Balustrade detail"
     }
-  ]
+  ],
+  "typography": {
+    "global": {
+      "headingSize": "100",
+      "bodySize": "100",
+      "headingColor": "#1b1b19",
+      "bodyColor": "#77746e"
+    },
+    "overrides": {}
+  }
 }
