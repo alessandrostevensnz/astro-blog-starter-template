@@ -1,1 +1,50 @@
-{"residentialText":"From general carpentry and decks to fencing, minor alterations and interior or exterior improvements, the right approach depends on the property and its intended use. We consider how new work meets existing surfaces, how materials will weather and how details such as junctions, fixings and finishes affect day-to-day function. For renovations, existing structures can reveal unexpected conditions once work begins. If that happens, we explain what has been found and discuss the practical options before proceeding. Work requiring a licensed building practitioner, building consent or specialist trade is undertaken or coordinated in line with applicable requirements.","processHeading":"Preparation makes a difference.","introHeading":"From the first conversation onward.","commercialText":"Commercial carpentry, repairs, office improvements, retail and hospitality fit-outs, alterations and refurbishment all need to work around the people using the space. We discuss site requirements, access, sequencing and practical scheduling with owners, businesses and property managers, aiming to keep disruption to a minimum. Where a project needs specialist trades, we can coordinate with appropriately qualified providers as required.","commercialHeading":"Commercial construction and fit-outs","introTextStyle":{"size":"100"},"introText":"Good building work starts before tools come out. We discuss what you need the space to do, look at the existing conditions and work through the details that shape a useful result. Clear communication about scope, access, materials and timing helps everyone understand what is planned.","introHeadingStyle":{"size":"100"},"processText":"A well-considered scope helps avoid mismatched expectations and rushed decisions. We talk through the intended outcome, identify visible constraints, consider suitable materials and clarify what is included. The aim is not to overcomplicate a project, but to make informed choices that support a durable, functional finish.","description":"Residential and commercial construction, carpentry, renovations and property improvements across Auckland. We take time to understand the existing building, prepare carefully and agree a clear scope so the finished work is practical as well as considered.","residentialHeading":"Residential construction and carpentry","photos":{"hero":{"src":"/images/Residential%20framing.png","alt":"Residential framing during construction"},"residential":{"src":"/images/screenshot-2026-11-07-at-4.53.17 pm.png","alt":"Residential building framing during construction"},"commercial":{"src":"/images/commercial%20framing.png","alt":"Commercial construction "},"processLeft":{"src":"/images/commercial%20framing.png","alt":"Commercial construction "},"processRight":{"src":"/images/screenshot-2026-11-07-at-4.53.17 pm.png","alt":"Residential building framing during construction"}},"gallery":[],"footerImages":{"logo":{"src":"/images/andro%20caps%20copy.png","alt":"ANDRO Construction logo"},"badge":{"src":"/images/MemberSticker_Shop_Image_453x512.width-1000.png","alt":"Site Safe Member — Proud to be safe"}}}
+{
+  "photos": {
+    "hero": {
+      "src": "/images/Residential%20framing.png",
+      "alt": "Residential framing during construction"
+    },
+    "residential": {
+      "src": "/images/screenshot-2026-11-07-at-4.53.17 pm.png",
+      "alt": "Residential building framing during construction"
+    },
+    "commercial": {
+      "src": "/images/commercial%20framing.png",
+      "alt": "Commercial construction "
+    },
+    "processLeft": {
+      "src": "/images/Commercial cavity.png",
+      "alt": "Commercial construction "
+    },
+    "processRight": {
+      "src": "/images/screenshot-2026-11-08-at-7.50.20 pm.png",
+      "alt": "Residential building framing during construction"
+    }
+  },
+  "residentialText": "From general carpentry and decks to fencing, minor alterations and interior or exterior improvements, the right approach depends on the property and its intended use. We consider how new work meets existing surfaces, how materials will weather and how details such as junctions, fixings and finishes affect day-to-day function. For renovations, existing structures can reveal unexpected conditions once work begins. If that happens, we explain what has been found and discuss the practical options before proceeding. Work requiring a licensed building practitioner, building consent or specialist trade is undertaken or coordinated in line with applicable requirements.",
+  "gallery": [],
+  "processHeading": "Preparation makes a difference.",
+  "footerImages": {
+    "logo": {
+      "src": "/images/andro%20caps%20copy.png",
+      "alt": "ANDRO Construction logo"
+    },
+    "badge": {
+      "src": "/images/MemberSticker_Shop_Image_453x512.width-1000.png",
+      "alt": "Site Safe Member — Proud to be safe"
+    }
+  },
+  "introHeading": "From the first conversation onward.",
+  "commercialText": "Commercial carpentry, repairs, office improvements, retail and hospitality fit-outs, alterations and refurbishment all need to work around the people using the space. We discuss site requirements, access, sequencing and practical scheduling with owners, businesses and property managers, aiming to keep disruption to a minimum. Where a project needs specialist trades, we can coordinate with appropriately qualified providers as required.",
+  "commercialHeading": "Commercial construction and fit-outs",
+  "introTextStyle": {
+    "size": "100"
+  },
+  "introText": "Good building work starts before tools come out. We discuss what you need the space to do, look at the existing conditions and work through the details that shape a useful result. Clear communication about scope, access, materials and timing helps everyone understand what is planned.",
+  "introHeadingStyle": {
+    "size": "100"
+  },
+  "processText": "A well-considered scope helps avoid mismatched expectations and rushed decisions. We talk through the intended outcome, identify visible constraints, consider suitable materials and clarify what is included. The aim is not to overcomplicate a project, but to make informed choices that support a durable, functional finish.",
+  "description": "Residential and commercial construction, carpentry, renovations and property improvements across Auckland. We take time to understand the existing building, prepare carefully and agree a clear scope so the finished work is practical as well as considered.",
+  "residentialHeading": "Residential construction and carpentry"
+}
