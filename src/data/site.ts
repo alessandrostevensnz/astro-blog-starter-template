@@ -1,4 +1,11 @@
-import content from '../../content/site.json';
+import legacy from '../../content/site.json';
+import home from '../../content/pages/home.json';
+import construction from '../../content/pages/construction.json';
+import maintenance from '../../content/pages/maintenance.json';
+import about from '../../content/pages/about.json';
+import projects from '../../content/pages/projects.json';
+import contact from '../../content/pages/contact.json';
+import settings from '../../content/site-settings.json';
 
 export const site = {
   name: 'ANDRO',
@@ -6,24 +13,40 @@ export const site = {
   legalName: 'Andro Construction Limited',
   established: '2020',
   location: 'Auckland, New Zealand',
-  // Set this to a verified company email when ready. The preview form does not send submissions.
   email: '',
 };
 
-export const siteContent = content;
-
-// Image paths, alt text and page copy are maintained in content/site.json and editable in /admin.
-export const imagery = {
-  hero: { ...content.images.hero, placeholder: true },
-  construction: { ...content.images.construction, placeholder: false },
-  home: { ...content.images.home, placeholder: false },
-  exterior: { ...content.images.exterior, placeholder: false },
-  maintenance: { ...content.images.maintenance, placeholder: false },
-  detail: { ...content.images.detail, placeholder: true },
-  commercialCavity: { ...content.images.commercialCavity, placeholder: false },
-  commercialGib: { ...content.images.commercialGib, placeholder: false },
-  commercial: { ...content.images.commercial, placeholder: false },
+// One source file per CMS page. Legacy content remains as a migration backup,
+// not as a second editable source of the same photographs.
+export const pageContent = { home, construction, maintenance, about, projects, contact };
+export const siteContent = {
+  ...legacy, home, construction, maintenance, about,
+  projects: projects.projects,
+  typography: settings.typography,
 };
+
+// Retained for older non-page consumers; the main pages use their own photos.
+export const imagery = {
+  hero: { ...legacy.images.hero, placeholder: true },
+  construction: { ...legacy.images.construction, placeholder: false },
+  home: { ...legacy.images.home, placeholder: false },
+  exterior: { ...legacy.images.exterior, placeholder: false },
+  maintenance: { ...legacy.images.maintenance, placeholder: false },
+  detail: { ...legacy.images.detail, placeholder: true },
+  commercialCavity: { ...legacy.images.commercialCavity, placeholder: false },
+  commercialGib: { ...legacy.images.commercialGib, placeholder: false },
+  commercial: { ...legacy.images.commercial, placeholder: false },
+};
+
+export function footerImagesForPath(path: string) {
+  const key = path.replace(/^\/+|\/+$/g, '');
+  if (key === 'construction') return construction.footerImages;
+  if (key === 'property-maintenance') return maintenance.footerImages;
+  if (key === 'about') return about.footerImages;
+  if (key === 'projects') return projects.footerImages;
+  if (key === 'contact') return contact.footerImages;
+  return home.footerImages;
+}
 
 export const navigation = [
   { label: 'Construction', href: '/construction/' },

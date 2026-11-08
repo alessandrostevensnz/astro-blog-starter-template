@@ -1,10 +1,11 @@
 ---
 import BaseHead from './BaseHead.astro';
-import { navigation, site, siteContent } from '../data/site';
+import { navigation, site, siteContent, footerImagesForPath } from '../data/site';
 import { typographyCss } from '../lib/typography';
 interface Props { title?: string; description?: string; }
 const { title = 'ANDRO Construction + Projects — EST. 2020', description = 'Auckland construction, renovation, property maintenance and asset maintenance by ANDRO Construction + Projects.' } = Astro.props;
 const currentPath = Astro.url.pathname;
+const footerImages = footerImagesForPath(currentPath);
 ---
 <BaseHead title={title} description={description} />
 <meta name="theme-color" content="#fbfaf7" />
@@ -27,8 +28,8 @@ const currentPath = Astro.url.pathname;
   <main><slot /></main>
   <footer class="site-footer">
     <div class="footer-credentials" aria-label="Company and safety credentials">
-      <img src="/images/andro%20caps%20copy.png" alt="ANDRO Construction logo" loading="lazy" />
-      <img src="/images/MemberSticker_Shop_Image_453x512.width-1000.png" alt="Site Safe Member — Proud to be safe" loading="lazy" />
+      <img src={footerImages.logo.src} alt={footerImages.logo.alt} loading="lazy" />
+      <img src={footerImages.badge.src} alt={footerImages.badge.alt} loading="lazy" />
     </div>
     <p class="footer-company">{site.legalName}</p>
     <a class="footer-domain" href="https://andro.co.nz">ANDRO.CO.NZ</a>
