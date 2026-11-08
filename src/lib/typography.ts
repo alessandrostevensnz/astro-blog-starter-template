@@ -38,9 +38,11 @@ export function typographyCss(input: Typography | undefined, content?: Record<st
       const name = field.slice(0, -5);
       if (!/^[a-zA-Z]+$/.test(section) || !/^[a-zA-Z]+$/.test(name)) continue;
       const selector = `[data-style-key="${section}.${name}"]`;
-      const size = percent(style.size, 60, 180);
+      const px = Number(style.sizePx);
+      const sizePx = style.sizePx !== '' && style.sizePx != null && Number.isFinite(px) && px >= 10 && px <= 120 ? px : null;
+      const size = sizePx ? null : percent(style.size, 60, 180);
       const color = hex(style.color);
-      const declarations = [size ? `zoom:${size}` : '', color ? `color:${color}` : ''].filter(Boolean);
+      const declarations = [sizePx ? `font-size:${sizePx}px` : (size ? `zoom:${size}` : ''), color ? `color:${color}` : ''].filter(Boolean);
       if (declarations.length) rules.push(`${selector}{${declarations.join(';')};}`);
     }
   }
