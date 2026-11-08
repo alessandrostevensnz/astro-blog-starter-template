@@ -13,15 +13,15 @@ collections:
     label: Website content
     files:
       - name: site
-        label: Pages, photos and project gallery
+        label: Edit your website
         file: content/site.json
         fields:
-          - label: Typography and colours
+          - label: Website-wide fonts and colours
             name: typography
             widget: object
             collapsed: true
             fields:
-              - label: Global website typography
+              - label: Default text appearance
                 name: global
                 widget: object
                 fields:
@@ -29,7 +29,7 @@ collections:
                   - { label: Body text size (%), name: bodySize, widget: number, value_type: int, min: 80, max: 150, default: 100 }
                   - { label: Heading colour, name: headingColor, widget: color, default: "#1b1b19", allowInput: true }
                   - { label: Body text colour, name: bodyColor, widget: color, default: "#77746e", allowInput: true }
-              - label: Individual text overrides
+              - label: Advanced text settings
                 name: overrides
                 widget: object
                 collapsed: true
@@ -155,23 +155,23 @@ collections:
                     fields:
                       - { label: Custom size (%), name: size, widget: number, value_type: int, min: 60, max: 180, required: false }
                       - { label: Custom colour, name: color, widget: color, allowInput: true, required: false }
-          - label: Homepage
+          - label: Home page
             name: home
             widget: object
             fields:
               - { label: Main headline, name: title, widget: string }
-              - label: Main headline formatting
+              - label: Headline appearance
                 name: titleStyle
                 widget: object
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -186,18 +186,18 @@ collections:
                       - { label: "Navy", value: "#263B53" }
 
               - { label: Hero description, name: subtitle, widget: text }
-              - label: Hero description formatting
+              - label: Description appearance
                 name: subtitleStyle
                 widget: object
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -218,12 +218,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -244,12 +244,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -270,12 +270,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -300,12 +300,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -326,12 +326,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -352,12 +352,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -378,12 +378,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -411,12 +411,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -437,12 +437,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -474,12 +474,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -500,12 +500,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -542,12 +542,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
@@ -568,12 +568,12 @@ collections:
                 collapsed: false
 
                 fields:
-                  - { label: Font size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Enter a number such as 18, 24 or 48. Leave blank for the original size." }
-                  - label: Text colour
+                  - { label: Text size (px), name: sizePx, widget: number, value_type: int, min: 10, max: 120, required: false, hint: "Optional. Enter a size in pixels, or leave blank to use the website default." }
+                  - label: Colour
                     name: color
                     widget: select
                     required: false
-                    hint: "Choose a preset colour or leave blank for the website default."
+                    hint: "Choose a colour, or keep the website default."
                     options:
                       - { label: "Website default", value: "" }
                       - { label: "Black", value: "#000000" }
