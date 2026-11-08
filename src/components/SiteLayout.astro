@@ -34,6 +34,21 @@ const currentPath = Astro.url.pathname;
     <a class="footer-domain" href="https://andro.co.nz">ANDRO.CO.NZ</a>
     <p class="footer-established">EST. {site.established}</p>
   </footer>
+  <script is:inline>
+    // Only enabled inside the same-origin CMS iframe; no effect on public visitors.
+    if (new URLSearchParams(location.search).has('androCmsPreview') && window.parent !== window) {
+      window.addEventListener('message', function (event) {
+        if (event.origin !== location.origin || event.source !== window.parent) return;
+        if (!event.data || event.data.type !== 'andro-cms-preview') return;
+        var fields = event.data.fields || {};
+        Object.keys(fields).forEach(function (key) {
+          if (!/^[a-zA-Z]+\.[a-zA-Z]+$/.test(key)) return;
+          var target = document.querySelector('[data-style-key="' + key + '"]');
+          if (target && typeof fields[key] === 'string') target.textContent = fields[key];
+        });
+      });
+    }
+  </script>
   <script>
     const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
     const mobileMenu = document.querySelector<HTMLElement>('#mobile-menu');
