@@ -9,7 +9,7 @@ const percent = (value: unknown, min: number, max: number): number | null => {
 };
 const heading = '.hero h1,.display-heading,.section-heading h2,.two-col h2,.content-block h2,.page-hero h1,.cta-row h2,.card-meta h3,.maintenance-detail-grid h3,.maintenance-services-heading h2,.maintenance-service h3,.construction-hero h1,.maintenance-hero h1,.image-band-copy h2';
 const body = '.hero-subtitle,.body-copy,.intro-copy p,.card-meta p,.maintenance-detail-grid p,.maintenance-service p,.page-hero .lead,.construction-hero .lead';
-export function typographyCss(input: Typography | undefined): string {
+export function typographyCss(input: Typography | undefined, content?: Record<string, any>): string {
   const global = input?.global || {};
   const rules: string[] = [];
   const hs = percent(global.headingSize, 70, 150);
@@ -28,6 +28,21 @@ export function typographyCss(input: Typography | undefined): string {
     const color = hex(override.color);
     const declarations = [size ? `zoom:${size}` : '', color ? `color:${color}` : ''].filter(Boolean);
     if (declarations.length) rules.push(`${selector}{${declarations.join(';')};}`);
+  }
+  // Inline editor formatting is stored beside each text field in site.json.
+  // Existing advanced overrides remain supported; inline values take precedence.
+  for (const [section, fields] of Object.entries(content || {})) {
+    if (!fields || typeof fields !== 'object' || Array.isArray(fields)) continue;
+    for (const [field, style] of Object.entries(fields as Record<string, any>)) {
+      if (!field.endsWith('Style') || !style || typeof style !== 'object') continue;
+      const name = field.slice(0, -5);
+      if (!/^[a-zA-Z]+$/.test(section) || !/^[a-zA-Z]+$/.test(name)) continue;
+      const selector = `[data-style-key="${section}.${name}"]`;
+      const size = percent(style.size, 60, 180);
+      const color = hex(style.color);
+      const declarations = [size ? `zoom:${size}` : '', color ? `color:${color}` : ''].filter(Boolean);
+      if (declarations.length) rules.push(`${selector}{${declarations.join(';')};}`);
+    }
   }
   return rules.join('\n');
 }

@@ -51,11 +51,13 @@
       function styleFor(key, kind) {
         var g = v('typography.global') || {};
         var o = v('typography.overrides.' + key.replace('.', '__')) || {};
+        var inline = v(key.replace(/\.[^.]+$/, function (field) { return field + 'Style'; })) || {};
         if (g.toJS) g = g.toJS();
         if (o.toJS) o = o.toJS();
+        if (inline.toJS) inline = inline.toJS();
         var globalSize = Number(kind === 'heading' ? g.headingSize : g.bodySize) || 100;
-        var overrideSize = Number(o.size) || 100;
-        var color = o.color || (kind === 'heading' ? g.headingColor : g.bodyColor);
+        var overrideSize = Number(inline.size || o.size) || 100;
+        var color = inline.color || o.color || (kind === 'heading' ? g.headingColor : g.bodyColor);
         var style = {};
         var scale = globalSize * overrideSize / 10000;
         if (scale !== 1) style.zoom = scale;
