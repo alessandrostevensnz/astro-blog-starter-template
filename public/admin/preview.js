@@ -12,7 +12,8 @@
       if (children.length === 1) props.children = children[0];
       else if (children.length > 1) props.children = children;
       var element = { type: type, key: key, props: props, _owner: null };
-      element['
+      element[String.fromCharCode(36, 36) + 'typeof'] = Symbol.for('react.transitional.element');
+      return element;
     }
     function val(entry, path, fallback) {
       var value = entry.getIn(['data'].concat(path.split('.')));
