@@ -1,9 +1,9 @@
-/* ANDRO Decap live editor preview. Uses React 19-compatible element objects. */
+/* ANDRO Decap live editor preview. Use the classic React element symbol expected by the bundled renderer. */
 (function () {
   function register() {
     if (!window.CMS) return false;
-    // Decap CMS renders with React 19; React 17 elements cause error #525.
-    // Construct React 19-compatible elements without loading a second React copy.
+    // The bundled Decap renderer does not recognize react.transitional.element.
+    // Use react.element without loading a second React runtime.
     function h(type, properties) {
       var props = Object.assign({}, properties || {});
       var children = Array.prototype.slice.call(arguments, 2);
@@ -12,7 +12,7 @@
       if (children.length === 1) props.children = children[0];
       else if (children.length > 1) props.children = children;
       var element = { type: type, key: key, props: props, _owner: null };
-      element[String.fromCharCode(36, 36) + 'typeof'] = Symbol.for('react.transitional.element');
+      element[String.fromCharCode(36, 36) + 'typeof'] = Symbol.for('react.element');
       return element;
     }
     function val(entry, path, fallback) {
