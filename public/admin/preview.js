@@ -1,8 +1,18 @@
-/* ANDRO Decap live editor preview. Uses Decap's bundled React. */
+/* ANDRO Decap live editor preview. Uses React 19-compatible element objects. */
 (function () {
   function register() {
-    if (!window.CMS || !window.React) return false;
-    var h = window.React.createElement;
+    if (!window.CMS) return false;
+    // Decap CMS renders with React 19; React 17 elements cause error #525.
+    // Construct React 19-compatible elements without loading a second React copy.
+    function h(type, properties) {
+      var props = Object.assign({}, properties || {});
+      var children = Array.prototype.slice.call(arguments, 2);
+      var key = props.key == null ? null : String(props.key);
+      delete props.key;
+      if (children.length === 1) props.children = children[0];
+      else if (children.length > 1) props.children = children;
+      return { $typeof: Symbol.for('react.transitional.element'), type: type, key: key, props: props, _owner: null };
+    }
     function val(entry, path, fallback) {
       var value = entry.getIn(['data'].concat(path.split('.')));
       return value == null || value === '' ? (fallback || '') : value;
