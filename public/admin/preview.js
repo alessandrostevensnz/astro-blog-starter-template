@@ -59,10 +59,13 @@
         if (inline.toJS) inline = inline.toJS();
         var globalSize = Number(kind === 'heading' ? g.headingSize : g.bodySize) || 100;
         var overrideSize = Number(inline.size || o.size) || 100;
+        var px = Number(inline.sizePx);
+        var sizePx = inline.sizePx !== '' && inline.sizePx != null && isFinite(px) && px >= 10 && px <= 120 ? px : null;
         var color = inline.color || o.color || (kind === 'heading' ? g.headingColor : g.bodyColor);
         var style = {};
         var scale = globalSize * overrideSize / 10000;
-        if (scale !== 1) style.zoom = scale;
+        if (sizePx) style.fontSize = sizePx + 'px';
+        else if (scale !== 1) style.zoom = scale;
         if (color && /^#[0-9a-fA-F]{6}$/.test(color)) style.color = color;
         return style;
       }
