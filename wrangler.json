@@ -13,7 +13,26 @@
 		"enabled": true
 	},
 	"upload_source_maps": true,
-	"previews": {},
+	"previews": {
+		"ratelimits": [
+			{
+				"name": "REPORT_LOGIN_IP_LIMITER",
+				"namespace_id": "847193463",
+				"simple": {
+					"limit": 8,
+					"period": 60
+				}
+			},
+			{
+				"name": "REPORT_LOGIN_GLOBAL_LIMITER",
+				"namespace_id": "847193464",
+				"simple": {
+					"limit": 60,
+					"period": 60
+				}
+			}
+		]
+	},
 	"ratelimits": [
 		{
 			"name": "REPORT_LOGIN_IP_LIMITER",
