@@ -43,13 +43,14 @@ export function validState(actual: string | null, expected: string | null): bool
   return diff === 0;
 }
 
-export function popupResponse(token?: string): Response {
+export function popupResponse(token?: string, failureReason = "unknown_failure"): Response {
   // Decap's GitHub OAuth popup protocol starts with an "authorizing" handshake.
   // Do not deliver the token until the opener confirms the expected origin.
   const message = token
     ? "authorization:github:success:" + JSON.stringify({ token, provider: "github" })
     : "authorization:github:error:Authentication failed";
   const safeMessage = JSON.stringify(message).replace(/</g, "\\u003c");
+  const safeReason = JSON.stringify(failureReason);
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <title>ANDRO GitHub login</title></head><body><p>Completing GitHub login…</p>
 <script>
@@ -57,6 +58,7 @@ export function popupResponse(token?: string): Response {
   const origin = ${JSON.stringify(SITE_ORIGIN)};
   const result = ${safeMessage};
   const success = ${Boolean(token)};
+  const reason = ${safeReason};
   if (!window.opener) {
     document.body.textContent = "Login window was not opened by the editor.";
     return;
@@ -71,7 +73,7 @@ export function popupResponse(token?: string): Response {
   window.addEventListener("message", receive);
   window.opener.postMessage("authorizing:github", origin);
   if (!success) {
-    document.body.textContent = "GitHub login failed. Please check the Cloudflare OAuth credentials and the GitHub OAuth callback URL. No credentials are shown here.";
+    document.body.textContent = "GitHub login failed (reason: " + reason + "). Please report this reason code. No credentials are shown here.";
   } else {
     setTimeout(function () {
       document.body.textContent = "GitHub returned a token, but the ANDRO admin page did not complete the login handshake. Please report this message.";
