@@ -2,7 +2,7 @@
 import SiteLayout from '../components/SiteLayout.astro';
 import { imagery, site, siteContent } from '../data/site';
 ---
-<SiteLayout title="ANDRO Construction + Projects | Construction and Property Maintenance Auckland" description=<span data-style-key="home.introText">{siteContent.home.introText}</span>>
+<SiteLayout title="ANDRO Construction + Projects | Construction and Property Maintenance Auckland" description={siteContent.home.introText}>
   <section class="hero" aria-labelledby="hero-title">
     <img class="hero-image" src={imagery.hero.src} alt={imagery.hero.alt} fetchpriority="high" />
     <div class="hero-shade"></div>
