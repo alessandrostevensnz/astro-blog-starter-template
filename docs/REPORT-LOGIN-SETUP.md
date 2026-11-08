@@ -13,7 +13,7 @@ This integration is **not ready to merge or deploy** until the steps below are c
 ## Required Cloudflare Worker secrets
 In Cloudflare **Workers & Pages > astro-blog-starter-template > Settings > Variables and Secrets**, add **encrypted secrets** (not plaintext variables):
 
-- `REPORT_PASSWORD`: a unique, randomly generated password of at least 16 characters (recommend 24+).
+- `REPORT_PASSWORD`: a unique password of at least 10 characters (12–15 or more recommended; never reuse a password from another account).
 - `REPORT_SESSION_SECRET`: a different cryptographically random string of at least 32 characters.
 
 Do **not** commit these values to GitHub, share them in screenshots or put them in client-side code. Configure the secrets for the correct environment and test them in a controlled preview before production deployment. Changes to the Worker settings may affect its deployment; review them before saving.
