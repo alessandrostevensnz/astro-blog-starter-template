@@ -1,7 +1,7 @@
 const encoder = new TextEncoder();
 const COOKIE = 'andro_report_session';
 export function configured(env: Record<string, unknown>) {
-  return typeof env.REPORT_PASSWORD === 'string' && env.REPORT_PASSWORD.length >= 16 &&
+  return typeof env.REPORT_PASSWORD === 'string' && env.REPORT_PASSWORD.length >= 10 &&
     typeof env.REPORT_SESSION_SECRET === 'string' && env.REPORT_SESSION_SECRET.length >= 32;
 }
 function key(secret: string) {
