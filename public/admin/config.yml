@@ -2,8 +2,8 @@ backend:
   name: github
   repo: alessandrostevensnz/astro-blog-starter-template
   branch: main
-  auth_type: pkce
-  app_id: Ov23liak0iYN0YoqGy5a
+  base_url: https://andro.co.nz
+  auth_endpoint: api/auth
 
 media_folder: public/images
 public_folder: /images
