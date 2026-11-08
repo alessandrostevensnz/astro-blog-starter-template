@@ -195,12 +195,3 @@ button, input, textarea, select { font: inherit; }
 }
 @media (max-width: 390px) { .editorial-grid { grid-template-columns: 1fr; } .editorial-image { aspect-ratio: 1.15 / 1; } .fact-row { gap: 8px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
-
-/* CMS-managed typography: defaults preserve existing ANDRO styles. */
-:root { --cms-heading-scale: 1; --cms-body-scale: 1; --cms-heading-color: #1b1b19; --cms-body-color: #77746e; }
-.display-heading, .section-heading h2, .two-col h2, .content-block h2, .page-hero h1, .cta-row h2, .card-meta h3, .maintenance-detail-grid h3, .maintenance-services-heading h2, .maintenance-service h3, .construction-hero h1, .maintenance-hero h1, .image-band-copy h2, .hero h1 { font-size: calc(var(--cms-heading-scale) * var(--cms-base-size, 1em)); }
-/* Global scaling preserves each heading's original responsive sizing through zoom-style font-size inheritance. */
-html { font-size: calc(16px * var(--cms-body-scale)); }
-body { color: var(--cms-heading-color); }
-.body-copy, .intro-copy p, .card-meta p, .maintenance-detail-grid p, .maintenance-service p, .hero-subtitle, .lead { color: var(--cms-body-color); }
-[data-style-key] { color: var(--cms-override-color, inherit); }
