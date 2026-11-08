@@ -19,10 +19,9 @@
       [class*="ObjectControl"] [class*="TopBar"], [class*="ObjectControl"] [class*="Header"] { border-radius:8px !important; }
       [class*="Editor"] button:focus-visible, #andro-real-preview button:focus-visible { outline:2px solid var(--andro-gold); outline-offset:2px; }
 
-      /* Hide Decap's built-in preview content beneath our real-site iframe.
-         The editor form remains visible and functional on the left. */
-      [class*="PreviewPane"], [class*="PreviewContainer"] { visibility: hidden !important; }
-      #andro-real-preview { visibility: visible !important; }
+      /* Do not hide Decap preview containers: in this CMS version those
+         selectors can also match an ancestor of the editing form.
+         The real Astro iframe already covers the native right-hand preview. */
       /* Softer, more approachable editing surfaces. */
       [class*="ObjectControl"] { border: 1px solid #e8e7e2 !important; background: #fff !important; box-shadow: 0 2px 9px rgba(20,24,20,.025) !important; }
       [class*="ObjectControl"] [class*="TopBar"], [class*="ObjectControl"] [class*="Header"] { background: #f2f1ed !important; }
