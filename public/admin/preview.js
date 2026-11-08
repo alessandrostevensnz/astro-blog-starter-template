@@ -1,130 +1,74 @@
-/* ANDRO Decap live editor preview. Use the classic React element symbol expected by the bundled renderer. */
+/* ANDRO preview: display the real Astro site, not a second React renderer. */
 (function () {
-  function register() {
-    if (!window.CMS) return false;
-    // The bundled Decap renderer does not recognize react.transitional.element.
-    // Use react.element without loading a second React runtime.
-    function h(type, properties) {
-      var props = Object.assign({}, properties || {});
-      var children = Array.prototype.slice.call(arguments, 2);
-      var key = props.key == null ? null : String(props.key);
-      delete props.key;
-      if (children.length === 1) props.children = children[0];
-      else if (children.length > 1) props.children = children;
-      var element = { type: type, key: key, props: props, _owner: null };
-      element[String.fromCharCode(36, 36) + 'typeof'] = Symbol.for('react.element');
-      return element;
-    }
-    function val(entry, path, fallback) {
-      var value = entry.getIn(['data'].concat(path.split('.')));
-      return value == null || value === '' ? (fallback || '') : value;
-    }
-    function img(entry, getAsset, path, fallback) {
-      var raw = val(entry, path, fallback);
-      if (!raw) return '';
-      try {
-        var asset = getAsset(raw);
-        return asset && asset.toString() ? asset.toString() : raw;
-      } catch (_) { return raw; }
-    }
-    function section(label, heading, body, headingStyle, bodyStyle) {
-      return h('section', { className: 'andro-section', key: label },
-        h('div', { className: 'andro-kicker' }, label),
-        h('div', { className: 'andro-columns' },
-          h('h2', { style: headingStyle }, heading),
-          h('p', { style: bodyStyle }, body)));
-    }
-    function photo(src, alt, cls) {
-      return src ? h('img', { className: cls || '', src: src, alt: alt || '' }) : null;
-    }
-    function card(title, description, src) {
-      return h('article', { className: 'andro-card' },
-        photo(src, title, 'andro-card-image'),
-        h('div', { className: 'andro-card-text' }, h('h3', null, title), h('p', null, description)));
-    }
-    function SitePreview(props) {
-      var e = props.entry, a = props.getAsset, collection = props.collection;
-      var filename = props.entry.get('slug') || '';
-      var data = e.get('data');
-      function v(path, fallback) { return val(e, path, fallback); }
-      function image(path, fallback) { return img(e, a, path, fallback); }
-      var home = v('home.title');
-      var isSite = !!home || !!data.get('home');
-      function styleFor(key, kind) {
-        var g = v('typography.global') || {};
-        var o = v('typography.overrides.' + key.replace('.', '__')) || {};
-        var inline = v(key.replace(/\.[^.]+$/, function (field) { return field + 'Style'; })) || {};
-        if (g.toJS) g = g.toJS();
-        if (o.toJS) o = o.toJS();
-        if (inline.toJS) inline = inline.toJS();
-        var globalSize = Number(kind === 'heading' ? g.headingSize : g.bodySize) || 100;
-        var overrideSize = Number(inline.size || o.size) || 100;
-        var px = Number(inline.sizePx);
-        var sizePx = inline.sizePx !== '' && inline.sizePx != null && isFinite(px) && px >= 10 && px <= 120 ? px : null;
-        var color = inline.color || o.color || (kind === 'heading' ? g.headingColor : g.bodyColor);
-        var style = {};
-        var scale = globalSize * overrideSize / 10000;
-        if (sizePx) style.fontSize = sizePx + 'px';
-        else if (scale !== 1) style.zoom = scale;
-        if (color && /^#[0-9a-fA-F]{6}$/.test(color)) style.color = color;
-        return style;
-      }
-      var body = [];
-      if (isSite) {
-        body.push(h('div', { className: 'andro-hero', key: 'hero' },
-          photo(image('images.hero.src', '/images/andro%20caps%20copy.png'), v('images.hero.alt'), 'andro-hero-image'),
-          h('div', { className: 'andro-hero-overlay' }),
-          h('div', { className: 'andro-hero-copy' },
-            h('div', { className: 'andro-hero-kicker' }, 'AUCKLAND · NEW ZEALAND · EST. 2020'),
-            h('h1', { style: styleFor('home.title', 'heading') }, v('home.title')),
-            h('p', { style: styleFor('home.subtitle', 'body') }, v('home.subtitle')))));
-        body.push(section('ANDRO CONSTRUCTION + PROJECTS', v('home.introHeading'), v('home.introText'), styleFor('home.introHeading', 'heading'), styleFor('home.introText', 'body')));
-        body.push(h('section', { className: 'andro-services', key: 'services' },
-          h('div', { className: 'andro-kicker' }, 'WHAT WE DO'),
-          h('h2', { style: styleFor('home.servicesHeading', 'heading') }, v('home.servicesHeading')),
-          h('div', { className: 'andro-cards' },
-            card(v('home.constructionCardTitle'), v('home.constructionCardDescription'), image('images.construction.src')),
-            card(v('home.maintenanceCardTitle'), v('home.maintenanceCardDescription'), image('images.maintenance.src')))));
-        body.push(h('section', { className: 'andro-image-band', key: 'feature' },
-          photo(image('images.detail.src'), '', 'andro-band-image'),
-          h('h2', { style: styleFor('home.featureHeading', 'heading') }, v('home.featureHeading'))));
-        body.push(section('CRAFTSMANSHIP · QUALITY · SERVICE', v('home.philosophyHeading'), v('home.philosophyText'), styleFor('home.philosophyHeading', 'heading'), styleFor('home.philosophyText', 'body')));
-        body.push(h('section', { className: 'andro-cta', key: 'cta' }, h('h2', { style: styleFor('home.closingHeading', 'heading') }, v('home.closingHeading'))));
-        body.push(section('CONSTRUCTION + RENOVATIONS', v('construction.introHeading'), v('construction.introText'), styleFor('construction.introHeading', 'heading'), styleFor('construction.introText', 'body')));
-        body.push(section('PROPERTY + ASSET MAINTENANCE', v('maintenance.introHeading'), v('maintenance.introText'), styleFor('maintenance.introHeading', 'heading'), styleFor('maintenance.introText', 'body')));
-        body.push(section('ABOUT ANDRO', v('about.whoHeading'), v('about.whoText'), styleFor('about.whoHeading', 'heading'), styleFor('about.whoText', 'body')));
-      } else {
-        var entries = data.get('projects') || data.get('services');
-        var rows = entries && entries.toJS ? entries.toJS() : [];
-        body.push(h('section', { className: 'andro-services', key: 'entries' },
-          h('div', { className: 'andro-kicker' }, 'ANDRO CONSTRUCTION + PROJECTS'),
-          h('h2', null, data.get('projects') ? 'Construction project gallery' : 'Property maintenance services'),
-          h('div', { className: 'andro-cards' }, rows.map(function (item, i) {
-            var src = item.image ? img(e, a, (data.get('projects') ? 'projects.' : 'services.') + i + '.image', item.image) : '';
-            // getAsset can also resolve a plain uploaded path.
-            if (item.image) { try { src = a(item.image).toString(); } catch (_) { src = item.image; } }
-            return h('article', { className: 'andro-card', key: i },
-              photo(src, item.alt || item.imageAlt || item.title, 'andro-card-image'),
-              h('div', { className: 'andro-card-text' }, h('div', { className: 'andro-kicker' }, item.category || item.number || ''),
-                h('h3', null, item.title || ''), h('p', null, item.description || '')));
-          }))));
-      }
-      return h('div', { className: 'andro-preview' },
-        h('header', { className: 'andro-header' },
-          h('div', { className: 'andro-logo' }, 'ANDRO', h('small', null, 'CONSTRUCTION + PROJECTS · EST. 2020')),
-          h('nav', null, 'Construction　 Property maintenance　 Projects　 About　 Contact')),
-        h('main', null, body),
-        h('footer', { className: 'andro-footer' }, 'ANDRO CONSTRUCTION LIMITED　 ·　 EST. 2020'));
-    }
-    window.CMS.registerPreviewStyle('/admin/preview.css');
-    // Decap file collections register templates by the individual file name.
-    window.CMS.registerPreviewTemplate('site_content', SitePreview);
-    window.CMS.registerPreviewTemplate('site', SitePreview);
-    window.CMS.registerPreviewTemplate('construction_gallery', SitePreview);
-    window.CMS.registerPreviewTemplate('projects', SitePreview);
-    window.CMS.registerPreviewTemplate('maintenance_services', SitePreview);
-    window.CMS.registerPreviewTemplate('services', SitePreview);
-    return true;
+  'use strict';
+  var root, frame, lastPath = '';
+  var labels = {
+    'main headline':'home.title', 'hero description':'home.subtitle',
+    'intro heading':'home.introHeading', 'intro text':'home.introText',
+    'services heading':'home.servicesHeading',
+    'feature section heading':'home.featureHeading',
+    'bottom call-to-action heading':'home.closingHeading',
+    'philosophy heading':'home.philosophyHeading', 'philosophy text':'home.philosophyText'
+  };
+  function page() {
+    var hash = window.location.hash || '';
+    if (/collections\/site_content\/entries\/site/.test(hash)) return '/';
+    if (/collections\/construction_gallery/.test(hash)) return '/construction/';
+    if (/collections\/maintenance_services/.test(hash)) return '/property-maintenance/';
+    return '';
   }
-  if (!register()) window.addEventListener('load', register, { once: true });
+  function mount() {
+    var path = page();
+    if (!path) { if (root) root.hidden = true; return; }
+    if (!root) {
+      root = document.createElement('aside');
+      root.id = 'andro-real-preview';
+      root.setAttribute('aria-label', 'ANDRO actual website preview');
+      root.innerHTML = '<div class="andro-preview-bar"><strong>ANDRO WEBSITE PREVIEW</strong><span>Unsaved edits shown where supported</span></div>';
+      frame = document.createElement('iframe');
+      frame.title = 'Actual ANDRO Astro website';
+      frame.setAttribute('loading', 'eager');
+      frame.addEventListener('load', sync);
+      root.appendChild(frame);
+      document.body.appendChild(root);
+      document.addEventListener('input', sync, true);
+      document.addEventListener('change', sync, true);
+    }
+    root.hidden = false;
+    if (path !== lastPath) {
+      lastPath = path;
+      frame.src = path + (path.indexOf('?') < 0 ? '?' : '&') + 'androCmsPreview=1';
+    }
+  }
+  function fieldValue(name) {
+    var nodes = document.querySelectorAll('label, [class*="FieldLabel"], [class*="fieldLabel"]');
+    for (var i = 0; i < nodes.length; i++) {
+      var label = nodes[i];
+      if (label.closest('#andro-real-preview')) continue;
+      var t = (label.textContent || '').trim().toLowerCase().replace(/\s*\(optional\)\s*$/, '');
+      if (t !== name) continue;
+      var parent = label.parentElement;
+      for (var depth = 0; depth < 4 && parent; depth++, parent = parent.parentElement) {
+        var input = parent.querySelector('textarea, input[type="text"], input:not([type]), select');
+        if (input) return input.value;
+      }
+    }
+    return null;
+  }
+  function sync() {
+    if (!frame || !frame.contentWindow || !page()) return;
+    var fields = {};
+    Object.keys(labels).forEach(function (name) {
+      var value = fieldValue(name);
+      if (value !== null) fields[labels[name]] = value;
+    });
+    frame.contentWindow.postMessage({ type: 'andro-cms-preview', fields: fields }, window.location.origin);
+  }
+  window.addEventListener('hashchange', mount);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+  // Decap mounts the editor asynchronously; watch only for its editor fields.
+  new MutationObserver(function (mutations) {
+    if (mutations.some(function (m) { return Array.prototype.some.call(m.addedNodes, function (n) { return n !== root && !(root && root.contains(n)); }); })) mount();
+  }).observe(document.documentElement, { childList: true, subtree: true });
 })();
