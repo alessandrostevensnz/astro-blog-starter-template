@@ -56,6 +56,7 @@ export function popupResponse(token?: string): Response {
 (function () {
   const origin = ${JSON.stringify(SITE_ORIGIN)};
   const result = ${safeMessage};
+  const success = ${Boolean(token)};
   if (!window.opener) {
     document.body.textContent = "Login window was not opened by the editor.";
     return;
@@ -65,10 +66,17 @@ export function popupResponse(token?: string): Response {
         event.data !== "authorizing:github") return;
     window.removeEventListener("message", receive);
     window.opener.postMessage(result, origin);
-    window.close();
+    if (success) window.close();
   }
   window.addEventListener("message", receive);
   window.opener.postMessage("authorizing:github", origin);
+  if (!success) {
+    document.body.textContent = "GitHub login failed. Please check the Cloudflare OAuth credentials and the GitHub OAuth callback URL. No credentials are shown here.";
+  } else {
+    setTimeout(function () {
+      document.body.textContent = "GitHub returned a token, but the ANDRO admin page did not complete the login handshake. Please report this message.";
+    }, 8000);
+  }
 })();
 </script></body></html>`;
   return new Response(html, {
