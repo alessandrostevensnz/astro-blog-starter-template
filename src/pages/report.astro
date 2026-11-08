@@ -1,7 +1,6 @@
 ---
-// ANDRO Site Reports route.
-// The app asset must be added at public/report/app.html before this is merged.
-// Protect BOTH /report and /report/* with Cloudflare Access before deployment.
+export const prerender = false;
+// Access is enforced by src/middleware.ts; the app is served by a server endpoint.
 ---
 <!doctype html>
 <html lang="en">
