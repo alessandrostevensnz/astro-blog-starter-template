@@ -100,9 +100,10 @@
         h('footer', { className: 'andro-footer' }, 'ANDRO CONSTRUCTION LIMITED　 ·　 EST. 2020'));
     }
     window.CMS.registerPreviewStyle('/admin/preview.css');
-    window.CMS.registerPreviewTemplate('site_content', SitePreview);
-    window.CMS.registerPreviewTemplate('construction_gallery', SitePreview);
-    window.CMS.registerPreviewTemplate('maintenance_services', SitePreview);
+    // Decap file collections register templates by the individual file name.
+    window.CMS.registerPreviewTemplate('site', SitePreview);
+    window.CMS.registerPreviewTemplate('projects', SitePreview);
+    window.CMS.registerPreviewTemplate('services', SitePreview);
     return true;
   }
   if (!register()) window.addEventListener('load', register, { once: true });
