@@ -23,7 +23,7 @@ export async function issueSession(secret: string) {
 export async function validSession(value: string | undefined, secret: string) {
   if (!value) return false;
   const parts = value.split('.');
-  if (parts.length !== 2 || !/^\\d{10}$/.test(parts[0]) || !/^[a-f0-9]{64}$/.test(parts[1])) return false;
+  if (parts.length !== 2 || !/^[0-9]{10}$/.test(parts[0]) || !/^[a-f0-9]{64}$/.test(parts[1])) return false;
   const expiry = Number(parts[0]);
   if (expiry <= Date.now() / 1000 || expiry > Date.now() / 1000 + 8 * 60 * 60) return false;
   const expected = new Uint8Array(await crypto.subtle.sign('HMAC', await key(secret), encoder.encode(parts[0])));
