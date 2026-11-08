@@ -12,7 +12,34 @@
     "introText": "ANDRO Construction + Projects is an Auckland-based company established in 2020. We work across residential and commercial construction, carpentry, renovations, property improvements and ongoing maintenance. We listen first, look closely at what the building needs and agree a practical scope before work begins.",
     "maintenanceCardDescription": "Repairs and planned care to help keep homes and commercial properties in good condition.",
     "constructionCardDescription": "Residential and commercial building work, carpentry and considered improvements.",
-    "philosophyText": "ANDRO was established with a straightforward purpose: to give people a genuine sense of quality in the work carried out on their property. We believe craftsmanship is not just how a finished job looks; it is the care taken in understanding the brief, preparing properly, choosing suitable materials and attending to the details that affect how the work performs over time."
+    "philosophyText": "ANDRO was established with a straightforward purpose: to give people a genuine sense of quality in the work carried out on their property. We believe craftsmanship is not just how a finished job looks; it is the care taken in understanding the brief, preparing properly, choosing suitable materials and attending to the details that affect how the work performs over time.",
+    "titleStyle": {
+      "size": "100"
+    },
+    "subtitleStyle": {
+      "size": "100"
+    },
+    "introHeadingStyle": {
+      "size": "100"
+    },
+    "introTextStyle": {
+      "size": "100"
+    },
+    "servicesHeadingStyle": {
+      "size": "100"
+    },
+    "featureHeadingStyle": {
+      "size": "100"
+    },
+    "closingHeadingStyle": {
+      "size": "100"
+    },
+    "philosophyHeadingStyle": {
+      "size": "100"
+    },
+    "philosophyTextStyle": {
+      "size": "100"
+    }
   },
   "construction": {
     "bannerImage": "/images/Residential%20framing.png",
@@ -25,7 +52,13 @@
     "processText": "A well-considered scope helps avoid mismatched expectations and rushed decisions. We talk through the intended outcome, identify visible constraints, consider suitable materials and clarify what is included. The aim is not to overcomplicate a project, but to make informed choices that support a durable, functional finish.",
     "description": "Residential and commercial construction, carpentry, renovations and property improvements across Auckland. We take time to understand the existing building, prepare carefully and agree a clear scope so the finished work is practical as well as considered.",
     "bannerAlt": "Residential framing during construction",
-    "residentialHeading": "Residential construction and carpentry"
+    "residentialHeading": "Residential construction and carpentry",
+    "introHeadingStyle": {
+      "size": "100"
+    },
+    "introTextStyle": {
+      "size": "100"
+    }
   },
   "maintenance": {
     "improvementsHeading": "Repairs and improvements",
@@ -42,7 +75,13 @@
     "description": "Property maintenance in Auckland is about more than putting things right after they fail. Weather, moisture, movement, use and ageing materials all affect a building over time. We help homeowners, landlords, investors, property managers and commercial owners identify repair needs, plan practical work and keep properties in good working condition.",
     "assetText": "For landlords, investors and commercial property owners, maintenance is part of understanding the condition of an asset and making informed decisions about it. We can assist with condition observations, maintenance scheduling, identifying visible deterioration and prioritising repairs according to property needs and agreed budgets. This supports a considered approach to long-term upkeep rather than relying only on reactive repairs.",
     "bannerAlt": "Exterior cladding on a property",
-    "residentialHeading": "Residential property maintenance"
+    "residentialHeading": "Residential property maintenance",
+    "introHeadingStyle": {
+      "size": "100"
+    },
+    "introTextStyle": {
+      "size": "100"
+    }
   },
   "about": {
     "description": "Learn about ANDRO Construction + Projects, an Auckland company established in 2020 and guided by craftsmanship, quality and service.",
@@ -52,7 +91,13 @@
     "craftHeading": "Care in the parts you see—and the parts you don't.",
     "craftText": "A neat finish matters, but so does the preparation behind it: the condition of the surface, the suitability of the materials and how details meet. Taking time with these things can help work perform as intended and reduce avoidable issues later. Our aim is to approach each job with the same respect for the property, whether it is a repair, an improvement or a larger project.",
     "visionHeading": "A business built on trust over time.",
-    "visionText": "We want ANDRO to be known for craftsmanship, quality and service—not as a slogan, but in the way we communicate, plan and complete work. We value long-term relationships and the reassurance that comes from knowing who is looking after your property."
+    "visionText": "We want ANDRO to be known for craftsmanship, quality and service—not as a slogan, but in the way we communicate, plan and complete work. We value long-term relationships and the reassurance that comes from knowing who is looking after your property.",
+    "whoHeadingStyle": {
+      "size": "100"
+    },
+    "whoTextStyle": {
+      "size": "100"
+    }
   },
   "images": {
     "commercialCavity": {
