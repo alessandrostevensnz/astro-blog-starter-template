@@ -97,7 +97,7 @@ const services = field('services', 'Service photographs and descriptions', 'list
 const projectCards = field('projects', 'All Projects-page photographs', 'list', {
   label_singular: 'Project photograph', collapsed: false, summary: '{{fields.title}}',
   hint: 'Cards on /projects/. Images reused on Construction have separate controls on that page.',
-  fields: [field('title','Project title'),field('image','Project photograph','image'),field('alt','Photo description (alt text)'),field('category','Category')],
+  fields: [field('title','Project title'),field('image','Project photograph','image'),field('alt','Photo description (alt text)'),field('category','Category'),field('description','Hover description (shown when the mouse is over this photo)','text',{required:false,hint:'Write a short custom description of the work. On mobile, visitors can tap the image to read it.'})],
 });
 const entries: Array<[string,string,string]> = [
   ['home','Home','/'],['construction','Construction','/construction/'],['maintenance','Asset maintenance','/property-maintenance/'],
