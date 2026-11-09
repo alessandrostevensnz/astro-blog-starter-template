@@ -1,29 +1,29 @@
 {
   "projects": [
     {
-      "title": "Residential Construction",
+      "title": "Portal Install · Auckland ",
       "category": "Construction · Residential",
       "image": "/images/Residential%20framing.png",
       "alt": "Residential building framing during construction",
       "description": ""
     },
     {
-      "title": "Commercial Construction",
+      "title": "Framing · Auckland",
       "category": "Construction · Commercial",
       "image": "/images/commercial%20framing.png",
       "alt": "Commercial construction framing",
       "description": ""
     },
     {
-      "title": "Civil and Earthworks ",
+      "title": "Civil · Auckland",
       "category": "Construction · Commercial",
       "image": "/images/commercial.png",
       "alt": "Commercial construction project",
       "description": ""
     },
     {
-      "title": "Asset maintenance ",
-      "category": "Property maintenance · Exterior",
+      "title": "Fence · Clover Park ",
+      "category": "Construction · Residential",
       "image": "/images/fence.png",
       "alt": "Clover park Fence ",
       "description": ""
@@ -31,8 +31,8 @@
     {
       "image": "/images/screenshot-2026-07-11-at-7_edited.jpg",
       "alt": "Custom Country Kitchen ",
-      "category": "Residential ",
-      "title": "TH"
+      "category": "Construction · Residential",
+      "title": "Custom Kitchen · Auckland"
     }
   ],
   "footerImages": {
