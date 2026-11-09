@@ -4,25 +4,29 @@
       "title": "Residential Construction",
       "category": "Construction · Residential",
       "image": "/images/Residential%20framing.png",
-      "alt": "Residential building framing during construction"
+      "alt": "Residential building framing during construction",
+      "description": ""
     },
     {
       "title": "Commercial Construction",
       "category": "Construction · Commercial",
       "image": "/images/commercial%20framing.png",
-      "alt": "Commercial construction framing"
+      "alt": "Commercial construction framing",
+      "description": ""
     },
     {
       "title": "Civil and Earthworks ",
       "category": "Construction · Commercial",
       "image": "/images/commercial.png",
-      "alt": "Commercial construction project"
+      "alt": "Commercial construction project",
+      "description": ""
     },
     {
       "title": "Asset maintenance ",
       "category": "Property maintenance · Exterior",
       "image": "/images/asset care 2.png",
-      "alt": "Exterior cladding on a property"
+      "alt": "Exterior cladding on a property",
+      "description": ""
     }
   ],
   "footerImages": {
