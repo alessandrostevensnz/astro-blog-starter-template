@@ -195,3 +195,23 @@ button, input, textarea, select { font: inherit; }
 }
 @media (max-width: 390px) { .editorial-grid { grid-template-columns: 1fr; } .editorial-image { aspect-ratio: 1.15 / 1; } .fact-row { gap: 8px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+
+/* Contact page: one refined enquiry section, without the duplicate intro banner.
+   Scoped to pages containing the contact form; leaves all other page heroes intact. */
+.page-hero:has(+ .page-body .contact-layout) { display: none; }
+.page-body:has(.contact-layout) {
+  padding-top: clamp(82px, 8vw, 130px);
+  padding-bottom: clamp(95px, 10vw, 160px);
+}
+.page-body:has(.contact-layout) .contact-layout {
+  align-items: start;
+  gap: clamp(45px, 7vw, 125px);
+}
+.page-body:has(.contact-layout) .display-heading { margin: 16px 0 24px; }
+.page-body:has(.contact-layout) .body-copy { max-width: 490px; }
+.page-body:has(.contact-layout) .contact-form { padding-top: 7px; }
+@media (max-width: 680px) {
+  .page-body:has(.contact-layout) { padding-top: 64px; padding-bottom: 90px; }
+  .page-body:has(.contact-layout) .contact-layout { gap: 38px; }
+}
