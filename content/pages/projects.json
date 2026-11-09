@@ -35,7 +35,7 @@
       "title": "Custom Kitchen · Auckland"
     },
     {
-      "image": "/images/9145f040-ee27-4bf6-a4d6-e2bfe6aa4bc8.heic",
+      "image": "/images/img_0093.jpeg",
       "title": "Renovated Bathroom · Auckland",
       "category": "Construction · Residential",
       "alt": "Custom Country Kitchen "
@@ -59,16 +59,40 @@
       "alt": "Construction · Residential"
     },
     {
-      "image": "/images/06857216-08c6-420c-a1d0-8604aca558f9.heic",
+      "image": "/images/img_0140.jpeg",
       "title": "Fence + Deck · Auckland",
       "alt": "Construction · Residential",
       "category": "Construction · Residential"
     },
     {
-      "image": "/images/5bf52047-5970-4d91-b31b-b8571656a3ec.heic",
+      "image": "/images/img_0346.jpeg",
       "title": "Gib Repair · Auckland",
       "alt": "Asset Maintenance  · Residential",
       "category": "Asset Maintenance  · Residential"
+    },
+    {
+      "image": "/images/img_3108.jpg",
+      "title": "Renovated Bathroom · Auckland",
+      "category": "Construction · Residential",
+      "alt": "Construction · Residential"
+    },
+    {
+      "title": "New Fence · Auckland",
+      "category": "Construction · Residential",
+      "alt": "Construction · Residential",
+      "image": "/images/img_0383.jpeg"
+    },
+    {
+      "title": "Cavity slider with custom door · Auckland",
+      "image": "/images/img_0611.jpeg",
+      "alt": "Construction · Residential",
+      "category": "Construction · Residential"
+    },
+    {
+      "image": "/images/img_0810.jpeg",
+      "title": "Feature Wall · Auckland",
+      "category": "Construction · Commercial",
+      "alt": "Construction · Commercial"
     }
   ],
   "footerImages": {
