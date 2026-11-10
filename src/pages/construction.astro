@@ -4,13 +4,28 @@ import { siteContent } from '../data/site';
 import optimizedGallery from '../data/project-gallery-optimized.generated.json';
 
 const photos = siteContent.construction.photos;
+const constructionHeroVideo = siteContent.construction.heroVideo?.trim() || '';
 const galleryThumbs = optimizedGallery as Record<string, { small: string; large: string }>;
 // The Construction showcase uses the SAME ordered photos as /projects/ and /admin.
 const projects = siteContent.projects.filter((project) => typeof project.image === 'string' && project.image.length > 0);
 const slideshowDuration = Math.max(50, projects.length * 3.6);
 ---
 <SiteLayout title="Construction, Carpentry & Renovations Auckland | ANDRO" description={siteContent.construction.description}>
-  <section class="construction-hero" aria-labelledby="construction-title"><img class="construction-hero-image" src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" /><div class="construction-hero-shade"></div><div class="construction-hero-copy"><p class="eyebrow inverse">CONSTRUCTION · AUCKLAND</p><h1 id="construction-title">Built with<br />purpose.</h1><p class="lead">{siteContent.construction.description}</p></div></section>
+  <section class="construction-hero" aria-labelledby="construction-title">
+    <img class="construction-hero-image" src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
+    {constructionHeroVideo && (
+      <video class="construction-hero-video" autoplay muted loop playsinline preload="metadata"
+        poster={photos.hero.src} aria-hidden="true" tabindex="-1" disablepictureinpicture>
+        <source src={constructionHeroVideo} type="video/mp4" />
+      </video>
+    )}
+    <div class="construction-hero-shade" aria-hidden="true"></div>
+    <div class="construction-hero-copy">
+      <p class="eyebrow inverse">CONSTRUCTION · AUCKLAND</p>
+      <h1 id="construction-title">Built with<br />purpose.</h1>
+      <p class="lead">{siteContent.construction.description}</p>
+    </div>
+  </section>
 
   <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">CONSTRUCTION + RENOVATIONS</p><h2><span data-style-key="construction.introHeading">{siteContent.construction.introHeading}</span></h2></div><div><p class="body-copy"><span data-style-key="construction.introText">{siteContent.construction.introText}</span></p><p class="body-copy">Preparation matters because details that are missed early can affect access, sequencing, material choices and the finished result. We aim to discuss those practicalities before work gets underway.</p><a class="text-link" href="/contact/">Discuss your project </a></div></div></section>
 
@@ -130,6 +145,17 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
 </SiteLayout>
 
 <script>
+  const constructionVideo = document.querySelector<HTMLVideoElement>('.construction-hero-video');
+  if (constructionVideo) {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncVideoMotion = () => {
+      if (motionPreference.matches) constructionVideo.pause();
+      else constructionVideo.play().catch(() => { /* the original hero photograph stays visible */ });
+    };
+    syncVideoMotion();
+    motionPreference.addEventListener?.('change', syncVideoMotion);
+  }
+
   // A single, optional pause/play control. CSS handles the seamless looping.
   const reel = document.querySelector<HTMLElement>('[data-showcase-reel]');
   const toggle = document.querySelector<HTMLButtonElement>('[data-showcase-toggle]');
@@ -145,6 +171,25 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
 
 <style>
 .construction-hero{min-height:max(580px,min(720px,calc(100svh - 82px)));position:relative;display:flex;align-items:center;overflow:hidden;isolation:isolate;padding:clamp(80px,12vw,150px) 10%;color:#fff;background:#77766f}.construction-hero-image,.construction-hero-shade{position:absolute;inset:0;width:100%;height:100%}.construction-hero-image{z-index:-2;object-fit:cover;object-position:center 48%}.construction-hero-shade{z-index:-1;background:linear-gradient(90deg,rgba(15,16,14,.62),rgba(15,16,14,.12) 85%),linear-gradient(0deg,rgba(15,16,14,.22),transparent 55%)}.construction-hero-copy{max-width:900px}.construction-hero h1{margin:22px 0 25px;color:#fff;font-family:var(--font-display);font-size:clamp(68px,10vw,136px);font-weight:300;line-height:.92;letter-spacing:-.085em}.construction-hero .lead{max-width:700px;margin:0;color:rgba(255,255,255,.92);font-size:16px;line-height:1.85}.construction-copy{max-width:850px;margin:0 0 32px}.content-block .service-list{margin-top:32px}
+/* Native video replaces the main still photo while preserving its existing overlay and caption. */
+.construction-hero-video {
+  position: absolute; inset: 0; z-index: -1;
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 48%;
+  pointer-events: none;
+}
+.construction-hero:not(.construction-section-hero) .construction-hero-shade {
+  z-index: 0;
+  pointer-events: none;
+}
+.construction-hero:not(.construction-section-hero) .construction-hero-copy {
+  position: relative;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .construction-hero-video { display: none !important; }
+}
+
 /* Matching photo-led residential and commercial section headers. */
 .construction-hero.construction-section-hero {
   min-height: clamp(375px, 38vw, 470px);

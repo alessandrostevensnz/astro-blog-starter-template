@@ -119,16 +119,22 @@ const pageFiles = entries.map(([name,label,path]) => {
     collapsed:false, hint:'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
     fields:photos[name].map(([key,title,hint])=>photo(key,title,hint)),
   }));
+  if (name === 'construction') {
+    fields.push(field('heroVideo', '02 - Construction header background video (MP4)', 'file', {
+      required: false,
+      hint: 'Full HD, muted, seamless 8-second loop behind Built with purpose. This video has been rendered from your Construction photo. Upload a replacement MP4 here to change it; the header photo remains the fallback.',
+    }));
+  }
   if (name === 'home' || name === 'about') {
     fields.push(field('heroVideo', name === 'home' ? '02 - Home header background video (MP4)' : '02 - About header background video (MP4)', 'file', {
       required: false,
-      hint: 'The current header photo has an 8-second cinematic pan-and-zoom loop without a separate download. Upload a real MP4 here only if you want actual moving footage. An uploaded video loops silently behind the heading; the existing photo remains a fallback. Leave empty for the gently animated photo.',
+      hint: 'The About header currently uses a genuine 1080p, 8-second MP4 rendered from your original photo, with subtle movement in the outdoor greenery. Upload a replacement MP4 if needed; the still photo remains the fallback. The Home hero keeps its original photo-only animation unless a Home video is added.',
     }));
   }
   if (name === 'maintenance') {
     fields.push(field('heroVideo', '02 - Maintenance landing background video (MP4)', 'file', {
       required: false,
-      hint: 'The current maintenance photo already has an 8-second gentle moving effect. Optionally upload a real MP4 to play it silently on repeat instead; the existing photo remains the fallback. Leave empty to use the animated photo.',
+      hint: 'The Asset Maintenance header uses a 1080p, 8-second MP4 with realistic sky movement from your existing photograph. Upload a replacement video here if needed. The original photo remains the fallback.',
     }));
     fields.push(services);
   }
