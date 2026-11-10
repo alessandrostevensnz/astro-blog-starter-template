@@ -2,11 +2,51 @@
 import SiteLayout from '../components/SiteLayout.astro';
 import { site, siteContent } from '../data/site';
 const photos = siteContent.about.photos;
+const aboutHeroVideo = siteContent.about.heroVideo?.trim() || '';
 ---
 <SiteLayout title="About ANDRO | Construction Company Auckland" description={siteContent.about.description}>
-  <section class="page-hero about-hero"><img class="about-hero-image" src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" /><p class="eyebrow inverse">ABOUT ANDRO · EST. {site.established}</p><h1>Built on care.<br />Grounded in craft.</h1><p class="lead">{siteContent.about.heroIntro}</p></section>
+  <section class="page-hero about-hero">
+    <img class:list={['about-hero-image', { 'about-hero-photo-motion': !aboutHeroVideo }]} src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
+    {aboutHeroVideo && (
+      <video class="about-hero-video" autoplay muted loop playsinline preload="metadata"
+        poster={photos.hero.src} aria-hidden="true" tabindex="-1" disablepictureinpicture>
+        <source src={aboutHeroVideo} type="video/mp4" />
+      </video>
+    )}
+    <div class="about-hero-content">
+      <p class="eyebrow inverse">ABOUT ANDRO · EST. {site.established}</p>
+      <h1>Built on care.<br />Grounded in craft.</h1>
+      <p class="lead">{siteContent.about.heroIntro}</p>
+    </div>
+  </section>
   <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">WHO WE ARE</p><h2><span data-style-key="about.whoHeading">{siteContent.about.whoHeading}</span></h2></div><div><p class="body-copy"><span data-style-key="about.whoText">{siteContent.about.whoText}</span></p><p class="body-copy">{siteContent.about.craftText}</p></div></div></section>
 </SiteLayout>
+<script>
+  const aboutVideo = document.querySelector<HTMLVideoElement>('.about-hero-video');
+  if (aboutVideo) {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncMotion = () => motionPreference.matches
+      ? aboutVideo.pause()
+      : aboutVideo.play().catch(() => { /* the photo beneath remains visible */ });
+    syncMotion();
+    motionPreference.addEventListener?.('change', syncMotion);
+  }
+</script>
 <style>
-.about-hero{position:relative;isolation:isolate;overflow:hidden;color:#fff;background:#555}.about-hero-image,.about-hero::after{position:absolute;inset:0}.about-hero-image{z-index:-2;width:100%;height:100%;object-fit:cover;object-position:center 48%}.about-hero::after{content:'';z-index:-1;background:linear-gradient(90deg,rgba(20,20,18,.58),rgba(20,20,18,.12) 90%)}.about-hero .eyebrow,.about-hero h1,.about-hero .lead{color:#fff}
+  .about-hero { position: relative; isolation: isolate; overflow: hidden; color: #fff; background: #555; }
+  .about-hero-image, .about-hero-video, .about-hero::after { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .about-hero-image { z-index: -2; object-fit: cover; object-position: center 48%; }
+  .about-hero-image.about-hero-photo-motion { animation: about-photo-drift 8s ease-in-out infinite; transform-origin: 49% 50%; }
+  @keyframes about-photo-drift {
+    0%, 100% { transform: scale(1.045) translate3d(.3%, 0, 0); }
+    50% { transform: scale(1.085) translate3d(-.4%, -.3%, 0); }
+  }
+  .about-hero-video { z-index: -1; display: block; object-fit: cover; object-position: center; pointer-events: none; }
+  .about-hero::after { content: ''; z-index: 0; background: linear-gradient(90deg,rgba(20,20,18,.58),rgba(20,20,18,.12) 90%); pointer-events: none; }
+  .about-hero-content { position: relative; z-index: 1; }
+  .about-hero .eyebrow, .about-hero h1, .about-hero .lead { color: #fff; }
+  @media (prefers-reduced-motion: reduce) {
+    .about-hero-image.about-hero-photo-motion { animation: none !important; }
+    .about-hero-video { display: none !important; }
+  }
 </style>
