@@ -68,7 +68,7 @@ const text: Record<string, Row[]> = {
   ],
   construction: [
     ['description','Page description','text'],['introHeading','Introduction heading'],['introText','Introduction text','text'],
-    ['residentialHeading','Residential photo header heading'],['residentialText','Residential photo header description','text'],['commercialHeading','Commercial heading'],['commercialText','Commercial description','text'],
+    ['residentialHeading','Residential photo header heading'],['residentialText','Residential introduction (above three service rows)','text'],['commercialHeading','Commercial photo header heading'],['commercialText','Commercial introduction (above three service rows)','text'],
     ['processHeading','Process heading'],['processText','Process description','text'],
   ],
   maintenance: [
