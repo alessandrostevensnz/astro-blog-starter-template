@@ -3,10 +3,27 @@ import SiteLayout from '../components/SiteLayout.astro';
 import { siteContent } from '../data/site';
 const photos = siteContent.maintenance.photos;
 const services = siteContent.maintenance.services;
+const maintenanceHeroVideo = siteContent.maintenance.heroVideo?.trim() || '';
 ---
 <SiteLayout title="Property Maintenance Auckland | Residential & Commercial | ANDRO" description={siteContent.maintenance.description}>
   <section class="maintenance-hero" aria-labelledby="maintenance-title">
-    <img class="maintenance-hero-image" src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
+    <img class:list={['maintenance-hero-image', { 'maintenance-hero-image-motion': !maintenanceHeroVideo }]} src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
+    {maintenanceHeroVideo && (
+      <video
+        class="maintenance-hero-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster={photos.hero.src}
+        aria-hidden="true"
+        tabindex="-1"
+        disablepictureinpicture
+      >
+        <source src={maintenanceHeroVideo} type="video/mp4" />
+      </video>
+    )}
     <div class="maintenance-hero-shade"></div>
     <div class="maintenance-hero-copy"><p class="eyebrow inverse">PROPERTY + ASSET MAINTENANCE · AUCKLAND</p><h1 id="maintenance-title">Look after<br />what matters.</h1></div>
   </section>
@@ -61,6 +78,20 @@ const services = siteContent.maintenance.services;
 </SiteLayout>
 
 <script>
+  // Honor motion preferences for an uploaded background video as well as the photo loop.
+  const maintenanceVideo = document.querySelector<HTMLVideoElement>('.maintenance-hero-video');
+  if (maintenanceVideo) {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncVideo = () => {
+      if (motionPreference.matches) {
+        maintenanceVideo.pause();
+      } else {
+        maintenanceVideo.play().catch(() => { /* the original photo stays behind the video */ });
+      }
+    };
+    syncVideo();
+    motionPreference.addEventListener?.('change', syncVideo);
+  }
   const revealItems = document.querySelectorAll<HTMLElement>('[data-reveal]');
   if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.documentElement.classList.add('service-reveal-ready');
@@ -78,10 +109,16 @@ const services = siteContent.maintenance.services;
 
 <style>
   .maintenance-hero { min-height: max(580px, min(720px, calc(100svh - 82px))); position: relative; display: flex; align-items: center; overflow: hidden; isolation: isolate; padding: clamp(80px, 12vw, 150px) 10%; color: #fff; background: #555; }
-  .maintenance-hero-image, .maintenance-hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .maintenance-hero-image, .maintenance-hero-video, .maintenance-hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
   .maintenance-hero-image { z-index: -2; object-fit: cover; object-position: center 50%; }
-  .maintenance-hero-shade { z-index: -1; background: linear-gradient(90deg, rgba(15,16,14,.58), rgba(15,16,14,.08) 85%), linear-gradient(0deg, rgba(15,16,14,.2), transparent 55%); }
-  .maintenance-hero-copy { max-width: 900px; }
+  .maintenance-hero-image-motion { animation: maintenance-cinematic-motion 8s ease-in-out infinite; transform-origin: center center; }
+  @keyframes maintenance-cinematic-motion {
+    0%, 100% { transform: scale(1.05) translate3d(-.6%, 0, 0); }
+    50% { transform: scale(1.11) translate3d(.6%, -.5%, 0); }
+  }
+  .maintenance-hero-video { z-index: -1; display: block; object-fit: cover; object-position: center; pointer-events: none; }
+  .maintenance-hero-shade { z-index: 0; background: linear-gradient(90deg, rgba(15,16,14,.58), rgba(15,16,14,.08) 85%), linear-gradient(0deg, rgba(15,16,14,.2), transparent 55%); pointer-events: none; }
+  .maintenance-hero-copy { position: relative; z-index: 1; max-width: 900px; }
   .maintenance-hero h1 { margin: 22px 0 0; color: #fff; font-family: var(--font-display); font-size: clamp(68px,10vw,136px); font-weight: 300; line-height: .92; letter-spacing: -.085em; }
   .maintenance-detail-block h2, .maintenance-services-heading h2 { max-width: 760px; margin: 14px 0 38px; font-family: var(--font-display); font-size: clamp(36px,4.5vw,60px); font-weight: 300; line-height: 1.08; letter-spacing: -.065em; }
   .maintenance-detail-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 34px 8%; }
@@ -114,5 +151,10 @@ const services = siteContent.maintenance.services;
   .service-reveal-ready [data-reveal].service-is-visible { opacity:1; transform:translateY(0); }
   @media(max-width:900px) { .maintenance-services { padding-right:7%; padding-left:7%; } .maintenance-service { gap:32px; } }
   @media(max-width:680px) { .maintenance-hero { min-height:590px; padding:76px 7%; } .maintenance-hero-image { object-position:58% center; } .maintenance-hero h1 { font-size:clamp(62px,14vw,92px); } .maintenance-detail-grid { grid-template-columns:1fr; gap:25px; } .maintenance-services { padding:60px 7% 72px; } .maintenance-services-heading { margin-bottom:32px; } .maintenance-service { grid-template-columns:1fr; gap:23px; padding:30px 0; } .maintenance-service-reverse .maintenance-service-copy,.maintenance-service-reverse .maintenance-service-visual { order:initial; } .maintenance-service-visual { aspect-ratio:1.35/1; } }
-  @media(prefers-reduced-motion:reduce) { .maintenance-service-visual img,.maintenance-quote-link,.service-reveal-ready [data-reveal] { transition:none; } .service-reveal-ready [data-reveal] { opacity:1; transform:none; } }
+  @media(prefers-reduced-motion:reduce) {
+    .maintenance-hero-image-motion { animation: none !important; }
+    .maintenance-hero-video { display: none !important; }
+    .maintenance-service-visual img,.maintenance-quote-link,.service-reveal-ready [data-reveal] { transition:none; }
+    .service-reveal-ready [data-reveal] { opacity:1; transform:none; }
+  }
 </style>
