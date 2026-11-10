@@ -94,22 +94,17 @@ const services = field('services', 'Service photographs and descriptions', 'list
   fields: [field('number','Display number'),field('title','Service title'),field('image','Service photo','image',{required:false}),field('imageAlt','Photo description (alt text)','string',{required:false}),
     field('caption','Photo caption','string',{required:false}),field('description','Service description','text')],
 });
-const projectCards = field('projects', 'Projects gallery - choose photo order', 'list', {
+const projectCards = field('projects', 'All Projects-page photographs', 'list', {
   label_singular: 'Project photograph',
-  collapsed: true,
-  allow_reorder: false,
-  summary: '#{{fields.order}} - {{fields.title}}',
-  hint: 'PHOTO ORDER: Each project has a Position number. Smaller numbers appear first, from left to right, five photos per desktop row. Your existing photos use 10, 20, 30 and so on. To move a photo to the very front, set its number to 1. To put it between 10 and 20, use 15. Use different numbers for each photo, then publish your changes. New photos start at 999, near the end. Tap a project in this list to change its number, photo or hover description.',
+  collapsed: false,
+  summary: '{{fields.title}}',
+  hint: 'Cards on /projects/. Drag projects up or down to choose their order on the website, then publish. Photos reused on Construction have separate controls on that page.',
   fields: [
-    field('order', 'Gallery position number', 'number', {
-      value_type: 'int', min: 1, max: 9999, step: 1, default: 999,
-      hint: 'A smaller number places this photo earlier. This number is only for ordering; it is not displayed to website visitors.',
-    }),
     field('title', 'Project title'),
     field('image', 'Project photograph', 'image'),
     field('alt', 'Photo description (alt text)'),
     field('category', 'Category'),
-    field('description', 'Hover description (shown when the mouse is over this photo)', 'text', { required: false, hint: 'Write a short custom description of the work. On mobile, visitors can tap the image to read it.' }),
+    field('description', 'Hover description (shown when the mouse is over this photo)', 'text', {required: false, hint: 'Write a short custom description of the work. On mobile, visitors can tap the image to read it.'}),
   ],
 });
 const entries: Array<[string,string,string]> = [
