@@ -119,7 +119,13 @@ const pageFiles = entries.map(([name,label,path]) => {
     collapsed:false, hint:'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
     fields:photos[name].map(([key,title,hint])=>photo(key,title,hint)),
   }));
-  if (name === 'maintenance') fields.push(services);
+  if (name === 'maintenance') {
+    fields.push(field('heroVideo', '02 - Maintenance landing background video (MP4)', 'file', {
+      required: false,
+      hint: 'The current maintenance photo already has an 8-second gentle moving effect. Optionally upload a real MP4 to play it silently on repeat instead; the existing photo remains the fallback. Leave empty to use the animated photo.',
+    }));
+    fields.push(services);
+  }
   if (name === 'projects') {
     fields.push(field('heroVideo', '02 - Projects landing background video (MP4)', 'file', {
       required: false,
