@@ -43,7 +43,7 @@ const photos: Record<string, Array<[string, string, string]>> = {
     ['serviceDecks', '03 - Decks and fencing row photo', 'Small photo on the right of Decks and fencing.'],
     ['serviceRenovations', '04 - Renovations and alterations row photo', 'Small photo on the right of Renovations and alterations.'],
     ['residential', '05 - Residential construction photo band', 'Short full-width image below the three residential service rows.'],
-    ['commercial', '06 - Commercial construction photo band', 'Full-width image below the commercial section.'],
+    ['commercial', '06 - Commercial construction photo header', 'Full-width commercial header photo behind the heading and text. The title and description are editable in the Construction text fields below.'],
     ['processLeft', '07 - Process photograph, left', 'Left image in the Preparation makes a difference pair.'],
     ['processRight', '08 - Process photograph, right', 'Right image in the Preparation makes a difference pair.'],
   ],
