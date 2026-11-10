@@ -200,3 +200,7 @@ dist
 
 ### Astro ###
 .astro/
+
+# Generated WebP thumbnails/manifest (regenerated at every Astro build)
+/public/images/project-thumbnails/
+/src/data/project-gallery-optimized.generated.json
