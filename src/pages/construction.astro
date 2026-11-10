@@ -49,7 +49,7 @@ const categories = [...new Set(projects.map((project) => project.category).filte
 
   <section class="construction-photo-feature construction-photo-feature-alt" aria-label="Commercial construction photograph"><img src={photos.commercial.src} alt={photos.commercial.alt} loading="lazy" decoding="async" /><p class="eyebrow inverse">COMMERCIAL CONSTRUCTION</p></section>
 
-  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2>{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy">{siteContent.construction.processText}</p><div class="editorial-grid"><div class="editorial-image"><img src={photos.processLeft.src} alt={photos.processLeft.alt} loading="lazy" decoding="async" /></div><div class="editorial-image"><img src={photos.processRight.src} alt={photos.processRight.alt} loading="lazy" decoding="async" /></div></div></section>
+  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2>{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy">{siteContent.construction.processText}</p><div class="editorial-grid construction-process-photos"><div class="editorial-image"><img src={photos.processLeft.src} alt={photos.processLeft.alt} loading="lazy" decoding="async" /></div><div class="editorial-image"><img src={photos.processRight.src} alt={photos.processRight.alt} loading="lazy" decoding="async" /></div></div></section>
 
   <section class="construction-showcase" aria-labelledby="construction-showcase-title">
     <header class="construction-showcase-heading"><p class="eyebrow">PROJECT SHOWCASE · AUCKLAND</p><h2 id="construction-showcase-title">Our Work.<br />In the Details.</h2><p>Construction quality is often found in the finer details—the preparation, material selection, accuracy of workmanship and final finish. This gallery is for genuine ANDRO project photographs and descriptions, added as they are approved for publication.</p></header>
@@ -109,6 +109,13 @@ const categories = [...new Set(projects.map((project) => project.category).filte
 
 <style>
 .construction-hero{min-height:max(580px,min(720px,calc(100svh - 82px)));position:relative;display:flex;align-items:center;overflow:hidden;isolation:isolate;padding:clamp(80px,12vw,150px) 10%;color:#fff;background:#77766f}.construction-hero-image,.construction-hero-shade{position:absolute;inset:0;width:100%;height:100%}.construction-hero-image{z-index:-2;object-fit:cover;object-position:center 48%}.construction-hero-shade{z-index:-1;background:linear-gradient(90deg,rgba(15,16,14,.62),rgba(15,16,14,.12) 85%),linear-gradient(0deg,rgba(15,16,14,.22),transparent 55%)}.construction-hero-copy{max-width:900px}.construction-hero h1{margin:22px 0 25px;color:#fff;font-family:var(--font-display);font-size:clamp(68px,10vw,136px);font-weight:300;line-height:.92;letter-spacing:-.085em}.construction-hero .lead{max-width:700px;margin:0;color:rgba(255,255,255,.92);font-size:16px;line-height:1.85}.construction-copy{max-width:850px;margin:0 0 32px}.content-block .service-list{margin-top:32px}
+/* Keep the two process photographs as a compact paired feature, not large page breaks. */
+.construction-process-photos { width: 100%; max-width: 1000px; margin-top: 28px; gap: 16px; }
+.construction-process-photos .editorial-image { aspect-ratio: 1.7 / 1; }
+@media (max-width: 680px) {
+  .construction-process-photos { gap: 10px; margin-top: 24px; }
+  .construction-process-photos .editorial-image { aspect-ratio: 1.25 / 1; }
+}
 /* Three compact, right-aligned project thumbnails; the rest of the site's service rows stay unchanged. */
 .residential-service-list .service-item {
   grid-template-columns: clamp(50px,5vw,70px) minmax(0,1fr) 22px clamp(140px,13vw,205px);
