@@ -18,6 +18,9 @@ const categories = [...new Set(projects.map((project) => project.category).filte
     <p class="eyebrow">RESIDENTIAL CONSTRUCTION</p>
     <h2>{siteContent.construction.residentialHeading}</h2>
     <p class="body-copy construction-copy">{siteContent.construction.residentialText}</p>
+    <figure class="residential-inline-banner">
+      <img src={photos.residential.src} alt={photos.residential.alt} loading="lazy" decoding="async" />
+    </figure>
     <div class="service-list residential-service-list">
       <article class="service-item">
         <span>01</span>
@@ -42,8 +45,6 @@ const categories = [...new Set(projects.map((project) => project.category).filte
       </article>
     </div>
   </section>
-
-  <section class="construction-photo-feature" aria-label="Residential construction photograph"><img src={photos.residential.src} alt={photos.residential.alt} loading="lazy" decoding="async" /><p class="eyebrow inverse">RESIDENTIAL CONSTRUCTION</p></section>
 
   <section class="construction-hero construction-commercial-hero" aria-labelledby="commercial-construction-title">
     <img class="construction-hero-image" src={photos.commercial.src} alt={photos.commercial.alt} loading="lazy" decoding="async" />
@@ -200,9 +201,28 @@ const categories = [...new Set(projects.map((project) => project.category).filte
   .residential-service-list .residential-service-photo { grid-column: 3; grid-row: 1 / span 2; }
 }
 
-.construction-photo-feature{height:clamp(220px,30vw,380px);position:relative;overflow:hidden;background:var(--brand-stone)}.construction-photo-feature img{width:100%;height:100%;object-fit:cover}.construction-photo-feature::after{position:absolute;inset:0;content:'';background:linear-gradient(0deg,rgba(15,16,14,.48),transparent 35%)}.construction-photo-feature .eyebrow{position:absolute;z-index:1;bottom:32px;left:10%;color:#fff}
+/* Keep the residential banner inside its section, directly below the intro. */
+.residential-inline-banner {
+  width: 100%;
+  max-width: 960px;
+  height: clamp(210px, 28vw, 330px);
+  margin: 16px 0 40px;
+  overflow: hidden;
+  background: var(--brand-stone);
+}
+.residential-inline-banner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 50%;
+}
+@media (max-width: 680px) {
+  .residential-inline-banner { height: clamp(180px, 55vw, 260px); margin: 8px 0 28px; }
+}
+
 .construction-showcase{padding:100px 10% 110px;background:var(--brand-paper)}.construction-showcase-heading{max-width:700px;margin-bottom:42px}.construction-showcase-heading h2{margin:16px 0 22px;font-family:var(--font-display);font-size:clamp(48px,7vw,88px);font-weight:300;line-height:.98;letter-spacing:-.075em}.construction-showcase-heading>p:last-child{max-width:650px;margin:0;color:var(--brand-muted);font-size:16px;line-height:1.9}.gallery-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}.gallery-filter{min-height:42px;padding:8px 15px;border:1px solid var(--brand-line);color:var(--brand-muted);background:transparent;cursor:pointer;font-size:12px;transition:color .2s,border-color .2s,background .2s}.gallery-filter:hover,.gallery-filter.is-active{border-color:var(--brand-accent);color:var(--brand-ink);background:var(--brand-stone)}.gallery-filter:focus-visible,.gallery-open:focus-visible,.lightbox-nav:focus-visible,.lightbox-close:focus-visible{outline:2px solid var(--brand-accent);outline-offset:3px}
 .construction-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 20px}.construction-gallery-card{min-width:0}.construction-gallery-card[hidden]{display:none}.gallery-card-wide{grid-column:span 2}.gallery-open{position:relative;display:block;width:100%;aspect-ratio:1.35/1;padding:0;overflow:hidden;border:0;background:var(--brand-stone);cursor:zoom-in}.gallery-open img{width:100%;height:100%;object-fit:cover;transition:transform .65s cubic-bezier(.2,.7,.2,1)}.gallery-open:hover img{transform:scale(1.035)}.gallery-stage{position:absolute;top:12px;left:12px;padding:7px 10px;color:#fff;background:rgba(20,20,19,.68);font-size:10px;letter-spacing:.08em;text-transform:uppercase}.gallery-caption{display:flex;justify-content:space-between;gap:14px;padding-top:13px}.gallery-caption h3{margin:0 0 5px;font-family:var(--font-display);font-size:20px;font-weight:400}.gallery-caption p{margin:0;color:var(--brand-muted);font-size:12px;line-height:1.6}.gallery-caption .gallery-description{margin-top:7px}.gallery-caption .card-arrow{color:var(--brand-accent)}.gallery-placeholder,.gallery-empty-state{display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--brand-muted);background:linear-gradient(135deg,#ece9e1,#d9d4c9)}.gallery-placeholder{width:100%;height:100%;gap:12px;padding:24px}.gallery-placeholder strong,.gallery-empty-mark{color:var(--brand-accent);font-family:var(--font-display);font-weight:300;letter-spacing:.25em}.gallery-placeholder strong{font-size:30px}.gallery-placeholder span{max-width:240px;font-size:12px;line-height:1.6}.gallery-empty-state{min-height:280px;padding:40px 8%;border:1px solid var(--brand-line)}.gallery-empty-mark{font-size:38px}.gallery-empty-state h3{margin:16px 0 8px;color:var(--brand-ink);font-family:var(--font-display);font-size:24px;font-weight:400}.gallery-empty-state p{max-width:600px;margin:0;font-size:14px;line-height:1.8}.gallery-empty-state a{color:var(--brand-accent);text-decoration:underline;text-underline-offset:3px}
 .gallery-lightbox{position:fixed;inset:0;width:min(1100px,94vw);max-width:none;max-height:92svh;padding:50px 70px 28px;border:0;color:#fff;background:#171715}.gallery-lightbox::backdrop{background:rgba(0,0,0,.86)}.gallery-lightbox figure{display:flex;max-height:calc(92svh - 80px);height:100%;margin:0;flex-direction:column;align-items:center;justify-content:center;gap:14px}.lightbox-image{display:block;max-width:100%;max-height:calc(92svh - 140px);object-fit:contain}.lightbox-caption{color:rgba(255,255,255,.86);font-size:13px;line-height:1.6;text-align:center}.lightbox-close,.lightbox-nav{position:absolute;display:grid;place-items:center;border:0;color:#fff;background:rgba(255,255,255,.12);cursor:pointer}.lightbox-close{top:12px;right:14px;width:42px;height:42px;font-size:30px}.lightbox-nav{top:50%;width:44px;height:56px;transform:translateY(-50%);font-size:38px}.lightbox-prev{left:12px}.lightbox-next{right:12px}
-@media(max-width:900px){.construction-showcase{padding-right:7%;padding-left:7%}.construction-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){.construction-hero{min-height:590px;padding:76px 7%}.construction-hero-image{object-position:58% center}.construction-hero h1{font-size:clamp(62px,14vw,92px)}.construction-photo-feature .eyebrow{left:7%;bottom:22px}.construction-showcase{padding:68px 7% 76px}.construction-gallery{gap:24px 12px}.gallery-card-wide{grid-column:span 2}.gallery-caption h3{font-size:16px}.gallery-caption p{font-size:11px}.gallery-lightbox{width:100vw;height:100svh;max-height:100svh;padding:55px 48px 24px}.gallery-lightbox figure{max-height:calc(100svh - 90px)}.lightbox-image{max-height:calc(100svh - 150px)}.lightbox-nav{width:36px;height:48px}.lightbox-prev{left:5px}.lightbox-next{right:5px}}@media(prefers-reduced-motion:reduce){.gallery-open img{transition:none}}
+@media(max-width:900px){.construction-showcase{padding-right:7%;padding-left:7%}.construction-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){.construction-hero{min-height:590px;padding:76px 7%}.construction-hero-image{object-position:58% center}.construction-hero h1{font-size:clamp(62px,14vw,92px)}.construction-showcase{padding:68px 7% 76px}.construction-gallery{gap:24px 12px}.gallery-card-wide{grid-column:span 2}.gallery-caption h3{font-size:16px}.gallery-caption p{font-size:11px}.gallery-lightbox{width:100vw;height:100svh;max-height:100svh;padding:55px 48px 24px}.gallery-lightbox figure{max-height:calc(100svh - 90px)}.lightbox-image{max-height:calc(100svh - 150px)}.lightbox-nav{width:36px;height:48px}.lightbox-prev{left:5px}.lightbox-next{right:5px}}@media(prefers-reduced-motion:reduce){.gallery-open img{transition:none}}
 </style>
