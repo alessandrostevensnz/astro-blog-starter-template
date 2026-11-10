@@ -10,16 +10,18 @@ const maintenanceHeroVideo = siteContent.maintenance.heroVideo?.trim() || '';
     <img class:list={['maintenance-hero-image', { 'maintenance-hero-image-motion': !maintenanceHeroVideo }]} src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
     {maintenanceHeroVideo && (
       <video
-        class="maintenance-hero-video"
+        class="maintenance-hero-video" data-background-video
         autoplay
         muted
         loop
         playsinline
-        preload="metadata"
+        webkit-playsinline
+        preload="auto"
         poster={photos.hero.src}
         aria-hidden="true"
         tabindex="-1"
         disablepictureinpicture
+        disableremoteplayback
       >
         <source src={maintenanceHeroVideo} type="video/mp4" />
       </video>
@@ -78,20 +80,6 @@ const maintenanceHeroVideo = siteContent.maintenance.heroVideo?.trim() || '';
 </SiteLayout>
 
 <script>
-  // Honor motion preferences for an uploaded background video as well as the photo loop.
-  const maintenanceVideo = document.querySelector<HTMLVideoElement>('.maintenance-hero-video');
-  if (maintenanceVideo) {
-    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncVideo = () => {
-      if (motionPreference.matches) {
-        maintenanceVideo.pause();
-      } else {
-        maintenanceVideo.play().catch(() => { /* the original photo stays behind the video */ });
-      }
-    };
-    syncVideo();
-    motionPreference.addEventListener?.('change', syncVideo);
-  }
   const revealItems = document.querySelectorAll<HTMLElement>('[data-reveal]');
   if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.documentElement.classList.add('service-reveal-ready');
@@ -153,7 +141,6 @@ const maintenanceHeroVideo = siteContent.maintenance.heroVideo?.trim() || '';
   @media(max-width:680px) { .maintenance-hero { min-height:590px; padding:76px 7%; } .maintenance-hero-image { object-position:58% center; } .maintenance-hero h1 { font-size:clamp(62px,14vw,92px); } .maintenance-detail-grid { grid-template-columns:1fr; gap:25px; } .maintenance-services { padding:60px 7% 72px; } .maintenance-services-heading { margin-bottom:32px; } .maintenance-service { grid-template-columns:1fr; gap:23px; padding:30px 0; } .maintenance-service-reverse .maintenance-service-copy,.maintenance-service-reverse .maintenance-service-visual { order:initial; } .maintenance-service-visual { aspect-ratio:1.35/1; } }
   @media(prefers-reduced-motion:reduce) {
     .maintenance-hero-image-motion { animation: none !important; }
-    .maintenance-hero-video { display: none !important; }
     .maintenance-service-visual img,.maintenance-quote-link,.service-reveal-ready [data-reveal] { transition:none; }
     .service-reveal-ready [data-reveal] { opacity:1; transform:none; }
   }

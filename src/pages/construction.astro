@@ -14,7 +14,7 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
   <section class="construction-hero" aria-labelledby="construction-title">
     <img class="construction-hero-image" src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
     {constructionHeroVideo && (
-      <video class="construction-hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto"
+      <video class="construction-hero-video" data-background-video autoplay muted loop playsinline webkit-playsinline preload="auto"
         poster={photos.hero.src} aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback>
         <source src={constructionHeroVideo} type="video/mp4" />
       </video>
@@ -143,28 +143,6 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
   <section class="cta-section"><div class="cta-row"><h2>Tell us what<br />you’re planning.</h2><a class="text-link" href="/contact/">Start a conversation </a></div></section>
 </SiteLayout>
 
-<script>
-  const constructionVideo = document.querySelector<HTMLVideoElement>('.construction-hero-video');
-  if (constructionVideo) {
-    // iPhone Safari needs an inline, muted video for autoplay. No user controls.
-    constructionVideo.defaultMuted = true;
-    constructionVideo.muted = true;
-    constructionVideo.playsInline = true;
-    constructionVideo.removeAttribute('controls');
-
-    const ensurePlaying = () => {
-      if (document.visibilityState === 'hidden' || !constructionVideo.paused) return;
-      constructionVideo.play().catch(() => {
-        // Device-level autoplay restrictions may apply; the hero photo remains visible.
-      });
-    };
-
-    ensurePlaying();
-    constructionVideo.addEventListener('canplay', ensurePlaying);
-    window.addEventListener('pageshow', ensurePlaying);
-    document.addEventListener('visibilitychange', ensurePlaying);
-  }
-</script>
 
 <style>
 .construction-hero{min-height:max(580px,min(720px,calc(100svh - 82px)));position:relative;display:flex;align-items:center;overflow:hidden;isolation:isolate;padding:clamp(80px,12vw,150px) 10%;color:#fff;background:#77766f}.construction-hero-image,.construction-hero-shade{position:absolute;inset:0;width:100%;height:100%}.construction-hero-image{z-index:-2;object-fit:cover;object-position:center 48%}.construction-hero-shade{z-index:-1;background:linear-gradient(90deg,rgba(15,16,14,.62),rgba(15,16,14,.12) 85%),linear-gradient(0deg,rgba(15,16,14,.22),transparent 55%)}.construction-hero-copy{max-width:900px}.construction-hero h1{margin:22px 0 25px;color:#fff;font-family:var(--font-display);font-size:clamp(68px,10vw,136px);font-weight:300;line-height:.92;letter-spacing:-.085em}.construction-hero .lead{max-width:700px;margin:0;color:rgba(255,255,255,.92);font-size:16px;line-height:1.85}.construction-copy{max-width:850px;margin:0 0 32px}.content-block .service-list{margin-top:32px}
@@ -174,14 +152,6 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
   display: block; width: 100%; height: 100%;
   object-fit: cover; object-position: center 48%;
   pointer-events: none;
-}
-/* Suppress iOS/Safari's native centre-play overlay and transport UI. */
-:global(.construction-hero-video::-webkit-media-controls),
-:global(.construction-hero-video::-webkit-media-controls-panel),
-:global(.construction-hero-video::-webkit-media-controls-start-playback-button),
-:global(.construction-hero-video::-webkit-media-controls-overlay-play-button) {
-  display: none !important;
-  -webkit-appearance: none;
 }
 .construction-hero:not(.construction-section-hero) .construction-hero-shade {
   z-index: 0;

@@ -20,16 +20,18 @@ const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
     />
     {projectsHeroVideo && (
       <video
-        class="projects-hero-video"
+        class="projects-hero-video" data-background-video
         autoplay
         muted
         loop
         playsinline
-        preload="metadata"
+        webkit-playsinline
+        preload="auto"
         poster={optimizedHero?.hero ?? projectsHero.src}
         aria-hidden="true"
         tabindex="-1"
         disablepictureinpicture
+        disableremoteplayback
       >
         <source src={projectsHeroVideo} type="video/mp4" />
       </video>
@@ -74,23 +76,6 @@ const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
 </SiteLayout>
 
 <script>
-  // Respect the visitor's motion settings; keep the photo visible as the fallback.
-  const heroVideo = document.querySelector<HTMLVideoElement>('.projects-hero-video');
-  if (heroVideo) {
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncMotion = () => {
-      if (motion.matches) {
-        heroVideo.pause();
-      } else {
-        heroVideo.play().catch(() => {
-          // Autoplay restrictions leave the original photo / video poster visible.
-        });
-      }
-    };
-    syncMotion();
-    motion.addEventListener?.('change', syncMotion);
-  }
-
   // On touchscreens, tap a project to reveal or hide its description.
   const tiles = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-project-tile]'));
   const noHover = window.matchMedia('(hover: none)');
@@ -173,9 +158,6 @@ const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .projects-hero-video { display: none; }
-  }
   .andro-projects-tip { margin: 0 0 22px; color: var(--brand-muted); font-size: 12px; line-height: 1.6; }
   .andro-projects-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; }
   .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; cursor: pointer; }

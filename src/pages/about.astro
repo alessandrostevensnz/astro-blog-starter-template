@@ -8,8 +8,8 @@ const aboutHeroVideo = siteContent.about.heroVideo?.trim() || '';
   <section class="page-hero about-hero">
     <img class:list={['about-hero-image', { 'about-hero-photo-motion': !aboutHeroVideo }]} src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
     {aboutHeroVideo && (
-      <video class="about-hero-video" autoplay muted loop playsinline preload="metadata"
-        poster={photos.hero.src} aria-hidden="true" tabindex="-1" disablepictureinpicture>
+      <video class="about-hero-video" data-background-video autoplay muted loop playsinline webkit-playsinline preload="auto"
+        poster={photos.hero.src} aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback>
         <source src={aboutHeroVideo} type="video/mp4" />
       </video>
     )}
@@ -21,17 +21,6 @@ const aboutHeroVideo = siteContent.about.heroVideo?.trim() || '';
   </section>
   <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">WHO WE ARE</p><h2><span data-style-key="about.whoHeading">{siteContent.about.whoHeading}</span></h2></div><div><p class="body-copy"><span data-style-key="about.whoText">{siteContent.about.whoText}</span></p><p class="body-copy">{siteContent.about.craftText}</p></div></div></section>
 </SiteLayout>
-<script>
-  const aboutVideo = document.querySelector<HTMLVideoElement>('.about-hero-video');
-  if (aboutVideo) {
-    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncMotion = () => motionPreference.matches
-      ? aboutVideo.pause()
-      : aboutVideo.play().catch(() => { /* the photo beneath remains visible */ });
-    syncMotion();
-    motionPreference.addEventListener?.('change', syncMotion);
-  }
-</script>
 <style>
   .about-hero { position: relative; isolation: isolate; overflow: hidden; color: #fff; background: #555; }
   .about-hero-image, .about-hero-video, .about-hero::after { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -47,6 +36,5 @@ const aboutHeroVideo = siteContent.about.heroVideo?.trim() || '';
   .about-hero .eyebrow, .about-hero h1, .about-hero .lead { color: #fff; }
   @media (prefers-reduced-motion: reduce) {
     .about-hero-image.about-hero-photo-motion { animation: none !important; }
-    .about-hero-video { display: none !important; }
   }
 </style>

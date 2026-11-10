@@ -64,10 +64,46 @@ const footerImages = footerImagesForPath(currentPath);
       menuButton?.setAttribute('aria-expanded', 'false');
       menuButton?.setAttribute('aria-label', 'Open menu');
     }));
+
+    // All site header films share the same silent, inline autoplay behaviour.
+    // Keep the photograph under each video as the fallback if Safari blocks playback.
+    const backgroundVideos = Array.from(document.querySelectorAll<HTMLVideoElement>('video[data-background-video]'));
+    if (backgroundVideos.length) {
+      const ensureBackgroundPlaying = (video: HTMLVideoElement) => {
+        video.defaultMuted = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.autoplay = true;
+        video.loop = true;
+        video.controls = false;
+        if (document.visibilityState !== 'visible' || !video.paused) return;
+        void video.play().catch(() => {
+          // A device may prohibit autoplay; there is no visible play control.
+        });
+      };
+      const resumeBackgroundVideos = () => backgroundVideos.forEach(ensureBackgroundPlaying);
+      backgroundVideos.forEach((video) => {
+        video.addEventListener('canplay', () => ensureBackgroundPlaying(video));
+        video.addEventListener('loadeddata', () => ensureBackgroundPlaying(video));
+      });
+      resumeBackgroundVideos();
+      window.addEventListener('pageshow', resumeBackgroundVideos);
+      document.addEventListener('visibilitychange', resumeBackgroundVideos);
+    }
   </script>
 </body>
 
 <style is:global>
+  /* No native video controls or centre-play overlay on any ANDRO header film. */
+  video[data-background-video]::-webkit-media-controls,
+  video[data-background-video]::-webkit-media-controls-enclosure,
+  video[data-background-video]::-webkit-media-controls-panel,
+  video[data-background-video]::-webkit-media-controls-start-playback-button,
+  video[data-background-video]::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+    -webkit-appearance: none;
+  }
+
   .brand-lockup {
     align-items: center;
     text-align: center;
