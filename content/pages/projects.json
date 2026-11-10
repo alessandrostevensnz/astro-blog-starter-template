@@ -5,154 +5,179 @@
       "category": "Construction · Residential",
       "image": "/images/Residential%20framing.png",
       "alt": "Residential building framing during construction",
-      "description": ""
+      "description": "",
+      "order": 10
     },
     {
       "title": "Framing · Auckland",
       "category": "Construction · Commercial",
       "image": "/images/commercial%20framing.png",
       "alt": "Commercial construction framing",
-      "description": ""
+      "description": "",
+      "order": 20
     },
     {
       "title": "Civil · Auckland",
       "category": "Construction · Commercial",
       "image": "/images/commercial.png",
       "alt": "Commercial construction project",
-      "description": ""
+      "description": "",
+      "order": 30
     },
     {
       "title": "Fence · Clover Park ",
       "category": "Construction · Residential",
       "image": "/images/fence.png",
       "alt": "Clover park Fence ",
-      "description": ""
+      "description": "",
+      "order": 40
     },
     {
       "image": "/images/screenshot-2026-07-11-at-7_edited.jpg",
       "alt": "Custom Country Kitchen ",
       "category": "Construction · Residential",
-      "title": "Custom Kitchen · Auckland"
+      "title": "Custom Kitchen · Auckland",
+      "order": 50
     },
     {
       "image": "/images/img_0093.jpeg",
       "title": "Renovated Bathroom · Auckland",
       "category": "Construction · Residential",
-      "alt": "Custom Country Kitchen "
+      "alt": "Custom Country Kitchen ",
+      "order": 60
     },
     {
       "image": "/images/889a4c7e-060c-4aa6-9f88-a46a972b560c.jpeg",
       "title": "New weatherboards and Scribers · Auckland",
       "category": "Asset Maintenance · Residential",
-      "alt": "Custom Country Kitchen "
+      "alt": "Custom Country Kitchen ",
+      "order": 70
     },
     {
       "image": "/images/f05341ee-f85c-460d-87b7-1394e3278121.jpeg",
       "title": "Custom Wardrobe · Auckland",
       "category": "Construction · Residential",
-      "alt": "Custom Country Kitchen "
+      "alt": "Custom Country Kitchen ",
+      "order": 80
     },
     {
       "title": "Renovated Flat · Auckland",
       "image": "/images/39f34f3b-d176-4653-9bf9-95ba5eaaa21e.jpeg",
       "category": "=Construction · Residential",
-      "alt": "Construction · Residential"
+      "alt": "Construction · Residential",
+      "order": 90
     },
     {
       "image": "/images/img_0140.jpeg",
       "title": "Fence + Deck · Auckland",
       "alt": "Construction · Residential",
-      "category": "Construction · Residential"
+      "category": "Construction · Residential",
+      "order": 100
     },
     {
       "image": "/images/img_0346.jpeg",
       "title": "Gib Repair · Auckland",
       "alt": "Asset Maintenance  · Residential",
-      "category": "Asset Maintenance  · Residential"
+      "category": "Asset Maintenance  · Residential",
+      "order": 110
     },
     {
       "image": "/images/img_3108.jpg",
       "title": "Renovated Bathroom · Auckland",
       "category": "Construction · Residential",
-      "alt": "Construction · Residential"
+      "alt": "Construction · Residential",
+      "order": 120
     },
     {
       "title": "New Fence · Auckland",
       "category": "Construction · Residential",
       "alt": "Construction · Residential",
-      "image": "/images/img_0383.jpeg"
+      "image": "/images/img_0383.jpeg",
+      "order": 130
     },
     {
       "title": "Cavity slider with custom door · Auckland",
       "image": "/images/img_0611.jpeg",
       "alt": "Construction · Residential",
-      "category": "Construction · Residential"
+      "category": "Construction · Residential",
+      "order": 140
     },
     {
       "image": "/images/img_0810.jpeg",
       "title": "Feature Wall · Auckland",
       "category": "Construction · Commercial",
-      "alt": "Construction · Commercial"
+      "alt": "Construction · Commercial",
+      "order": 150
     },
     {
       "image": "/images/img_1717.jpeg",
       "title": "Louver Install · Palmerston North",
       "alt": "Construction · Commercial",
-      "category": "Construction · Commercial"
+      "category": "Construction · Commercial",
+      "order": 160
     },
     {
       "image": "/images/img_1449.jpeg",
       "title": "Front Door install · Mission Bay ",
       "alt": "Construction · Residential",
-      "category": "Construction · Residential"
+      "category": "Construction · Residential",
+      "order": 170
     },
     {
       "image": "/images/img_0491.jpeg",
       "alt": "Construction · Residential",
       "category": "Construction · Residential",
-      "title": "Villa Extension · Devonport"
+      "title": "Villa Extension · Devonport",
+      "order": 180
     },
     {
       "image": "/images/5e97d985-2449-4f22-8a69-b360e8e68e00_1_105_c.jpeg",
       "title": "New Vitex Deck · Browns Bay",
       "alt": "Construction · Residential",
-      "category": "Construction · Residential"
+      "category": "Construction · Residential",
+      "order": 190
     },
     {
       "image": "/images/0f58a188-5ccb-437a-8905-16092fde40a8_1_105_c.jpeg",
       "alt": "Construction · Commercial",
       "category": "Construction · Commercial",
-      "title": "Specialised Access install · Wiri"
+      "title": "Specialised Access install · Wiri",
+      "order": 200
     },
     {
       "image": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
       "alt": "Construction · Commercial",
       "category": "Construction · Commercial",
-      "title": "Cavity · Auckland"
+      "title": "Cavity · Auckland",
+      "order": 210
     },
     {
       "alt": "Construction · Residential ",
       "category": "Construction · Residential ",
       "image": "/images/img_0969.jpeg",
-      "title": "Box Corners · Manukau "
+      "title": "Box Corners · Manukau ",
+      "order": 220
     },
     {
       "image": "/images/img_0951.jpg",
       "title": "Extension · Auckland",
       "alt": "Construction · Residential ",
-      "category": "Construction · Residential "
+      "category": "Construction · Residential ",
+      "order": 230
     },
     {
       "image": "/images/0fbfb826-06e3-49c5-8016-9462dc8e2f22_1_105_c.jpeg",
       "title": "Re roof · Residential ",
       "category": "Construction · Residential ",
-      "alt": "Construction · Residential "
+      "alt": "Construction · Residential ",
+      "order": 240
     },
     {
       "image": "/images/img_2966-2.jpg",
       "title": "Full Villa Renovation · Central Auckland",
       "alt": "Construction · Residential ",
-      "category": "Construction · Residential "
+      "category": "Construction · Residential ",
+      "order": 250
     }
   ],
   "footerImages": {
