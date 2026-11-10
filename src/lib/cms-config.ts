@@ -39,10 +39,13 @@ const photos: Record<string, Array<[string, string, string]>> = {
   ],
   construction: [
     ['hero', '01 - Main construction banner', 'Large image at the very top.'],
-    ['residential', '02 - Residential construction', 'Full-width image below the residential services.'],
-    ['commercial', '03 - Commercial construction', 'Full-width image below the commercial section.'],
-    ['processLeft', '04 - Process photograph, left', 'Left image in the Preparation makes a difference pair.'],
-    ['processRight', '05 - Process photograph, right', 'Right image in the Preparation makes a difference pair.'],
+    ['serviceCarpentry', '02 - General carpentry row photo', 'Small photo on the right of General carpentry, below Residential construction.'],
+    ['serviceDecks', '03 - Decks and fencing row photo', 'Small photo on the right of Decks and fencing.'],
+    ['serviceRenovations', '04 - Renovations and alterations row photo', 'Small photo on the right of Renovations and alterations.'],
+    ['residential', '05 - Residential construction photo band', 'Short full-width image below the three residential service rows.'],
+    ['commercial', '06 - Commercial construction photo band', 'Full-width image below the commercial section.'],
+    ['processLeft', '07 - Process photograph, left', 'Left image in the Preparation makes a difference pair.'],
+    ['processRight', '08 - Process photograph, right', 'Right image in the Preparation makes a difference pair.'],
   ],
   maintenance: [
     ['hero', '01 - Main maintenance banner', 'Large image behind Look after what matters.'],
@@ -81,7 +84,7 @@ const styled: Record<string, string[]> = {
   home: ['title','subtitle','introHeading','introText','servicesHeading','featureHeading','closingHeading','philosophyHeading','philosophyText'],
   construction: ['introHeading','introText'], maintenance: ['introHeading','introText'], about: ['whoHeading','whoText'],
 };
-const gallery = field('gallery', '06 onwards - Construction project showcase', 'list', {
+const gallery = field('gallery', 'Construction project showcase (additional photos)', 'list', {
   label_singular: 'Construction project photograph', collapsed: false, required: false, summary: '{{fields.title}}',
   hint: 'All showcase photographs for Construction are here. Add, remove or reorder cards; an empty list keeps the empty showcase.',
   fields: [field('title','Project title'),field('image','Project photo','image',{required:false}),field('alt','Photo description (alt text)','string',{required:false}),
