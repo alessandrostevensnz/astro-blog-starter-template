@@ -52,7 +52,8 @@ const photos: Record<string, Array<[string, string, string]>> = {
   ],
   maintenance: [
     ['hero', '01 - Main maintenance banner', 'Large image behind Look after what matters.'],
-    ['closing', 'Closing property-care photo', 'Wide image below all the service cards, near the bottom.'],
+    ['introBackground', '02 - Look for the early signs background', 'Full-width photograph behind the CARE FOR YOUR PROPERTY introduction, heading and two paragraphs. Change this photo without affecting the main hero.'],
+    ['closing', '03 - Closing property-care photo', 'Wide image below all the service cards, near the bottom.'],
   ],
   about: [
     ['hero', '01 - About banner', 'Image behind Built on care. Grounded in craft.'],
