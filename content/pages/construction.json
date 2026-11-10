@@ -1,8 +1,8 @@
 {
   "photos": {
-    "hero": {
-      "src": "/images/Residential%20framing.png",
-      "alt": "Residential framing during construction"
+    "serviceCarpentry": {
+      "src": "/images/img_0611.jpeg",
+      "alt": "Custom carpentry work and cavity sliding door installation"
     },
     "residential": {
       "src": "/images/screenshot-2026-11-07-at-4.53.17 pm.png",
@@ -12,37 +12,37 @@
       "src": "/images/commercial%20framing.png",
       "alt": "Commercial construction "
     },
-    "processLeft": {
-      "src": "/images/Commercial cavity.png",
-      "alt": "Commercial construction "
+    "serviceRenovations": {
+      "src": "/images/img_2966-2.jpg",
+      "alt": "Villa renovation project"
+    },
+    "serviceCommercialRefurbishment": {
+      "src": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
+      "alt": "Commercial recladding and joinery improvements in Remuera"
     },
     "processRight": {
       "src": "/images/screenshot-2026-11-08-at-7.50.20 pm.png",
       "alt": "Residential building framing during construction"
     },
-    "serviceCarpentry": {
-      "src": "/images/img_0611.jpeg",
-      "alt": "Custom carpentry work and cavity sliding door installation"
-    },
     "serviceDecks": {
       "src": "/images/img_0140.jpeg",
       "alt": "Deck and fencing project"
     },
-    "serviceRenovations": {
-      "src": "/images/img_2966-2.jpg",
-      "alt": "Villa renovation project"
+    "processLeft": {
+      "src": "/images/Commercial cavity.png",
+      "alt": "Commercial construction "
+    },
+    "serviceCommercialFitouts": {
+      "src": "/images/c77a9053.webp",
+      "alt": "Commercial construction framing prior to fit-out in Auckland"
     },
     "serviceCommercialCarpentry": {
       "src": "/images/img_0810.jpeg",
       "alt": "Commercial carpentry and feature wall installation in Auckland"
     },
-    "serviceCommercialFitouts": {
-      "src": "/images/commercial%20framing.png",
-      "alt": "Commercial construction framing prior to fit-out in Auckland"
-    },
-    "serviceCommercialRefurbishment": {
-      "src": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
-      "alt": "Commercial recladding and joinery improvements in Remuera"
+    "hero": {
+      "src": "/images/Residential%20framing.png",
+      "alt": "Residential framing during construction"
     }
   },
   "residentialText": "From general carpentry and decks to fencing, minor alterations and interior or exterior improvements, the right approach depends on the property and its intended use. We consider how new work meets existing surfaces, how materials will weather and how details such as junctions, fixings and finishes affect day-to-day function. For renovations, existing structures can reveal unexpected conditions once work begins. If that happens, we explain what has been found and discuss the practical options before proceeding. Work requiring a licensed building practitioner, building consent or specialist trade is undertaken or coordinated in line with applicable requirements.",
