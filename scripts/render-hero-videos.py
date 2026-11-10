@@ -2,8 +2,9 @@
 """Generate three native 1080p, 8-second site-header MP4s from the current CMS hero photos.
 
 Uses only the repository's source photographs: no low-resolution GIF frames.
-Sky movement is limited to distant sky; foliage movement is limited to green leaves.
-Buildings, joinery, scaffolding, and other structural details remain stationary.
+Cloud movement applies only to Maintenance and leaf movement only to About.
+Construction uses a single, almost-still handheld viewpoint: the scaffolding,
+portal, and framing stay locked together with no independently moving layers.
 """
 import json
 import math
@@ -81,7 +82,7 @@ def encode(kind):
     if image is None:
         raise ValueError("Cannot read hero photograph: " + kind)
     base = fit(image)
-    region = foliage_mask(base) if kind == "about" else sky_mask(base)
+    region = foliage_mask(base) if kind == "about" else sky_mask(base) if kind == "maintenance" else None
     if kind == "about":
         xmap, ymap = np.meshgrid(np.arange(W, dtype=np.float32), np.arange(H, dtype=np.float32))
     out = ROOT / "public" / "images" / ("andro-" + kind + "-1080p-8s.mp4")
@@ -101,20 +102,30 @@ def encode(kind):
                 moving = cv2.remap(base, (xmap + horizontal).astype(np.float32),
                                    (ymap + vertical).astype(np.float32),
                                    cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT_101)
-            else:
-                amount = 21 if kind == "maintenance" else 17
-                dx = amount * math.sin(2 * math.pi * phase)
+            elif kind == "maintenance":
+                dx = 21 * math.sin(2 * math.pi * phase)
                 dy = 2 * math.sin(2 * math.pi * phase + .4)
                 moving = cv2.warpAffine(base, np.float32([[1, 0, dx], [0, 1, dy]]),
                                         (W, H), flags=cv2.INTER_LINEAR,
                                         borderMode=cv2.BORDER_REFLECT_101)
-            frame = blend(base, moving, region)
-            bright = 1 + (.006 if kind == "about" else .009) * (
-                math.sin(2 * math.pi * phase + .3) - math.sin(.3))
+            # Construction: no composited sky. The entire scene stays rigid.
+            frame = base.copy() if kind == "construction" else blend(base, moving, region)
+            if kind == "construction":
+                # Almost-static handheld shot. One uniform camera transform
+                # preserves the scaffold's position relative to the portal.
+                bright = 1 + .003 * (math.sin(2 * math.pi * phase + .3) - math.sin(.3))
+                cam_x = .8 * math.sin(2 * math.pi * phase)
+                cam_x += .2 * (math.sin(4 * math.pi * phase + .45) - math.sin(.45))
+                cam_y = .45 * (math.sin(2 * math.pi * phase + .7) - math.sin(.7))
+                cam_y += .12 * (math.sin(4 * math.pi * phase + .2) - math.sin(.2))
+                scale = 1.005 + .0004 * (1 - math.cos(2 * math.pi * phase))
+            else:
+                bright = 1 + (.006 if kind == "about" else .009) * (
+                    math.sin(2 * math.pi * phase + .3) - math.sin(.3))
+                cam_x = (1.7 if kind == "about" else 2.7) * math.sin(2 * math.pi * phase)
+                cam_y = .9 * (math.sin(2 * math.pi * phase + .7) - math.sin(.7))
+                scale = 1.009 + .002 * (1 - math.cos(2 * math.pi * phase))
             frame = np.clip(frame.astype(np.float32) * bright, 0, 255).astype(np.uint8)
-            cam_x = (1.7 if kind == "about" else 2.7) * math.sin(2 * math.pi * phase)
-            cam_y = .9 * (math.sin(2 * math.pi * phase + .7) - math.sin(.7))
-            scale = 1.009 + .002 * (1 - math.cos(2 * math.pi * phase))
             affine = cv2.getRotationMatrix2D((W / 2, H / 2), 0, scale)
             affine[0, 2] += cam_x
             affine[1, 2] += cam_y
