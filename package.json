@@ -20,7 +20,8 @@
 		"typescript": "5.9.3"
 	},
 	"devDependencies": {
-		"wrangler": "4.136.1"
+		"wrangler": "4.136.1",
+		"sharp": "0.34.5"
 	},
 	"engines": {
 		"node": ">=22"
