@@ -1,7 +1,10 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
 import { siteContent } from '../data/site';
+import optimizedGallery from '../data/project-gallery-optimized.generated.json';
 const photos = siteContent.maintenance.photos;
+const optimizedPhotos = optimizedGallery as Record<string, { large?: string; hero?: string }>;
+const introBackground = optimizedPhotos[photos.introBackground.src];
 const services = siteContent.maintenance.services;
 ---
 <SiteLayout title="Property Maintenance Auckland | Residential & Commercial | ANDRO" description={siteContent.maintenance.description}>
@@ -12,7 +15,15 @@ const services = siteContent.maintenance.services;
   </section>
 
   <section class="page-body section-pad maintenance-intro-band" aria-labelledby="maintenance-intro-title">
-    <img class="maintenance-intro-image" src={photos.introBackground.src} alt={photos.introBackground.alt} loading="lazy" decoding="async" />
+    <img
+      class="maintenance-intro-image"
+      src={introBackground?.hero ?? photos.introBackground.src}
+      srcset={introBackground?.hero && introBackground?.large ? `${introBackground.large} 960w, ${introBackground.hero} 1800w` : undefined}
+      sizes="100vw"
+      alt={photos.introBackground.alt}
+      loading="lazy"
+      decoding="async"
+    />
     <div class="maintenance-intro-shade" aria-hidden="true"></div>
     <div class="two-col maintenance-intro-grid">
       <div class="maintenance-intro-heading">
