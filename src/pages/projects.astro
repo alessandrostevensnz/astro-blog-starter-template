@@ -1,6 +1,8 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
 import { siteContent } from '../data/site';
+import optimizedGallery from '../data/project-gallery-optimized.generated.json';
+const galleryImages = optimizedGallery as Record<string, {small: string; large: string}>;
 ---
 <SiteLayout title="Projects | ANDRO Construction + Projects Auckland" description="Explore a selection of residential and commercial construction work, carpentry, interior lining and property improvements by ANDRO in Auckland.">
   <section class="page-hero"><p class="eyebrow">PROJECTS · AUCKLAND, NEW ZEALAND</p><h1>Every brief<br />starts somewhere.</h1><p class="lead">Buildings are shaped by hundreds of decisions, from the structure and materials to the way each finish meets. This selection shows examples of residential and commercial construction work, including framing, interior lining, fencing and balustrade details.</p></section>
@@ -15,7 +17,14 @@ import { siteContent } from '../data/site';
           aria-expanded="false"
           aria-label={entry.title + (entry.description ? '. ' + entry.description : '. ' + entry.category)}
         >
-          <img src={entry.image} alt={entry.alt} loading="lazy" decoding="async" />
+          <img
+            src={galleryImages[entry.image]?.large ?? entry.image}
+            srcset={galleryImages[entry.image] ? `${galleryImages[entry.image].small} 480w, ${galleryImages[entry.image].large} 960w` : undefined}
+            sizes={galleryImages[entry.image] ? '(max-width: 760px) 50vw, (max-width: 1050px) 33vw, (max-width: 1180px) 25vw, 20vw' : undefined}
+            alt={entry.alt}
+            loading="lazy"
+            decoding="async"
+          />
           <span class="andro-project-overlay">
             <span class="andro-project-category">{entry.category}</span>
             <span class="andro-project-title">{entry.title}</span>
