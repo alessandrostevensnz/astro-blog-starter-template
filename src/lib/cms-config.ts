@@ -120,7 +120,13 @@ const pageFiles = entries.map(([name,label,path]) => {
     fields:photos[name].map(([key,title,hint])=>photo(key,title,hint)),
   }));
   if (name === 'maintenance') fields.push(services);
-  if (name === 'projects') fields.push(projectCards);
+  if (name === 'projects') {
+    fields.push(field('heroVideo', '02 - Projects landing background video (MP4)', 'file', {
+      required: false,
+      hint: 'Upload the optimised 8-second MP4 video here, then Publish. It will play silently on repeat behind the Projects heading. The header photo above stays as the fallback image. Leave empty to use the photo only.',
+    }));
+    fields.push(projectCards);
+  }
   for (const [key,title,widget] of text[name]) {
     fields.push(field(key,title,widget));
     if (styled[name]?.includes(key)) fields.push(formatting(key,title));
