@@ -5,6 +5,7 @@ import optimizedGallery from '../data/project-gallery-optimized.generated.json';
 const galleryImages = optimizedGallery as Record<string, { small: string; large: string; hero?: string }>;
 const projectsHero = pageContent.projects.photos.hero;
 const optimizedHero = galleryImages[projectsHero.src];
+const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
 ---
 <SiteLayout title="Projects | ANDRO Construction + Projects Auckland" description="Explore a selection of residential and commercial construction work, carpentry, interior lining and property improvements by ANDRO in Auckland.">
   <section class="page-hero projects-photo-hero" aria-labelledby="projects-hero-title">
@@ -17,6 +18,22 @@ const optimizedHero = galleryImages[projectsHero.src];
       fetchpriority="high"
       decoding="async"
     />
+    {projectsHeroVideo && (
+      <video
+        class="projects-hero-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster={optimizedHero?.hero ?? projectsHero.src}
+        aria-hidden="true"
+        tabindex="-1"
+        disablepictureinpicture
+      >
+        <source src={projectsHeroVideo} type="video/mp4" />
+      </video>
+    )}
     <div class="projects-hero-shade" aria-hidden="true"></div>
     <div class="projects-hero-content">
       <p class="eyebrow inverse">PROJECTS · AUCKLAND, NEW ZEALAND</p>
@@ -57,6 +74,23 @@ const optimizedHero = galleryImages[projectsHero.src];
 </SiteLayout>
 
 <script>
+  // Respect the visitor's motion settings; keep the photo visible as the fallback.
+  const heroVideo = document.querySelector<HTMLVideoElement>('.projects-hero-video');
+  if (heroVideo) {
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncMotion = () => {
+      if (motion.matches) {
+        heroVideo.pause();
+      } else {
+        heroVideo.play().catch(() => {
+          // Autoplay restrictions leave the original photo / video poster visible.
+        });
+      }
+    };
+    syncMotion();
+    motion.addEventListener?.('change', syncMotion);
+  }
+
   // On touchscreens, tap a project to reveal or hide its description.
   const tiles = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-project-tile]'));
   const noHover = window.matchMedia('(hover: none)');
@@ -85,6 +119,17 @@ const optimizedHero = galleryImages[projectsHero.src];
     color: #fff;
   }
   .projects-hero-image,
+  .projects-hero-video {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+  }
   .projects-hero-shade {
     position: absolute;
     inset: 0;
@@ -128,6 +173,9 @@ const optimizedHero = galleryImages[projectsHero.src];
     }
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .projects-hero-video { display: none; }
+  }
   .andro-projects-tip { margin: 0 0 22px; color: var(--brand-muted); font-size: 12px; line-height: 1.6; }
   .andro-projects-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; }
   .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; cursor: pointer; }
