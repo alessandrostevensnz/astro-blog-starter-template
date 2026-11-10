@@ -17,7 +17,6 @@ const outputDir = path.join(originalsDir, 'project-thumbnails');
 const manifestFile = path.join(projectRoot, 'src', 'data', 'project-gallery-optimized.generated.json');
 const projectsFile = path.join(projectRoot, 'content', 'pages', 'projects.json');
 const constructionFile = path.join(projectRoot, 'content', 'pages', 'construction.json');
-const maintenanceFile = path.join(projectRoot, 'content', 'pages', 'maintenance.json');
 
 const widths = [480, 960];
 const quality = 78;
@@ -27,8 +26,7 @@ export async function optimizeProjectGallery() {
   await writeFile(manifestFile, '{}\n');
   const data = JSON.parse(await readFile(projectsFile, 'utf8'));
   const construction = JSON.parse(await readFile(constructionFile, 'utf8'));
-  const maintenance = JSON.parse(await readFile(maintenanceFile, 'utf8'));
-  const maintenanceBackground = maintenance.photos?.introBackground?.src;
+  const projectsBackground = data.photos?.hero?.src;
   const serviceKeys = [
     'serviceCarpentry', 'serviceDecks', 'serviceRenovations',
     'serviceCommercialCarpentry', 'serviceCommercialFitouts', 'serviceCommercialRefurbishment',
@@ -37,11 +35,11 @@ export async function optimizeProjectGallery() {
   const photoUrls = [...new Set([
     ...(data.projects ?? []).map((project) => project.image),
     ...constructionServicePhotos,
-    maintenanceBackground,
+    projectsBackground,
   ].filter(Boolean))];
   const manifest = {};
 
-  // Keep only responsive photos used by Projects, Construction services or the Maintenance intro.
+  // Keep only responsive photos used by Projects, its header, or Construction services.
   await rm(outputDir, { force: true, recursive: true });
   await mkdir(outputDir, { recursive: true });
 
@@ -70,9 +68,9 @@ export async function optimizeProjectGallery() {
         .slice(0, 40) || 'project';
       const variants = {};
 
-      // The wide Maintenance background receives one extra, sharper desktop size.
+      // The Projects hero uses an extra, sharper desktop size without touching gallery images.
       // Gallery 480w/960w variants keep their existing names for compatibility.
-      const requestedWidths = sourceUrl === maintenanceBackground ? [...widths, 1800] : widths;
+      const requestedWidths = sourceUrl === projectsBackground ? [...widths, 1800] : widths;
       for (const width of requestedWidths) {
         const optimizedName = `${stem}-${digest}-${width}.webp`;
         const destination = path.join(outputDir, optimizedName);
