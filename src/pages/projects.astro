@@ -1,11 +1,29 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
-import { siteContent } from '../data/site';
+import { siteContent, pageContent } from '../data/site';
 import optimizedGallery from '../data/project-gallery-optimized.generated.json';
-const galleryImages = optimizedGallery as Record<string, {small: string; large: string}>;
+const galleryImages = optimizedGallery as Record<string, { small: string; large: string; hero?: string }>;
+const projectsHero = pageContent.projects.photos.hero;
+const optimizedHero = galleryImages[projectsHero.src];
 ---
 <SiteLayout title="Projects | ANDRO Construction + Projects Auckland" description="Explore a selection of residential and commercial construction work, carpentry, interior lining and property improvements by ANDRO in Auckland.">
-  <section class="page-hero"><p class="eyebrow">PROJECTS · AUCKLAND, NEW ZEALAND</p><h1>Every brief<br />starts somewhere.</h1><p class="lead">Buildings are shaped by hundreds of decisions, from the structure and materials to the way each finish meets. This selection shows examples of residential and commercial construction work, including framing, interior lining, fencing and balustrade details.</p></section>
+  <section class="page-hero projects-photo-hero" aria-labelledby="projects-hero-title">
+    <img
+      class="projects-hero-image"
+      src={optimizedHero?.hero ?? projectsHero.src}
+      srcset={optimizedHero?.hero && optimizedHero?.large ? `${optimizedHero.large} 960w, ${optimizedHero.hero} 1800w` : undefined}
+      sizes="100vw"
+      alt={projectsHero.alt}
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="projects-hero-shade" aria-hidden="true"></div>
+    <div class="projects-hero-content">
+      <p class="eyebrow inverse">PROJECTS · AUCKLAND, NEW ZEALAND</p>
+      <h1 id="projects-hero-title">Every brief<br />starts somewhere.</h1>
+      <p class="lead">Buildings are shaped by hundreds of decisions, from the structure and materials to the way each finish meets. This selection shows examples of residential and commercial construction work, including framing, interior lining, fencing and balustrade details.</p>
+    </div>
+  </section>
   <section class="page-body section-pad">
     <p class="andro-projects-tip">Hover over a photo to learn more. On a phone, tap to reveal the description.</p>
     <div class="andro-projects-grid" aria-label="Project showcase">
@@ -54,6 +72,62 @@ const galleryImages = optimizedGallery as Record<string, {small: string; large: 
   });
 </script>
 <style>
+  /* Projects photo header matches ANDRO's construction and other photo-led pages. */
+  .page-hero.projects-photo-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: clamp(560px, 52vw, 710px);
+    overflow: hidden;
+    padding: clamp(105px, 10vw, 150px) 10%;
+    background: #343a37;
+    color: #fff;
+  }
+  .projects-hero-image,
+  .projects-hero-shade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .projects-hero-image {
+    z-index: -2;
+    object-fit: cover;
+    object-position: center 45%;
+  }
+  .projects-hero-shade {
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgba(13,16,15,.78) 0%, rgba(13,16,15,.63) 47%, rgba(13,16,15,.27) 100%),
+      linear-gradient(0deg, rgba(13,16,15,.24), transparent 64%);
+  }
+  .projects-hero-content { position: relative; max-width: 900px; }
+  .projects-photo-hero .eyebrow { color: var(--brand-accent-soft); }
+  .projects-photo-hero h1 {
+    max-width: 900px;
+    color: #fff;
+    font-size: clamp(61px, 8vw, 108px);
+    line-height: .97;
+    text-wrap: balance;
+  }
+  .projects-photo-hero .lead {
+    max-width: 690px;
+    color: rgba(255,255,255,.94);
+    font-size: clamp(13px, 1.1vw, 15px);
+    line-height: 1.8;
+  }
+  @media (max-width: 680px) {
+    .page-hero.projects-photo-hero { min-height: 580px; padding: 92px 7% 94px; }
+    .projects-photo-hero h1 { font-size: clamp(52px, 12vw, 78px); }
+    .projects-photo-hero .lead { font-size: 13px; line-height: 1.75; }
+    .projects-hero-image { object-position: 55% center; }
+    .projects-hero-shade {
+      background: linear-gradient(90deg, rgba(13,16,15,.83), rgba(13,16,15,.55)),
+                  linear-gradient(0deg, rgba(13,16,15,.2), transparent);
+    }
+  }
+
   .andro-projects-tip { margin: 0 0 22px; color: var(--brand-muted); font-size: 12px; line-height: 1.6; }
   .andro-projects-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; }
   .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; cursor: pointer; }
