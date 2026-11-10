@@ -1,19 +1,13 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
 import { siteContent } from '../data/site';
-const positionOf = (entry: { order?: number | string }): number => {
-  const position = Number(entry.order);
-  return Number.isFinite(position) && position > 0 ? position : Number.MAX_SAFE_INTEGER;
-};
-// Sort a copy: editing a project position in /admin changes the public gallery order.
-const sortedProjects = [...siteContent.projects].sort((a, b) => positionOf(a) - positionOf(b));
 ---
 <SiteLayout title="Projects | ANDRO Construction + Projects Auckland" description="Explore a selection of residential and commercial construction work, carpentry, interior lining and property improvements by ANDRO in Auckland.">
   <section class="page-hero"><p class="eyebrow">PROJECTS · AUCKLAND, NEW ZEALAND</p><h1>Every brief<br />starts somewhere.</h1><p class="lead">Buildings are shaped by hundreds of decisions, from the structure and materials to the way each finish meets. This selection shows examples of residential and commercial construction work, including framing, interior lining, fencing and balustrade details.</p></section>
   <section class="page-body section-pad">
     <p class="andro-projects-tip">Hover over a photo to learn more. On a phone, tap to reveal the description.</p>
     <div class="andro-projects-grid" aria-label="Project showcase">
-      {sortedProjects.map((entry) => (
+      {siteContent.projects.map((entry) => (
         <button
           type="button"
           class="andro-project-tile"
