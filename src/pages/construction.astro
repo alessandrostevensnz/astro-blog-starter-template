@@ -14,13 +14,18 @@ const categories = [...new Set(projects.map((project) => project.category).filte
 
   <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">CONSTRUCTION + RENOVATIONS</p><h2><span data-style-key="construction.introHeading">{siteContent.construction.introHeading}</span></h2></div><div><p class="body-copy"><span data-style-key="construction.introText">{siteContent.construction.introText}</span></p><p class="body-copy">Preparation matters because details that are missed early can affect access, sequencing, material choices and the finished result. We aim to discuss those practicalities before work gets underway.</p><a class="text-link" href="/contact/">Discuss your project <span>↗</span></a></div></div></section>
 
-  <section class="content-block residential-services">
-    <p class="eyebrow">RESIDENTIAL CONSTRUCTION</p>
-    <h2>{siteContent.construction.residentialHeading}</h2>
-    <p class="body-copy construction-copy">{siteContent.construction.residentialText}</p>
-    <figure class="residential-inline-banner">
-      <img src={photos.residential.src} alt={photos.residential.alt} loading="lazy" decoding="async" />
-    </figure>
+  <section class="construction-hero construction-section-hero construction-residential-hero" aria-labelledby="residential-construction-title">
+    <img class="construction-hero-image" src={photos.residential.src} alt={photos.residential.alt} loading="lazy" decoding="async" />
+    <div class="construction-hero-shade" aria-hidden="true"></div>
+    <div class="construction-hero-copy">
+      <p class="eyebrow inverse">RESIDENTIAL CONSTRUCTION</p>
+      <h2 id="residential-construction-title">{siteContent.construction.residentialHeading}</h2>
+      <p class="lead">{siteContent.construction.residentialText}</p>
+      <a class="construction-section-hero-link" href="/contact/">Discuss a residential project <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="content-block residential-services" aria-label="Residential construction services">
     <div class="service-list residential-service-list">
       <article class="service-item">
         <span>01</span>
@@ -46,14 +51,14 @@ const categories = [...new Set(projects.map((project) => project.category).filte
     </div>
   </section>
 
-  <section class="construction-hero construction-commercial-hero" aria-labelledby="commercial-construction-title">
+  <section class="construction-hero construction-section-hero construction-commercial-hero" aria-labelledby="commercial-construction-title">
     <img class="construction-hero-image" src={photos.commercial.src} alt={photos.commercial.alt} loading="lazy" decoding="async" />
     <div class="construction-hero-shade" aria-hidden="true"></div>
     <div class="construction-hero-copy">
       <p class="eyebrow inverse">COMMERCIAL CONSTRUCTION</p>
       <h2 id="commercial-construction-title">{siteContent.construction.commercialHeading}</h2>
       <p class="lead">{siteContent.construction.commercialText}</p>
-      <a class="commercial-hero-link" href="/contact/">Talk through a commercial brief <span aria-hidden="true">↗</span></a>
+      <a class="construction-section-hero-link" href="/contact/">Talk through a commercial brief <span aria-hidden="true">↗</span></a>
     </div>
   </section>
 
@@ -117,17 +122,18 @@ const categories = [...new Set(projects.map((project) => project.category).filte
 
 <style>
 .construction-hero{min-height:max(580px,min(720px,calc(100svh - 82px)));position:relative;display:flex;align-items:center;overflow:hidden;isolation:isolate;padding:clamp(80px,12vw,150px) 10%;color:#fff;background:#77766f}.construction-hero-image,.construction-hero-shade{position:absolute;inset:0;width:100%;height:100%}.construction-hero-image{z-index:-2;object-fit:cover;object-position:center 48%}.construction-hero-shade{z-index:-1;background:linear-gradient(90deg,rgba(15,16,14,.62),rgba(15,16,14,.12) 85%),linear-gradient(0deg,rgba(15,16,14,.22),transparent 55%)}.construction-hero-copy{max-width:900px}.construction-hero h1{margin:22px 0 25px;color:#fff;font-family:var(--font-display);font-size:clamp(68px,10vw,136px);font-weight:300;line-height:.92;letter-spacing:-.085em}.construction-hero .lead{max-width:700px;margin:0;color:rgba(255,255,255,.92);font-size:16px;line-height:1.85}.construction-copy{max-width:850px;margin:0 0 32px}.content-block .service-list{margin-top:32px}
-/* Secondary construction banner: matches the primary photo-led hero without its full height. */
-.construction-hero.construction-commercial-hero {
+/* Matching photo-led residential and commercial section headers. */
+.construction-hero.construction-section-hero {
   min-height: clamp(480px, 48vw, 580px);
   padding: clamp(78px, 9vw, 115px) 10%;
 }
-.construction-commercial-hero .construction-hero-image { object-position: center 45%; }
-.construction-commercial-hero .construction-hero-shade {
+.construction-section-hero .construction-hero-image { object-position: center 45%; }
+.construction-residential-hero .construction-hero-image { object-position: center 51%; }
+.construction-section-hero .construction-hero-shade {
   background: linear-gradient(90deg, rgba(15,16,14,.79) 0%, rgba(15,16,14,.55) 46%, rgba(15,16,14,.18) 100%), linear-gradient(0deg,rgba(15,16,14,.30),transparent 62%);
 }
-.construction-commercial-hero .construction-hero-copy { max-width: 780px; }
-.construction-commercial-hero h2 {
+.construction-section-hero .construction-hero-copy { max-width: 780px; }
+.construction-section-hero h2 {
   max-width: 780px;
   margin: 22px 0 22px;
   color: #fff;
@@ -137,8 +143,10 @@ const categories = [...new Set(projects.map((project) => project.category).filte
   line-height: .96;
   letter-spacing: -.075em;
 }
-.construction-commercial-hero .lead { max-width: 670px; font-size: 14px; line-height: 1.8; }
-.commercial-hero-link {
+.construction-section-hero .lead { max-width: 670px; font-size: 14px; line-height: 1.8; }
+.construction-residential-hero .construction-hero-copy { max-width: 880px; }
+.construction-residential-hero .lead { max-width: 800px; }
+.construction-section-hero-link {
   display: inline-flex;
   align-items: center;
   gap: 24px;
@@ -150,14 +158,14 @@ const categories = [...new Set(projects.map((project) => project.category).filte
   text-decoration: none;
   transition: border-color .2s ease;
 }
-.commercial-hero-link:hover { border-bottom-color: #fff; }
-.commercial-hero-link:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
-.commercial-hero-link span { color: var(--brand-accent-soft); }
+.construction-section-hero-link:hover { border-bottom-color: #fff; }
+.construction-section-hero-link:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.construction-section-hero-link span { color: var(--brand-accent-soft); }
 @media (max-width: 680px) {
-  .construction-hero.construction-commercial-hero { min-height: 0; padding: 76px 7% 84px; }
-  .construction-commercial-hero .construction-hero-image { object-position: 55% center; }
-  .construction-commercial-hero h2 { font-size: clamp(43px,10vw,63px); }
-  .construction-commercial-hero .lead { font-size: 13px; }
+  .construction-hero.construction-section-hero { min-height: 0; padding: 76px 7% 84px; }
+  .construction-section-hero .construction-hero-image { object-position: 55% center; }
+  .construction-section-hero h2 { font-size: clamp(43px,10vw,63px); }
+  .construction-section-hero .lead { font-size: 13px; }
 }
 
 /* Keep the two process photographs as a compact paired feature, not large page breaks. */
@@ -199,26 +207,6 @@ const categories = [...new Set(projects.map((project) => project.category).filte
   .residential-service-list .service-item p { font-size: 12px; }
   .residential-service-list .service-item b { display: none; }
   .residential-service-list .residential-service-photo { grid-column: 3; grid-row: 1 / span 2; }
-}
-
-/* Keep the residential banner inside its section, directly below the intro. */
-.residential-inline-banner {
-  width: 100%;
-  max-width: 960px;
-  height: clamp(210px, 28vw, 330px);
-  margin: 16px 0 40px;
-  overflow: hidden;
-  background: var(--brand-stone);
-}
-.residential-inline-banner img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 50%;
-}
-@media (max-width: 680px) {
-  .residential-inline-banner { height: clamp(180px, 55vw, 260px); margin: 8px 0 28px; }
 }
 
 .construction-showcase{padding:100px 10% 110px;background:var(--brand-paper)}.construction-showcase-heading{max-width:700px;margin-bottom:42px}.construction-showcase-heading h2{margin:16px 0 22px;font-family:var(--font-display);font-size:clamp(48px,7vw,88px);font-weight:300;line-height:.98;letter-spacing:-.075em}.construction-showcase-heading>p:last-child{max-width:650px;margin:0;color:var(--brand-muted);font-size:16px;line-height:1.9}.gallery-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}.gallery-filter{min-height:42px;padding:8px 15px;border:1px solid var(--brand-line);color:var(--brand-muted);background:transparent;cursor:pointer;font-size:12px;transition:color .2s,border-color .2s,background .2s}.gallery-filter:hover,.gallery-filter.is-active{border-color:var(--brand-accent);color:var(--brand-ink);background:var(--brand-stone)}.gallery-filter:focus-visible,.gallery-open:focus-visible,.lightbox-nav:focus-visible,.lightbox-close:focus-visible{outline:2px solid var(--brand-accent);outline-offset:3px}

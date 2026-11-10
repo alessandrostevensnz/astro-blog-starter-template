@@ -42,7 +42,7 @@ const photos: Record<string, Array<[string, string, string]>> = {
     ['serviceCarpentry', '02 - General carpentry row photo', 'Small photo on the right of General carpentry, below Residential construction.'],
     ['serviceDecks', '03 - Decks and fencing row photo', 'Small photo on the right of Decks and fencing.'],
     ['serviceRenovations', '04 - Renovations and alterations row photo', 'Small photo on the right of Renovations and alterations.'],
-    ['residential', '05 - Residential construction inline banner', 'Wide photo immediately under the Residential construction introduction, above the three service rows.'],
+    ['residential', '05 - Residential construction photo header', 'Full-width Residential Construction banner with the heading and description over the image. The service photos below have their own controls.'],
     ['commercial', '06 - Commercial construction photo header', 'Full-width commercial header photo behind the heading and text. The title and description are editable in the Construction text fields below.'],
     ['processLeft', '07 - Process photograph, left', 'Left image in the Preparation makes a difference pair.'],
     ['processRight', '08 - Process photograph, right', 'Right image in the Preparation makes a difference pair.'],
@@ -65,7 +65,7 @@ const text: Record<string, Row[]> = {
   ],
   construction: [
     ['description','Page description','text'],['introHeading','Introduction heading'],['introText','Introduction text','text'],
-    ['residentialHeading','Residential heading'],['residentialText','Residential description','text'],['commercialHeading','Commercial heading'],['commercialText','Commercial description','text'],
+    ['residentialHeading','Residential photo header heading'],['residentialText','Residential photo header description','text'],['commercialHeading','Commercial heading'],['commercialText','Commercial description','text'],
     ['processHeading','Process heading'],['processText','Process description','text'],
   ],
   maintenance: [
