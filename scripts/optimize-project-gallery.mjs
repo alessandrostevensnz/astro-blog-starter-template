@@ -26,15 +26,18 @@ export async function optimizeProjectGallery() {
   await writeFile(manifestFile, '{}\n');
   const data = JSON.parse(await readFile(projectsFile, 'utf8'));
   const construction = JSON.parse(await readFile(constructionFile, 'utf8'));
-  const serviceKeys = ['serviceCarpentry', 'serviceDecks', 'serviceRenovations'];
-  const residentialServicePhotos = serviceKeys.map((key) => construction.photos?.[key]?.src);
+  const serviceKeys = [
+    'serviceCarpentry', 'serviceDecks', 'serviceRenovations',
+    'serviceCommercialCarpentry', 'serviceCommercialFitouts', 'serviceCommercialRefurbishment',
+  ];
+  const constructionServicePhotos = serviceKeys.map((key) => construction.photos?.[key]?.src);
   const photoUrls = [...new Set([
     ...(data.projects ?? []).map((project) => project.image),
-    ...residentialServicePhotos,
+    ...constructionServicePhotos,
   ].filter(Boolean))];
   const manifest = {};
 
-  // Keep only thumbnails referenced by Projects or the three residential-service photos.
+  // Keep only thumbnails referenced by Projects or either Construction service list.
   await rm(outputDir, { force: true, recursive: true });
   await mkdir(outputDir, { recursive: true });
 

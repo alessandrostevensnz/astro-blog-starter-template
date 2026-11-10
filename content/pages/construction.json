@@ -31,6 +31,18 @@
     "serviceRenovations": {
       "src": "/images/img_2966-2.jpg",
       "alt": "Villa renovation project"
+    },
+    "serviceCommercialCarpentry": {
+      "src": "/images/img_0810.jpeg",
+      "alt": "Commercial carpentry and feature wall installation in Auckland"
+    },
+    "serviceCommercialFitouts": {
+      "src": "/images/commercial%20framing.png",
+      "alt": "Commercial construction framing prior to fit-out in Auckland"
+    },
+    "serviceCommercialRefurbishment": {
+      "src": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
+      "alt": "Commercial recladding and joinery improvements in Remuera"
     }
   },
   "residentialText": "From general carpentry and decks to fencing, minor alterations and interior or exterior improvements, the right approach depends on the property and its intended use. We consider how new work meets existing surfaces, how materials will weather and how details such as junctions, fixings and finishes affect day-to-day function. For renovations, existing structures can reveal unexpected conditions once work begins. If that happens, we explain what has been found and discuss the practical options before proceeding. Work requiring a licensed building practitioner, building consent or specialist trade is undertaken or coordinated in line with applicable requirements.",

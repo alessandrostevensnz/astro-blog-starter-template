@@ -26,27 +26,27 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
   </section>
 
   <section class="content-block residential-services" aria-label="Residential construction services">
-    <div class="service-list residential-service-list">
+    <div class="service-list construction-service-list">
       <article class="service-item">
         <span>01</span>
         <h3>General carpentry</h3>
         <b aria-hidden="true">↗</b>
         <p>Careful carpentry for practical changes, repairs and improvements, with attention to how new work connects to the existing building.</p>
-        <img class="residential-service-photo" src={galleryThumbs[photos.serviceCarpentry.src]?.small ?? photos.serviceCarpentry.src} alt={photos.serviceCarpentry.alt} loading="lazy" decoding="async" />
+        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCarpentry.src]?.small ?? photos.serviceCarpentry.src} alt={photos.serviceCarpentry.alt} loading="lazy" decoding="async" />
       </article>
       <article class="service-item">
         <span>02</span>
         <h3>Decks and fencing</h3>
         <b aria-hidden="true">↗</b>
         <p>Decking and fence work planned around the site, intended use, material exposure and the details that affect durability and everyday function.</p>
-        <img class="residential-service-photo" src={galleryThumbs[photos.serviceDecks.src]?.small ?? photos.serviceDecks.src} alt={photos.serviceDecks.alt} loading="lazy" decoding="async" />
+        <img class="construction-service-photo" src={galleryThumbs[photos.serviceDecks.src]?.small ?? photos.serviceDecks.src} alt={photos.serviceDecks.alt} loading="lazy" decoding="async" />
       </article>
       <article class="service-item">
         <span>03</span>
         <h3>Renovations and alterations</h3>
         <b aria-hidden="true">↗</b>
         <p>Thoughtful improvements to existing spaces, balancing appearance, function and the realities of working with an existing structure.</p>
-        <img class="residential-service-photo" src={galleryThumbs[photos.serviceRenovations.src]?.small ?? photos.serviceRenovations.src} alt={photos.serviceRenovations.alt} loading="lazy" decoding="async" />
+        <img class="construction-service-photo" src={galleryThumbs[photos.serviceRenovations.src]?.small ?? photos.serviceRenovations.src} alt={photos.serviceRenovations.alt} loading="lazy" decoding="async" />
       </article>
     </div>
   </section>
@@ -59,6 +59,32 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
       <h2 id="commercial-construction-title">{siteContent.construction.commercialHeading}</h2>
       <p class="lead">{siteContent.construction.commercialText}</p>
       <a class="construction-section-hero-link" href="/contact/">Talk through a commercial brief <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="content-block commercial-services" aria-label="Commercial construction services">
+    <div class="service-list construction-service-list">
+      <article class="service-item">
+        <span>01</span>
+        <h3>Commercial carpentry and repairs</h3>
+        <b aria-hidden="true">↗</b>
+        <p>Carpentry, detailed improvements and practical repairs for commercial properties, with attention to workmanship and the people using the space.</p>
+        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCommercialCarpentry.src]?.small ?? photos.serviceCommercialCarpentry.src} alt={photos.serviceCommercialCarpentry.alt} loading="lazy" decoding="async" />
+      </article>
+      <article class="service-item">
+        <span>02</span>
+        <h3>Fit-outs and interior improvements</h3>
+        <b aria-hidden="true">↗</b>
+        <p>Interior framing, fit-outs and alterations planned around how offices, retail and hospitality spaces need to function.</p>
+        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCommercialFitouts.src]?.small ?? photos.serviceCommercialFitouts.src} alt={photos.serviceCommercialFitouts.alt} loading="lazy" decoding="async" />
+      </article>
+      <article class="service-item">
+        <span>03</span>
+        <h3>Alterations and refurbishments</h3>
+        <b aria-hidden="true">↗</b>
+        <p>Upgrades, recladding and refurbishment work coordinated around access, sequencing and keeping disruption to a minimum.</p>
+        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCommercialRefurbishment.src]?.small ?? photos.serviceCommercialRefurbishment.src} alt={photos.serviceCommercialRefurbishment.alt} loading="lazy" decoding="async" />
+      </article>
     </div>
   </section>
 
@@ -178,19 +204,19 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
   .construction-process-photos { gap: 10px; margin-top: 24px; }
   .construction-process-photos .editorial-image { aspect-ratio: 1.25 / 1; }
 }
-/* Three compact, right-aligned project thumbnails; the rest of the site's service rows stay unchanged. */
-.residential-service-list .service-item {
+/* Matching compact right-hand photographs for residential and commercial service rows. */
+.construction-service-list .service-item {
   grid-template-columns: clamp(50px,5vw,70px) minmax(0,1fr) 22px clamp(140px,13vw,205px);
   column-gap: clamp(12px,1.6vw,23px);
   row-gap: 8px;
   align-items: start;
   padding: 20px 0;
 }
-.residential-service-list .service-item > span:first-child { grid-column: 1; grid-row: 1; padding-top: 6px; }
-.residential-service-list .service-item h3 { grid-column: 2; grid-row: 1; min-width: 0; }
-.residential-service-list .service-item p { grid-column: 2; grid-row: 2; margin: 0; max-width: 760px; }
-.residential-service-list .service-item b { grid-column: 3; grid-row: 1; padding-top: 6px; }
-.residential-service-list .residential-service-photo {
+.construction-service-list .service-item > span:first-child { grid-column: 1; grid-row: 1; padding-top: 6px; }
+.construction-service-list .service-item h3 { grid-column: 2; grid-row: 1; min-width: 0; }
+.construction-service-list .service-item p { grid-column: 2; grid-row: 2; margin: 0; max-width: 760px; }
+.construction-service-list .service-item b { grid-column: 3; grid-row: 1; padding-top: 6px; }
+.construction-service-list .construction-service-photo {
   grid-column: 4;
   grid-row: 1 / span 2;
   display: block;
@@ -201,16 +227,20 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
   background: #d4d0c8;
 }
 @media (max-width: 680px) {
-  .residential-service-list .service-item {
+  .construction-service-list .service-item {
     grid-template-columns: 26px minmax(0,1fr) clamp(78px,23vw,110px);
     gap: 7px 10px;
     padding: 17px 0;
   }
-  .residential-service-list .service-item h3 { font-size: clamp(18px,4.5vw,23px); }
-  .residential-service-list .service-item p { font-size: 12px; }
-  .residential-service-list .service-item b { display: none; }
-  .residential-service-list .residential-service-photo { grid-column: 3; grid-row: 1 / span 2; }
+  .construction-service-list .service-item h3 { font-size: clamp(18px,4.5vw,23px); }
+  .construction-service-list .service-item p { font-size: 12px; }
+  .construction-service-list .service-item b { display: none; }
+  .construction-service-list .construction-service-photo { grid-column: 3; grid-row: 1 / span 2; }
 }
+
+/* Keep the new commercial rows close to their photographic banner. */
+.commercial-services { padding-top: clamp(42px,5vw,74px); padding-bottom: clamp(42px,5vw,66px); }
+.commercial-services .construction-service-list { margin-top: 0; }
 
 .construction-showcase { padding: 100px 10% 110px; background: var(--brand-paper); overflow: hidden; }
 .construction-showcase-top { display: flex; align-items: end; justify-content: space-between; gap: 35px; margin-bottom: 36px; }
