@@ -1,21 +1,21 @@
 {
   "projects": [
     {
-      "title": "Portal Install · Auckland ",
+      "title": "Residential New Build · Auckland ",
       "category": "Construction · Residential",
       "image": "/images/Residential%20framing.png",
       "alt": "Residential building framing during construction",
       "description": ""
     },
     {
-      "title": "Framing · Auckland",
+      "title": "Commercial New Build · Auckland",
       "category": "Construction · Commercial",
       "image": "/images/commercial%20framing.png",
       "alt": "Commercial construction framing",
       "description": ""
     },
     {
-      "title": "Civil · Auckland",
+      "title": "Civil Drainage · Auckland",
       "category": "Construction · Commercial",
       "image": "/images/commercial.png",
       "alt": "Commercial construction project",
@@ -32,11 +32,11 @@
       "image": "/images/screenshot-2026-07-11-at-7_edited.jpg",
       "alt": "Custom Country Kitchen ",
       "category": "Construction · Residential",
-      "title": "Custom Kitchen · Auckland"
+      "title": "Custom Kitchen · Taupaki"
     },
     {
       "image": "/images/img_0093.jpeg",
-      "title": "Renovated Bathroom · Auckland",
+      "title": "Renovated Bathroom · Rodney",
       "category": "Construction · Residential",
       "alt": "Custom Country Kitchen "
     },
@@ -128,7 +128,7 @@
       "image": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
       "alt": "Construction · Commercial",
       "category": "Construction · Commercial",
-      "title": "Cavity · Auckland"
+      "title": "Re Clad and Joinery  · Remuera"
     },
     {
       "alt": "Construction · Residential ",
