@@ -19,7 +19,7 @@ const footerImages = footerImagesForPath(currentPath);
     <nav class="desktop-nav" aria-label="Main navigation">
       {navigation.map((item) => <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>{item.label}</a>)}
     </nav>
-    <a class="header-cta" href="/contact/">Start a conversation <span aria-hidden="true">↗</span></a>
+    <a class="header-cta" href="/contact/">Start a conversation </a>
     <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
     <nav class="mobile-nav" id="mobile-menu" aria-label="Mobile navigation" hidden>
       {navigation.map((item) => <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>{item.label}</a>)}
