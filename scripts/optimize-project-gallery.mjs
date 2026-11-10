@@ -1,5 +1,5 @@
 /**
- * Generate lightweight, responsive WebP thumbnails for the ANDRO Projects page.
+ * Generate lightweight, responsive WebP thumbnails for ANDRO photo galleries.
  *
  * The source photos in public/images/ are never modified. The generated files and
  * manifest are build outputs only, so Decap CMS continues editing original URLs.
@@ -16,6 +16,7 @@ const originalsDir = path.join(projectRoot, 'public', 'images');
 const outputDir = path.join(originalsDir, 'project-thumbnails');
 const manifestFile = path.join(projectRoot, 'src', 'data', 'project-gallery-optimized.generated.json');
 const projectsFile = path.join(projectRoot, 'content', 'pages', 'projects.json');
+const constructionFile = path.join(projectRoot, 'content', 'pages', 'construction.json');
 
 const widths = [480, 960];
 const quality = 78;
@@ -24,10 +25,16 @@ export async function optimizeProjectGallery() {
   // A missing/generated manifest must never break the build or hide a source image.
   await writeFile(manifestFile, '{}\n');
   const data = JSON.parse(await readFile(projectsFile, 'utf8'));
-  const photoUrls = [...new Set((data.projects ?? []).map((project) => project.image).filter(Boolean))];
+  const construction = JSON.parse(await readFile(constructionFile, 'utf8'));
+  const serviceKeys = ['serviceCarpentry', 'serviceDecks', 'serviceRenovations'];
+  const residentialServicePhotos = serviceKeys.map((key) => construction.photos?.[key]?.src);
+  const photoUrls = [...new Set([
+    ...(data.projects ?? []).map((project) => project.image),
+    ...residentialServicePhotos,
+  ].filter(Boolean))];
   const manifest = {};
 
-  // Keep only thumbnails referenced in the current gallery on each build.
+  // Keep only thumbnails referenced by Projects or the three residential-service photos.
   await rm(outputDir, { force: true, recursive: true });
   await mkdir(outputDir, { recursive: true });
 
