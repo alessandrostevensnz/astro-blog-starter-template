@@ -84,13 +84,6 @@ const styled: Record<string, string[]> = {
   home: ['title','subtitle','introHeading','introText','servicesHeading','featureHeading','closingHeading','philosophyHeading','philosophyText'],
   construction: ['introHeading','introText'], maintenance: ['introHeading','introText'], about: ['whoHeading','whoText'],
 };
-const gallery = field('gallery', 'Construction project showcase (additional photos)', 'list', {
-  label_singular: 'Construction project photograph', collapsed: false, required: false, summary: '{{fields.title}}',
-  hint: 'All showcase photographs for Construction are here. Add, remove or reorder cards; an empty list keeps the empty showcase.',
-  fields: [field('title','Project title'),field('image','Project photo','image',{required:false}),field('alt','Photo description (alt text)','string',{required:false}),
-    field('category','Category'),field('location','Location','string',{required:false}),field('description','Description','text',{required:false}),
-    field('beforeAfter','Before / after label','select',{required:false,options:['Before','After','In progress']})],
-});
 const services = field('services', 'Service photographs and descriptions', 'list', {
   label_singular: 'Maintenance service', collapsed: false, summary: '{{fields.number}} - {{fields.title}}',
   hint: 'The service cards between the banner and closing photo. Empty photo positions are included. Drag cards to reorder.',
@@ -101,7 +94,7 @@ const projectCards = field('projects', 'All Projects-page photographs', 'list', 
   label_singular: 'Project photograph',
   collapsed: false,
   summary: '{{fields.title}}',
-  hint: 'Cards on /projects/. Drag projects up or down to choose their order on the website, then publish. Photos reused on Construction have separate controls on that page.',
+  hint: 'Photos appear on /projects/ and automatically scroll through the showcase on /construction/. Drag and drop to reorder both displays, then Publish. The fixed Construction banners and service photos are edited separately on the Construction page.',
   fields: [
     field('title', 'Project title'),
     field('image', 'Project photograph', 'image'),
@@ -120,7 +113,6 @@ const pageFiles = entries.map(([name,label,path]) => {
     collapsed:false, hint:'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
     fields:photos[name].map(([key,title,hint])=>photo(key,title,hint)),
   }));
-  if (name === 'construction') fields.push(gallery);
   if (name === 'maintenance') fields.push(services);
   if (name === 'projects') fields.push(projectCards);
   for (const [key,title,widget] of text[name]) {
