@@ -1,7 +1,7 @@
 {
   "photos": {
     "hero": {
-      "src": "/images/bright-minimalist-u-shaped-kitchen.png",
+      "src": "/images/Bright Minimalist U-Shaped Kitchen.png",
       "alt": "Residential building framing in progress on an ANDRO construction project"
     }
   },
@@ -231,5 +231,5 @@
       "alt": "Site Safe Member — Proud to be safe"
     }
   },
-  "heroVideo": ""
+  "heroVideo": "/images/andro-projects-background-8s.mp4"
 }
