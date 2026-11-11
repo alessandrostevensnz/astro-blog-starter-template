@@ -245,7 +245,7 @@
     $("#prev-step").disabled=step===0;
     $("#next-step").hidden=step===3;
     if(step===3)requestAnimationFrame(initSignaturePads);
-    window.scrollTo({top:0,behavior:"instant"});
+    window.scrollTo(0,0);
   }
   function edit(r){
     current=normalize(r);
@@ -400,7 +400,7 @@
     await put(r);edit(r);
     alert("JSA copied. Previous signatures, risk ratings and safety check confirmations were cleared for new site verification.");
   }
-  function printJsa(){
+  async function printJsa(){
     if(!current)return;
     if(!current.hazards.length||!current.hazards.some(function(h){return h.task&&h.hazard&&h.mitigation;})){
       if(!confirm("No fully described hazard and mitigation has been entered. Export an incomplete draft PDF anyway?"))return;
@@ -411,7 +411,7 @@
     $("#pdf").innerHTML=PDF.html(current);
     printingTitle=document.title;
     document.title="ANDRO JSA - "+filename(current.jobName||current.site)+" - "+(current.date||today());
-    saveNow();
+    await saveNow();
     window.print();
   }
   function emailDraft(){
