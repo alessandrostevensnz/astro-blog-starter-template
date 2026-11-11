@@ -58,8 +58,8 @@
     result.push('<h2 class="page-break">4. Steps taken to carry out task - hazard register</h2>');
     const hazardRows=(r.hazards||[]).map(function(h,i) {
       const initial=score(r,h,false),residual=score(r,h,true);
-      return '<tr>'+cell(i+1)+cell(h.task)+cell(h.hazard)+cell(initial===null?"Not assessed":initial+" / "+band(initial).replace("risk-",""))+
-        cell(h.mitigation)+cell(h.responsible)+cell(residual===null?"Not assessed":residual+" / "+band(residual).replace("risk-",""))+'</tr>';
+      return '<tr>'+cell(i+1)+cell(h.task)+cell(h.hazard)+cell(initial===null?"Not assessed":String(initial),band(initial))+
+        cell(h.mitigation)+cell(h.responsible)+cell(residual===null?"Not assessed":String(residual),band(residual))+'</tr>';
     });
     result.push('<p class="matrix-note">Initial and residual risk values are generated from the selected likelihood / impact against the matrix below, unless a manual override was entered. A recorded mitigation is not automatically an adequate control.</p>');
     result.push('<table class="risk-report-table"><colgroup><col/><col/><col/><col/><col/><col/><col/></colgroup><thead><tr><th>Step</th><th>Task</th><th>Hazard</th><th>Risk level</th><th>Mitigation / control measures</th><th>Responsible</th><th>Residual risk</th></tr></thead><tbody>'+
@@ -102,7 +102,7 @@
     result.push(sec("9. Approvals, permit and follow-up"));
     result.push(two([
       field("Site supervisor",r.supervisor),field("Work allocated by",r.allocatedBy),field("WorkSafe notification required",r.workSafe),
-      field("Work permit required",r.permitRequired),field("Weather",r.weather+(r.weather==="Other"&&r.weatherOther?" - "+r.weatherOther:"")),
+      field("Work permit required",r.permitRequired),field("Weather",(r.weather||"")+(r.weather==="Other"&&r.weatherOther?" - "+r.weatherOther:"")),
       field("Email copy recipient",r.copyEmail),field("Relaunch tomorrow requested",r.relaunchTomorrow),
       field("Relaunch recipient email",r.relaunchEmail),field("Additional email recipients",r.additionalRecipients),
       field("Additional notes and limitations",r.finalNotes)
