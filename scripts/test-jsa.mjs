@@ -39,7 +39,7 @@ const report={
 };
 const html=p.html(report);
 for(const expected of ["Job Safety Analysis","ANDRO CONSTRUCTION LIMITED","Example task","risk-report-table",
-  "23 / critical","12 / moderate","pdf-risk-matrix","Site-specific controls recorded",
+  'class="risk-critical">23</td>','class="risk-moderate">12</td>',"pdf-risk-matrix","Site-specific controls recorded",
   "Equipment checks","Team members","Not signed","2026"]) assert(html.includes(expected),"Missing content "+expected);
 assert(!html.includes("GOLEMAN GROUP"),"Must not use source company's branding");
 console.log("JSA JavaScript syntax + source risk-matrix + PDF layout smoke tests passed.");
