@@ -115,16 +115,21 @@ const entries: Array<[string,string,string]> = [
 ];
 const pageFiles = entries.map(([name,label,path]) => {
   const fields: Field[] = [];
-  if (photos[name]) fields.push(field('photos','Page photographs','object',{
-    collapsed:false, hint:'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
-    fields:photos[name].map(([key,title,hint])=>photo(key,title,hint)),
-  }));
+  // Show the Construction landing video FIRST. It was previously buried below eleven image
+  // controls, which made it difficult to find on mobile. This is the same Decap file
+  // widget / heroVideo data field used for the Projects landing video.
   if (name === 'construction') {
-    fields.push(field('heroVideo', '02 - Construction header background video (MP4)', 'file', {
+    fields.push(field('heroVideo', 'LANDING BANNER VIDEO (MP4) - Built with purpose.', 'file', {
       required: false,
-      hint: 'Full HD, muted, seamless 8-second loop behind Built with purpose. This video has been rendered from your Construction photo. Upload a replacement MP4 here to change it; the header photo remains the fallback.',
+      hint: 'This is the FIRST banner at the top of /construction/, behind Built with purpose. Upload an MP4 here and click Publish, exactly as you do on the Projects page. The video plays automatically, silently and on repeat. Your main Construction banner photograph below remains the fallback. For fast mobile loading, use an optimised MP4 (ideally under 10 MB).',
     }));
   }
+  if (photos[name]) fields.push(field('photos','Page photographs','object',{
+    collapsed:false, hint:name === 'construction'
+      ? 'The first Main construction banner photo is the fallback behind the landing VIDEO field above. All other photos belong to their own Construction sections and service rows.'
+      : 'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
+    fields:photos[name].map(([key,title,hint])=>photo(key,title,hint)),
+  }));
   if (name === 'home' || name === 'about') {
     fields.push(field('heroVideo', name === 'home' ? '02 - Home header background video (MP4)' : '02 - About header background video (MP4)', 'file', {
       required: false,
