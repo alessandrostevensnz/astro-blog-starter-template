@@ -1,0 +1,38 @@
+name: JSA PDF and form validation
+
+on:
+  pull_request:
+    paths:
+      - "src/pages/report/jsa.astro"
+      - "public/report/jsa-app.js"
+      - "public/report/jsa-pdf.js"
+      - "src/lib/report-app.ts"
+      - "scripts/test-jsa.mjs"
+      - ".github/workflows/jsa-validation.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/pages/report/jsa.astro"
+      - "public/report/jsa-app.js"
+      - "public/report/jsa-pdf.js"
+      - "scripts/test-jsa.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate JSA JavaScript and PDF output
+        run: node scripts/test-jsa.mjs
+      - name: Install website dependencies
+        run: npm ci
+      - name: Verify Astro and Cloudflare application build
+        run: npm run build
