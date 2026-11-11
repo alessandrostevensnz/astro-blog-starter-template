@@ -42,4 +42,15 @@ for(const expected of ["Job Safety Analysis","ANDRO CONSTRUCTION LIMITED","Examp
   'class="risk-critical">23</td>','class="risk-moderate">12</td>',"pdf-risk-matrix","Site-specific controls recorded",
   "Equipment checks","Team members","Not signed","2026"]) assert(html.includes(expected),"Missing content "+expected);
 assert(!html.includes("GOLEMAN GROUP"),"Must not use source company's branding");
+const page=readFileSync("src/pages/report/jsa.astro","utf8");
+const legacy=readFileSync("src/lib/report-app.ts","utf8");
+const middleware=readFileSync("src/middleware.ts","utf8");
+for(const id of ["new-jsa","editor","jsaForm","hazard-rows","matrix-inputs","signature-rows","member-rows","harness-rows","save-pdf","print-jsa-bottom"]){
+  if(id!=="jsaForm")assert(page.includes('id="'+id+'"'),"Missing JSA UI control "+id);
+}
+assert(page.includes('src="/report/jsa-pdf.js"')&&page.includes('src="/report/jsa-app.js"'));
+assert(page.indexOf('src="/report/jsa-pdf.js"')<page.indexOf('src="/report/jsa-app.js"'));
+assert(legacy.includes('href=\\\"/report/jsa\\\"'),"JSA tile missing from existing report dashboard");
+assert.equal((legacy.match(/data-newtype=/g)||[]).length,3,"Original three report types must stay intact");
+assert(middleware.includes("path.startsWith('/report/')"),"New JSA route must stay password-protected");
 console.log("JSA JavaScript syntax + source risk-matrix + PDF layout smoke tests passed.");
