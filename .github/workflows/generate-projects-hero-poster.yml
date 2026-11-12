@@ -1,0 +1,56 @@
+name: Generate ANDRO Projects video first-frame poster
+
+on:
+  push:
+    branches:
+      - main
+      - fix/projects-banner-matching-first-frame-20261112
+    paths:
+      - "public/images/andro-projects-background-8s-1080p.mp4"
+      - ".github/workflows/generate-projects-hero-poster.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  poster:
+    name: Extract the Projects landing video's actual first frame
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out ANDRO
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install FFmpeg if necessary
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Export exact opening frame as a small JPEG
+        shell: bash
+        run: |
+          set -euo pipefail
+          source="public/images/andro-projects-background-8s-1080p.mp4"
+          poster="public/images/andro-projects-background-8s-1080p-poster.jpg"
+          test -s "$source"
+          ffmpeg -hide_banner -loglevel error -y \
+            -i "$source" -frames:v 1 -q:v 3 "$poster"
+          test -s "$poster"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$poster")" = "1920"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$poster")" = "1080"
+          ls -lh "$source" "$poster"
+
+      - name: Commit poster image to the current branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f "public/images/andro-projects-background-8s-1080p-poster.jpg"
+          if git diff --cached --quiet; then
+            echo "Projects poster is already up to date."
+            exit 0
+          fi
+          git commit -m "Generate first-frame JPG for Projects hero video"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
