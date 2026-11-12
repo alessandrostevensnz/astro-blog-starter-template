@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /report/
+
+Sitemap: https://andro.co.nz/sitemap-index.xml
