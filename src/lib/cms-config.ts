@@ -139,7 +139,11 @@ const pageFiles = entries.map(([name,label,path]) => {
   if (name === 'maintenance') {
     fields.push(field('heroVideo', '02 - Maintenance landing background video (MP4)', 'file', {
       required: false,
-      hint: 'The Asset Maintenance header uses a 1080p, 8-second MP4 with realistic sky movement from your existing photograph. Upload a replacement video here if needed. The original photo remains the fallback.',
+      hint: 'Upload a muted, looping MP4 for the Look after what matters landing banner. For a seamless load, the Preview frame image field below should match the very first frame of your video.',
+    }));
+    fields.push(field('heroVideoPoster', '03 - Maintenance video first-frame preview (image)', 'image', {
+      required: false,
+      hint: 'Image shown while the video loads and used as its fallback. Use a screenshot of the FIRST frame of the same video so there is no flash of a different photo. For the current video, a matching frame was generated automatically.',
     }));
     fields.push(services);
   }
