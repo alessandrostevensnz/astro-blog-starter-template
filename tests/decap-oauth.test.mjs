@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { popupResponse, validState, newState, stateCookie, cookieValue, SITE_ORIGIN } from '../src/lib/decap-oauth.ts';
+import { popupResponse, validState, newState, stateCookie, cookieValue, SITE_ORIGIN, oauthState, stateRelay, stateCookieName, expiredStateCookie, validRelay } from '../src/lib/decap-oauth.ts';
 
 // Dummy token only. No GitHub requests, personal data, or saved browser storage.
 const TOKEN = 'TEST_TOKEN_NOT_A_CREDENTIAL';
@@ -168,4 +168,87 @@ test('popup launcher isolates attempts and passes unrelated windows through unch
     [SITE_ORIGIN+'/api/auth?provider=github','anything-else'],
   ]) { window.open(url,target,'height=600'); assert.deepEqual(calls.at(-1).args,[url,target,'height=600']); }
   const wrapper=window.open; vm.runInContext(source,ctx); assert.equal(window.open,wrapper,'No duplicate installation');
+});
+
+test('relay uses a nonce-bound per-login state cookie and rejects invalid IDs',()=>{
+  const r1='a'.repeat(32), r2='b'.repeat(32);
+  assert(validRelay(r1)); assert(!validRelay('../evil')); assert(!validRelay(''));
+  const s1=oauthState(r1), s2=oauthState(r2);
+  assert.equal(stateRelay(s1),r1);
+  assert.equal(stateRelay(s2),r2);
+  assert(validState(s1,s1)); assert(!validState(s1,s2));
+  assert.equal(stateRelay(s1.slice(0,-1)+'!'),null);
+  assert.equal(stateRelay(oauthState()),null);
+  assert.notEqual(stateCookieName(r1),stateCookieName(r2));
+  assert.match(stateCookie(s1,r1),/HttpOnly; SameSite=Lax/);
+  assert(expiredStateCookie(r1).includes(stateCookieName(r1)+'=;'));
+});
+
+test('opener-free callback uses a same-origin nonce channel, never broadcasts on a wrong channel',async()=>{
+  const relay='c'.repeat(32), SENTINEL='TOKEN_TEST_ONLY';
+  const response=popupResponse(SENTINEL,'unknown_failure',relay);
+  const html=await response.text();
+  const script=html.match(/<script nonce="[^"]+">([\s\S]*?)<\/script>/)[1];
+  const emissions=[],timeouts=new Map(),intervals=new Map();
+  let seq=0;
+  class BroadcastChannel {
+    constructor(name){ this.name=name; }
+    postMessage(data){emissions.push({name:this.name,data});}
+    close(){}
+  }
+  const win={
+    opener:null,
+    BroadcastChannel,
+    addEventListener(){},
+    removeEventListener(){},
+    close(){},
+  };
+  vm.runInNewContext(script,{
+    window:win,document:{getElementById:id=>({textContent:'',hidden:false})},
+    history:{replaceState(){}},location:{pathname:'/api/auth/callback'},
+    setInterval:(fn,ms)=>{intervals.set(++seq,fn);return seq;},
+    setTimeout:(fn,ms)=>{timeouts.set(++seq,fn);return seq;},
+    clearInterval:id=>intervals.delete(id),clearTimeout:id=>timeouts.delete(id)
+  });
+  assert.equal(emissions.length,1);
+  assert.equal(emissions[0].name,'andro-github-oauth-'+relay);
+  assert.equal(emissions[0].data.kind,'ready');
+  win.BroadcastChannel.prototype.onmessage; // Channel instance owns the handler.
+  assert(!JSON.stringify(emissions).includes(SENTINEL));
+});
+
+test('popup launcher relays Decap handshake through a nonce-scoped channel',()=>{
+  const messages=[],channels=[],popups=[];
+  class BC {
+    constructor(name){this.name=name;this.closed=false;channels.push(this);}
+    postMessage(data){ messages.push({name:this.name,data}); }
+    close(){ this.closed=true; }
+  }
+  const window={
+    location:{href:SITE_ORIGIN+'/admin/',origin:SITE_ORIGIN},
+    crypto, BroadcastChannel:BC,
+    addEventListener(){},
+    dispatchEvent(e){messages.push({kind:'editor-event',data:e.data,origin:e.origin});},
+    open(url,name,features) {
+      const popup={closed:false,focus(){},close(){this.closed=true;}};
+      popups.push({url,name,features,popup});return popup;
+    }
+  };
+  const src=readFileSync(new URL('../public/admin/oauth-popup.js',import.meta.url),'utf8');
+  vm.runInNewContext(src,{window,URL,Uint8Array,Array,MessageEvent:class {
+    constructor(type,init){Object.assign(this,init);}
+  },setTimeout:()=>1,clearTimeout:()=>{}});
+  const handle=window.open(SITE_ORIGIN+'/api/auth?provider=github','Netlify Authorization','width=960');
+  const url=new URL(popups[0].url);
+  assert.match(url.searchParams.get('andro_relay'),/^[a-f0-9]{32}$/);
+  assert.equal(channels[0].name,'andro-github-oauth-'+url.searchParams.get('andro_relay'));
+  channels[0].onmessage({data:{kind:'ready'}});
+  assert.equal(messages.at(-1).data,'authorizing:github');
+  handle.postMessage('authorizing:github',SITE_ORIGIN);
+  assert.equal(messages.at(-1).data.kind,'ack');
+  channels[0].onmessage({data:{kind:'result',message:'authorization:github:success:'+JSON.stringify({token:'FAKE'})}});
+  assert.equal(messages.at(-1).data.startsWith('authorization:github:success:'),true);
+  handle.close();
+  assert.equal(popups[0].popup.closed,true);
+  assert.equal(channels[0].closed,true);
 });
