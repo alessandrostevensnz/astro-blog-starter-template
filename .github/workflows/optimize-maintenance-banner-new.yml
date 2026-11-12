@@ -1,0 +1,79 @@
+name: Optimise new ANDRO Asset Maintenance banner
+
+on:
+  push:
+    branches:
+      - main
+      - fix/maintenance-hero-new-video-20261112
+    paths:
+      - "asset maintence video banner new.mp4"
+      - ".github/workflows/optimize-maintenance-banner-new.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimise:
+    name: Compress new Maintenance MP4 and matching opening frame
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out ANDRO website
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure FFmpeg is installed
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Compress uploaded file and extract matching first-frame poster
+        shell: bash
+        run: |
+          set -euo pipefail
+          source="asset maintence video banner new.mp4"
+          output="public/images/andro-maintenance-banner-new-1080p-optimized.mp4"
+          poster="public/images/andro-maintenance-banner-new-1080p-optimized-poster.jpg"
+          test -s "$source"
+          mkdir -p public/images
+
+          # Match the smooth Projects header: 1080p, 30 fps, H.264,
+          # fast-start MP4 with no audio. Keep the complete uploaded clip.
+          ffmpeg -hide_banner -loglevel error -y \
+            -i "$source" -map 0:v:0 \
+            -vf "fps=30,scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,setsar=1,format=yuv420p" \
+            -c:v libx264 -preset slow -profile:v high -level:v 4.1 \
+            -b:v 4400k -maxrate 4900k -bufsize 8800k \
+            -an -movflags +faststart "$output"
+
+          test -s "$output"
+          # Exact first decoded frame, same source/crop as the displayed MP4.
+          ffmpeg -hide_banner -loglevel error -y \
+            -i "$output" -frames:v 1 -q:v 3 "$poster"
+          test -s "$poster"
+
+          for file in "$output" "$poster"; do
+            test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$file")" = "1920"
+            test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$file")" = "1080"
+          done
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 "$output")" = "30/1"
+          src_bytes=$(stat -c '%s' "$source")
+          new_bytes=$(stat -c '%s' "$output")
+          echo "Original MP4: $src_bytes bytes"
+          echo "Optimised MP4: $new_bytes bytes"
+          echo "Poster JPEG: $(stat -c '%s' "$poster") bytes"
+          test "$new_bytes" -lt "$src_bytes"
+
+      - name: Commit optimised MP4 and its matching poster
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f "public/images/andro-maintenance-banner-new-1080p-optimized.mp4" "public/images/andro-maintenance-banner-new-1080p-optimized-poster.jpg"
+          if git diff --cached --quiet; then
+            echo "No updated media files."
+            exit 0
+          fi
+          git commit -m "Generate optimised new Maintenance landing MP4 and first-frame poster"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
