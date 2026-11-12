@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import {
-  CALLBACK_URL, SITE_ORIGIN, STATE_COOKIE, clearStateCookie,
+  CALLBACK_URL, SITE_ORIGIN, stateCookieName, expiredStateCookie, stateRelay,
   cookieValue, oauthEnv, popupResponse, validState
 } from "../../../lib/decap-oauth";
 
@@ -8,15 +8,16 @@ export const prerender = false;
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const url = new URL(request.url);
+  const state = url.searchParams.get("state");
+  const relay = stateRelay(state);
   const finish = (token?: string, reason?: string) => {
-    const response = popupResponse(token, reason);
-    response.headers.set("Set-Cookie", clearStateCookie);
+    const response = popupResponse(token, reason, relay);
+    response.headers.set("Set-Cookie", expiredStateCookie(relay));
     return response;
   };
 
   if (url.origin !== SITE_ORIGIN) return finish(undefined, "origin_mismatch");
-  const state = url.searchParams.get("state");
-  const expected = cookieValue(request, STATE_COOKIE);
+  const expected = cookieValue(request, stateCookieName(relay));
   const code = url.searchParams.get("code");
   if (url.searchParams.has("error")) return finish(undefined, "github_authorization_denied");
   if (!validState(state, expected)) return finish(undefined, "csrf_state_mismatch");
