@@ -1,0 +1,74 @@
+name: Optimise ANDRO Asset Maintenance banner
+
+on:
+  push:
+    branches:
+      - main
+      - fix/use-uploaded-maintenance-banner-20261112
+    paths:
+      - "public/images/asset maintence video banner.mp4"
+      - ".github/workflows/optimize-maintenance-banner.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimise:
+    name: Compress and publish Full HD Maintenance MP4
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out website
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure FFmpeg is available
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Optimise uploaded Maintenance video
+        shell: bash
+        run: |
+          set -euo pipefail
+          source="public/images/asset maintence video banner.mp4"
+          output="public/images/andro-maintenance-banner-1080p-optimized.mp4"
+          test -s "$source"
+
+          # Same deliverable settings as the smooth Projects hero: H.264,
+          # 1920x1080 / 30fps, fast-start, no audio, roughly 4-5 MB for 8 seconds.
+          # Preserve the uploaded clip's complete duration and aspect ratio.
+          ffmpeg -hide_banner -loglevel error -y \
+            -i "$source" -map 0:v:0 \
+            -vf "fps=30,scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,setsar=1,format=yuv420p" \
+            -c:v libx264 -preset slow -profile:v high -level:v 4.1 \
+            -b:v 4500k -maxrate 4900k -bufsize 9000k \
+            -an -movflags +faststart "$output"
+
+          test -s "$output"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$output")" = "1920"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$output")" = "1080"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 "$output")" = "30/1"
+          ffprobe -v error -show_entries format=duration,size,bit_rate -of default=noprint_wrappers=1 "$source" "$output" || true
+          original_size=$(stat -c '%s' "$source")
+          optimized_size=$(stat -c '%s' "$output")
+          echo "Original bytes: $original_size"
+          echo "Optimized bytes: $optimized_size"
+          if [ "$optimized_size" -ge "$original_size" ]; then
+            echo "Compression did not reduce file size" >&2
+            exit 1
+          fi
+
+      - name: Commit compressed video to the same branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f "public/images/andro-maintenance-banner-1080p-optimized.mp4"
+          if git diff --cached --quiet; then
+            echo "Optimized MP4 is already up to date."
+            exit 0
+          fi
+          git commit -m "Generate compressed Full HD Asset Maintenance hero MP4"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
