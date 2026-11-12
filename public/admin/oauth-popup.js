@@ -26,7 +26,7 @@
     }
   }
 
-  window.addEventListener('pagehide', dispose);
+  if (typeof window.addEventListener === 'function') window.addEventListener('pagehide', dispose);
 
   window.open = function (url, target, features) {
     var parsed;
