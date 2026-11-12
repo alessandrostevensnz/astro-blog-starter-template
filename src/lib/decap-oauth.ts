@@ -169,10 +169,17 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   // Remove one-use OAuth parameters from the visible address without storing
   // tokens, using localStorage, or changing the verified origin.
   try { history.replaceState(null, "", location.pathname); } catch (_) {}
+  // The editor can also retrieve a verified login receipt from the
+  // server. Give useful feedback even when the popup's opener is gone.
+  if (success && relay) {
+    show("GitHub authorised. Return to your ANDRO editor tab — sign-in should finish there automatically.", false);
+    setTimeout(function () { try { window.close(); } catch (_) {} }, 8000);
+  }
   // A same-origin relay survives GitHub navigation that severs window.opener.
-  // The relay is only exposed after server-side OAuth state verification.
+  // The server-side receipt polling path remains available independently.
   if (beginBridge()) return;
   if (openerMissing()) {
+    if (success && relay) return;
     stop("This login window is not connected to the editor. Please start a new login.");
     return;
   }
