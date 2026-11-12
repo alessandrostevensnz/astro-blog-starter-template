@@ -6,13 +6,15 @@ const galleryImages = optimizedGallery as Record<string, { small: string; large:
 const projectsHero = pageContent.projects.photos.hero;
 const optimizedHero = galleryImages[projectsHero.src];
 const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
+// Use the first frame of the actual video while it buffers (same visual as Asset Maintenance).
+const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (optimizedHero?.hero ?? projectsHero.src);
 ---
 <SiteLayout title="Projects | ANDRO Construction + Projects Auckland" description="Explore a selection of residential and commercial construction work, carpentry, interior lining and property improvements by ANDRO in Auckland.">
   <section class="page-hero projects-photo-hero" aria-labelledby="projects-hero-title">
     <img
-      class="projects-hero-image"
-      src={optimizedHero?.hero ?? projectsHero.src}
-      srcset={optimizedHero?.hero && optimizedHero?.large ? `${optimizedHero.large} 960w, ${optimizedHero.hero} 1800w` : undefined}
+      class:list={['projects-hero-image', { 'projects-hero-video-poster': !!projectsHeroVideo }]}
+      src={projectsHeroVideo ? projectsHeroPoster : (optimizedHero?.hero ?? projectsHero.src)}
+      srcset={!projectsHeroVideo && optimizedHero?.hero && optimizedHero?.large ? `${optimizedHero.large} 960w, ${optimizedHero.hero} 1800w` : undefined}
       sizes="100vw"
       alt={projectsHero.alt}
       fetchpriority="high"
@@ -27,7 +29,7 @@ const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
         playsinline
         webkit-playsinline
         preload="auto"
-        poster={optimizedHero?.hero ?? projectsHero.src}
+        poster={projectsHeroPoster}
         aria-hidden="true"
         tabindex="-1"
         disablepictureinpicture
@@ -126,6 +128,8 @@ const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
     object-fit: cover;
     object-position: center 45%;
   }
+  /* Use the identical crop for the loading frame and the moving video. */
+  .projects-hero-video-poster { object-position: center; }
   .projects-hero-shade {
     z-index: -1;
     background:
@@ -152,6 +156,7 @@ const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
     .projects-photo-hero h1 { font-size: clamp(52px, 12vw, 78px); }
     .projects-photo-hero .lead { font-size: 13px; line-height: 1.75; }
     .projects-hero-image { object-position: 55% center; }
+    .projects-hero-video-poster { object-position: center; }
     .projects-hero-shade {
       background: linear-gradient(90deg, rgba(13,16,15,.83), rgba(13,16,15,.55)),
                   linear-gradient(0deg, rgba(13,16,15,.2), transparent);

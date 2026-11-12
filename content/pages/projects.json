@@ -231,5 +231,6 @@
       "alt": "Site Safe Member — Proud to be safe"
     }
   },
-  "heroVideo": "/images/andro-projects-background-8s-1080p.mp4"
+  "heroVideo": "/images/andro-projects-background-8s-1080p.mp4",
+  "heroVideoPoster": "/images/andro-projects-background-8s-1080p-poster.jpg"
 }

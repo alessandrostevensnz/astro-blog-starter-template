@@ -150,7 +150,11 @@ const pageFiles = entries.map(([name,label,path]) => {
   if (name === 'projects') {
     fields.push(field('heroVideo', '02 - Projects landing background video (MP4)', 'file', {
       required: false,
-      hint: 'Upload the optimised 8-second MP4 video here, then Publish. It will play silently on repeat behind the Projects heading. The header photo above stays as the fallback image. Leave empty to use the photo only.',
+      hint: 'The Projects landing banner plays silently on repeat. For seamless loading, upload a matching first-frame JPG in the video preview image field below.',
+    }));
+    fields.push(field('heroVideoPoster', '03 - Projects video first-frame preview (image)', 'image', {
+      required: false,
+      hint: 'Shown immediately while the video loads. Use a screenshot of the FIRST frame of the current video so the picture does not flash or jump as playback begins. A matching preview has been generated for the existing Projects MP4.',
     }));
     fields.push(projectCards);
   }
