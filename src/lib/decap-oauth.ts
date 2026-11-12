@@ -197,3 +197,81 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
     }
   });
 }
+
+
+// A short-lived, encrypted, per-attempt receipt lets the editor complete an
+// OAuth login without a live popup/opener or BroadcastChannel connection.
+// Never store the raw GitHub token in a cookie, URL, or persistent browser storage.
+export const LOGIN_RESULT_TTL_MS = 120_000;
+
+export function resultCookieName(relay: string): string {
+  if (!validRelay(relay)) throw new Error("invalid_oauth_relay");
+  return "__Host-andro_oauth_result_" + relay;
+}
+
+export function clearResultCookie(relay: string): string {
+  return resultCookieName(relay) + "=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Lax";
+}
+
+function base64Url(bytes: Uint8Array): string {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\\+/g, "-").replace(/\\//g, "_").replace(/=+$/g, "");
+}
+
+function fromBase64Url(value: string): Uint8Array {
+  if (!/^[A-Za-z0-9_-]{1,3000}$/.test(value)) throw new Error("bad_cookie");
+  const pad = value.replace(/-/g, "+").replace(/_/g, "/");
+  const binary = atob(pad + "=".repeat((4 - (pad.length % 4)) % 4));
+  return Uint8Array.from(binary, char => char.charCodeAt(0));
+}
+
+async function resultKey(secret: string): Promise<CryptoKey> {
+  const label = new TextEncoder().encode("andro-oauth-receipt-v1:" + secret);
+  const hash = await crypto.subtle.digest("SHA-256", label);
+  return crypto.subtle.importKey("raw", hash, "AES-GCM", false, ["encrypt", "decrypt"]);
+}
+
+export async function encryptedResultCookie(token: string, relay: string, secret: string): Promise<string> {
+  if (!validRelay(relay) || !token || token.length > 1024 || !secret) {
+    throw new Error("invalid_oauth_receipt");
+  }
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const data = new TextEncoder().encode(JSON.stringify({
+    token, relay, expires: Date.now() + LOGIN_RESULT_TTL_MS
+  }));
+  const aad = new TextEncoder().encode("andro-oauth:" + relay);
+  const cipher = new Uint8Array(await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv, additionalData: aad },
+    await resultKey(secret), data
+  ));
+  const result = new Uint8Array(iv.length + cipher.length);
+  result.set(iv);
+  result.set(cipher, iv.length);
+  return resultCookieName(relay) + "=" + base64Url(result) +
+    "; Path=/; Max-Age=120; Secure; HttpOnly; SameSite=Lax";
+}
+
+export async function decryptResult(value: string, relay: string, secret: string): Promise<string | null> {
+  if (!validRelay(relay) || !secret) return null;
+  try {
+    const blob = fromBase64Url(value);
+    if (blob.length < 29) return null;
+    const plain = await crypto.subtle.decrypt(
+      {
+        name: "AES-GCM", iv: blob.slice(0, 12),
+        additionalData: new TextEncoder().encode("andro-oauth:" + relay)
+      },
+      await resultKey(secret), blob.slice(12)
+    );
+    const data = JSON.parse(new TextDecoder().decode(plain)) as {
+      token?: unknown; relay?: unknown; expires?: unknown
+    };
+    if (data.relay !== relay || typeof data.token !== "string" ||
+        !data.token || data.token.length > 1024 || typeof data.expires !== "number" ||
+        data.expires <= Date.now() || data.expires > Date.now() + LOGIN_RESULT_TTL_MS) return null;
+    return data.token;
+  } catch {
+    return null;
+  }
+}
