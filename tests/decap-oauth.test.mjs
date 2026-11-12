@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { popupResponse, validState, newState, stateCookie, cookieValue, SITE_ORIGIN, oauthState, stateRelay, stateCookieName, expiredStateCookie, validRelay } from '../src/lib/decap-oauth.ts';
+import { popupResponse, validState, newState, stateCookie, cookieValue, SITE_ORIGIN, oauthState, stateRelay, stateCookieName, expiredStateCookie, validRelay, encryptedResultCookie, decryptResult, resultCookieName, clearResultCookie } from '../src/lib/decap-oauth.ts';
 
 // Dummy token only. No GitHub requests, personal data, or saved browser storage.
 const TOKEN = 'TEST_TOKEN_NOT_A_CREDENTIAL';
@@ -153,13 +153,17 @@ test('popup launcher isolates attempts and passes unrelated windows through unch
     open(...args){ const p={closed:false,close(){this.closed=true;}}; calls.push({args,p}); return p; }
   };
   const source=readFileSync(new URL('../public/admin/oauth-popup.js',import.meta.url),'utf8');
-  const ctx=vm.createContext({window,URL,Uint32Array,Array}); vm.runInContext(source,ctx);
+  const ctx=vm.createContext({window,URL,Uint8Array,Uint32Array,Array,setTimeout:()=>1,clearTimeout:()=>{}}); vm.runInContext(source,ctx);
   const url=SITE_ORIGIN+'/api/auth?provider=github';
   const first=window.open(url,'Netlify Authorization','width=960');
   const second=window.open(url,'Netlify Authorization','width=960');
   assert.notEqual(calls[0].args[1],calls[1].args[1]);
   assert.match(calls[0].args[1],/^andro-github-login-[a-f0-9]{32}$/);
-  assert.equal(calls[0].args[0],url); assert.equal(calls[0].args[2],'width=960');
+  const firstUrl=new URL(calls[0].args[0]);
+  assert.equal(firstUrl.origin+firstUrl.pathname,url.split('?')[0]);
+  assert.equal(firstUrl.searchParams.get('provider'),'github');
+  assert.match(firstUrl.searchParams.get('andro_relay'),/^[a-f0-9]{32}$/);
+  assert.equal(calls[0].args[2],'width=960');
   assert(first.closed); assert(!second.closed);
   for(const [url,target] of [
     [SITE_ORIGIN+'/report','Netlify Authorization'],
@@ -251,4 +255,56 @@ test('popup launcher relays Decap handshake through a nonce-scoped channel',()=>
   handle.close();
   assert.equal(popups[0].popup.closed,true);
   assert.equal(channels[0].closed,true);
+});
+
+test('AES-GCM receipt is short-lived, scoped to one login and not plaintext',async()=>{
+  const relay='d'.repeat(32), other='e'.repeat(32), token='DUMMY_OAUTH_TOKEN';
+  const cookie=await encryptedResultCookie(token,relay,'test-secret-with-high-entropy');
+  assert(cookie.startsWith(resultCookieName(relay)+'='));
+  assert.match(cookie,/HttpOnly; SameSite=Lax/);
+  assert(!cookie.includes(token));
+  const value=cookie.split(';')[0].slice(resultCookieName(relay).length+1);
+  assert.equal(await decryptResult(value,relay,'test-secret-with-high-entropy'),token);
+  assert.equal(await decryptResult(value,other,'test-secret-with-high-entropy'),null);
+  assert.equal(await decryptResult(value,relay,'different-secret'),null);
+  assert.equal(await decryptResult(value.slice(0,-1)+'!',relay,'test-secret-with-high-entropy'),null);
+  assert(clearResultCookie(relay).includes('Max-Age=0'));
+});
+
+test('editor finishes GitHub sign-in by polling even without BroadcastChannel',async()=>{
+  const events=[],requests=[],timers=[];
+  const popup={closed:false,focus(){},close(){this.closed=true;}};
+  const window={
+    location:{href:SITE_ORIGIN+'/admin/',origin:SITE_ORIGIN},
+    crypto,
+    addEventListener(){},
+    open(url,name){requests.push({kind:'popup',url,name});return popup;},
+    fetch(url,options){
+      requests.push({kind:'fetch',url,options});
+      return Promise.resolve({status:200,json:()=>Promise.resolve({token:TOKEN,provider:'github'})});
+    },
+    dispatchEvent(e){events.push(e);}
+  };
+  const source=readFileSync(new URL('../public/admin/oauth-popup.js',import.meta.url),'utf8');
+  vm.runInNewContext(source,{
+    window,URL,Uint8Array,Array,MessageEvent:class {
+      constructor(type,options){this.type=type;Object.assign(this,options);}
+    },setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length;},
+    clearTimeout:()=>{},encodeURIComponent
+  });
+  const handle=window.open(SITE_ORIGIN+'/api/auth?provider=github','Netlify Authorization');
+  const loginRelay=new URL(requests[0].url).searchParams.get('andro_relay');
+  assert.match(loginRelay,/^[a-f0-9]{32}$/);
+  assert.equal(timers.filter(t=>t.ms===350).length,1,'polling starts');
+  timers.find(t=>t.ms===350).fn();
+  await new Promise(resolve=>setImmediate(resolve));
+  const fetchRequest=requests.find(r=>r.kind==='fetch');
+  assert(fetchRequest.url.endsWith('relay='+loginRelay));
+  assert.equal(fetchRequest.options.credentials,'same-origin');
+  assert.equal(events[0].data,'authorizing:github');
+  assert(events[1].data.startsWith('authorization:github:success:'));
+  assert.equal(JSON.parse(events[1].data.split('authorization:github:success:')[1]).token,TOKEN);
+  assert.equal(events[1].origin,SITE_ORIGIN);
+  assert(popup.closed,'stale popup is closed after successful receipt');
+  assert.equal(handle.closed,true);
 });

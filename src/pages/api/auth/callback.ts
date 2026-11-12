@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import {
   CALLBACK_URL, SITE_ORIGIN, stateCookieName, expiredStateCookie, stateRelay,
-  cookieValue, oauthEnv, popupResponse, validState
+  cookieValue, oauthEnv, popupResponse, validState, encryptedResultCookie
 } from "../../../lib/decap-oauth";
 
 export const prerender = false;
@@ -10,9 +10,20 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const url = new URL(request.url);
   const state = url.searchParams.get("state");
   const relay = stateRelay(state);
-  const finish = (token?: string, reason?: string) => {
+  const finish = async (token?: string, reason?: string) => {
     const response = popupResponse(token, reason, relay);
     response.headers.set("Set-Cookie", expiredStateCookie(relay));
+    if (token && relay) {
+      const env = oauthEnv(locals);
+      if (env) {
+        try {
+          response.headers.append("Set-Cookie",
+            await encryptedResultCookie(token, relay, env.GITHUB_CLIENT_SECRET));
+        } catch {
+          // Preserve the original popup OAuth handoff as the secure fallback.
+        }
+      }
+    }
     return response;
   };
 
