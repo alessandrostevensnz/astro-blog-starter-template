@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - fix/use-uploaded-maintenance-banner-20261112
+      - fix/maintenance-banner-matching-first-frame-20261112
     paths:
       - "public/images/asset maintence video banner.mp4"
       - ".github/workflows/optimize-maintenance-banner.yml"
@@ -33,6 +34,7 @@ jobs:
           set -euo pipefail
           source="public/images/asset maintence video banner.mp4"
           output="public/images/andro-maintenance-banner-1080p-optimized.mp4"
+          poster="public/images/andro-maintenance-banner-1080p-optimized-poster.jpg"
           test -s "$source"
 
           # Same deliverable settings as the smooth Projects hero: H.264,
@@ -46,6 +48,13 @@ jobs:
             -an -movflags +faststart "$output"
 
           test -s "$output"
+          # Match the exact opening frame of the compressed MP4. This image is also
+          # displayed beneath the video while it buffers, avoiding the photo flash.
+          ffmpeg -hide_banner -loglevel error -y \
+            -i "$output" -frames:v 1 -q:v 3 "$poster"
+          test -s "$poster"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$poster")" = "1920"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$poster")" = "1080"
           test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$output")" = "1920"
           test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$output")" = "1080"
           test "$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 "$output")" = "30/1"
@@ -65,7 +74,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f "public/images/andro-maintenance-banner-1080p-optimized.mp4"
+          git add -f "public/images/andro-maintenance-banner-1080p-optimized.mp4" "public/images/andro-maintenance-banner-1080p-optimized-poster.jpg"
           if git diff --cached --quiet; then
             echo "Optimized MP4 is already up to date."
             exit 0
