@@ -101,7 +101,9 @@ test('Projects auto-scrolls slowly with readable captions and 2x5 manual navigat
 
 test('All six pages share ONE editable footer with no Site Safe badge field', () => {
   const shared=JSON.parse(read('../content/site-footer.json'));
-  assert.equal(shared.logo.src, '/images/andro-footer-circular.png');
+  // The owner can replace the shared logo in /admin. Never hard-code its filename.
+  assert(typeof shared.logo.src === 'string' && shared.logo.src.startsWith('/images/'),
+    'The universal footer must point to a valid editable image path');
   assert.equal(shared.companyName, 'Andro Construction Limited');
   for(const name of ['home','construction','maintenance','projects','about','contact']){
     const page=JSON.parse(read('../content/pages/' + name + '.json'));
