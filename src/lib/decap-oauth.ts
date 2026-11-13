@@ -81,7 +81,7 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   const nonce = newState();
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ANDRO GitHub login v4</title></head><body>
+<title>ANDRO GitHub login v5</title></head><body>
 <p id="login-status" role="status">Completing GitHub login...</p>
 <p id="login-help" hidden>Close this popup and start a new login from the ANDRO editor. Do not refresh this callback or clear your saved reports.</p>
 <script nonce="${nonce}">
@@ -190,6 +190,9 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   if (success && relay) {
     show("GitHub authorised. Return to your ANDRO editor tab — sign-in should finish there automatically.", false);
     setTimeout(function () { try { window.close(); } catch (_) {} }, 8000);
+  }
+  if (success && !relay) {
+    show("GitHub authorised, but this login was started without a recovery ID. Close this popup and reopen the ANDRO editor using the current login page.", true);
   }
   // Display the verified server-side reason immediately on failure.
   // The message handshake still runs to notify the original editor.
