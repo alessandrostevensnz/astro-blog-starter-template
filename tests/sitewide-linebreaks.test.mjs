@@ -36,11 +36,10 @@ test('shared stylesheet preserves individual Return and blank-line gaps, without
   assert(layout.includes('overflow-wrap: break-word;'));
   assert(layout.includes("target.textContent = fields[key]"), 'live preview must use safe textContent');
   assert(!layout.includes("target.innerHTML = fields[key]"), 'untrusted editor text must not be interpreted as HTML');
+  // The About copy is owner-controlled; formatting must also work after
+  // they rewrite it and remove or add paragraphs.
   const existing = JSON.parse(read('../content/pages/about.json'));
-  assert(existing.craftText.includes('\n\n'),
-    'Existing real About copy must retain its blank paragraph break');
-  assert(existing.craftText.includes('\n'),
-    'Existing About copy must retain deliberate single-line breaks');
+  assert(typeof existing.craftText === 'string', 'About copy should remain editable');
 });
 
 test('all six published pages mark CMS text for preserved whitespace', () => {
