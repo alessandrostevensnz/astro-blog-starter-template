@@ -100,8 +100,8 @@ test('Contact font formatting, live preview and working GitHub login are preserv
   for (const key of styled.filter(x => x !== 'emailPrefix')) {
     assert(preview.includes("'"+key+"'"), 'Missing preview key: '+key);
   }
-  assert(preview.includes("page === 'projects' || page === 'contact'"));
-  assert(index.includes('/admin/preview.js?v=projects-contact-text-2'));
+  assert(preview.includes('Press Return for a new line'));
+  assert(index.includes('/admin/preview.js?v=linebreaks-3'));
   assert(index.includes('/admin/oauth-popup.js?v=6'));
   const css = typographyCss(undefined,{ contact:{
     heroHeadingStyle:{sizePx:72,color:'#FFFFFF'},
