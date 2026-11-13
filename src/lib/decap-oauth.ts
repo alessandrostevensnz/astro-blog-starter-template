@@ -92,6 +92,17 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   let result = ${inlineJson(message)};
   const success = ${Boolean(token)};
   const reason = ${inlineJson(reason)};
+  const reasonHelp = ({
+    csrf_state_mismatch: "The login state cookie was missing or did not match. This can happen after an expired tab or with blocked cookies.",
+    github_client_credentials_rejected: "ANDRO's GitHub OAuth application credentials were rejected. This requires a server configuration change.",
+    github_code_rejected: "GitHub rejected the one-time sign-in code. Start a completely new login attempt.",
+    github_authorization_denied: "GitHub sign-in was denied or cancelled.",
+    missing_worker_credentials: "The server is missing its GitHub OAuth configuration.",
+    github_token_http_error: "The GitHub authentication service returned an error.",
+    github_token_request_failed: "ANDRO could not reach GitHub to complete the sign-in.",
+    origin_mismatch: "The login callback returned on the wrong domain.",
+    missing_authorization_code: "GitHub did not return a usable login code."
+  })[reason] || "Close the login popup and open the ANDRO editor to retry.";
   const opener = window.opener;
   const status = document.getElementById("login-status");
   const help = document.getElementById("login-help");
@@ -115,7 +126,7 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   function stop(text) {
     abandon();
     // Never replace a real OAuth failure with a misleading popup timeout.
-    show(success ? text : ("GitHub rejected this login (" + reason + "). " + text), true);
+    show(success ? text : ("GitHub sign-in failed (" + reason + "). " + reasonHelp + " " + text), true);
   }
   function openerMissing() {
     try { return !opener || opener.closed; } catch (_) { return true; }
@@ -182,7 +193,7 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   }
   // Display the verified server-side reason immediately on failure.
   // The message handshake still runs to notify the original editor.
-  if (!success) show("GitHub login failed (" + reason + "). Close this window and start a new login from ANDRO.", true);
+  if (!success) show("GitHub sign-in failed (" + reason + "). " + reasonHelp, true);
   // A same-origin relay survives GitHub navigation that severs window.opener.
   // The server-side receipt polling path remains available independently.
   if (beginBridge()) return;
