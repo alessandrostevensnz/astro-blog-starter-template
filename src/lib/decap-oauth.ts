@@ -81,7 +81,7 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   const nonce = newState();
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ANDRO GitHub login</title></head><body>
+<title>ANDRO GitHub login v4</title></head><body>
 <p id="login-status" role="status">Completing GitHub login...</p>
 <p id="login-help" hidden>Close this popup and start a new login from the ANDRO editor. Do not refresh this callback or clear your saved reports.</p>
 <script nonce="${nonce}">
