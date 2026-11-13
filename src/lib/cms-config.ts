@@ -161,13 +161,16 @@ const pageFiles = entries.map(([name,label,path]) => {
   // public-facing Projects section is now editable without scrolling past photos.
   const addTextFields = () => {
     for (const [key,title,widget] of text[name]) {
-      fields.push(field(key,title,widget,
-        (name === 'projects' && (key === 'heroHeading' || key === 'ctaHeading')) ||
-        (name === 'contact' && (key === 'heroHeading' || key === 'sectionHeading'))
-          ? { hint: 'Press Enter to create a new line in the heading.' }
-          : name === 'contact' && key === 'contactEmail'
-            ? { required: false, hint: 'Optional. Leave blank to hide the email link. Use a full address such as hello@example.com.' }
-            : {}));
+      // All page headings and paragraphs accept Return. Decap's single-line
+      // string input does not, so use a multiline widget for headings too.
+      // This changes only the editor input, never the stored string value.
+      const isMultiline = widget === 'text' || key === 'title' || /Heading$|CardTitle$/.test(key);
+      const editorWidget = isMultiline ? 'text' : widget;
+      const textHint = 'Press Return for a new line. Leave a blank line (Return twice) for a paragraph gap. Both the preview and published website preserve the spacing.';
+      const options = name === 'contact' && key === 'contactEmail'
+        ? { required: false, hint: 'Optional. Leave blank to hide the email link. Use a full address such as hello@example.com.' }
+        : isMultiline ? { hint: textHint } : {};
+      fields.push(field(key,title,editorWidget,options));
       if (styled[name]?.includes(key)) fields.push(formatting(key,title));
       if (name === 'contact' && key === 'servicePlaceholder') {
         fields.push(field('serviceOptions', '12 - Service dropdown choices', 'list', {
