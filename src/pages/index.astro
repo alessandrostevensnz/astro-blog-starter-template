@@ -28,15 +28,15 @@ const homeHeroVideo = siteContent.home.heroVideo?.trim() || '';
         <div class="section-kicker home-editorial-kicker"><p class="eyebrow">ANDRO CONSTRUCTION + PROJECTS</p><span class="kicker-line" aria-hidden="true"></span></div>
         <h2 class="display-heading"><span data-style-key="home.introHeading">{siteContent.home.introHeading}</span></h2>
       </div>
-      <div class="intro-copy home-editorial-copy"><p>{siteContent.home.introText}</p><p>We work with homeowners, landlords, property managers, businesses and commercial property owners. Whether you are planning a build, improving a space or dealing with a maintenance issue, we talk through the requirements and agree a practical way forward.</p><a class="text-link" href="/about/">Get to know ANDRO </a></div>
+      <div class="intro-copy home-editorial-copy"><p data-style-key="home.introText">{siteContent.home.introText}</p><p>We work with homeowners, landlords, property managers, businesses and commercial property owners. Whether you are planning a build, improving a space or dealing with a maintenance issue, we talk through the requirements and agree a practical way forward.</p><a class="text-link" href="/about/">Get to know ANDRO </a></div>
     </div>
   </section>
 
   <section class="service-strip section-pad" aria-labelledby="services-title">
     <div class="section-heading"><div><p class="eyebrow">WHAT WE DO</p><h2 id="services-title"><span data-style-key="home.servicesHeading">{siteContent.home.servicesHeading}</span></h2></div><a class="text-link" href="/construction/">Explore construction </a></div>
     <div class="editorial-grid">
-      <a class="editorial-card" href="/construction/"><div class="editorial-image"><img src={photos.constructionCard.src} alt={photos.constructionCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3>{siteContent.home.constructionCardTitle}</h3><p>{siteContent.home.constructionCardDescription}</p></div></div></a>
-      <a class="editorial-card" href="/property-maintenance/"><div class="editorial-image"><img src={photos.maintenanceCard.src} alt={photos.maintenanceCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3>{siteContent.home.maintenanceCardTitle}</h3><p>{siteContent.home.maintenanceCardDescription}</p></div></div></a>
+      <a class="editorial-card" href="/construction/"><div class="editorial-image"><img src={photos.constructionCard.src} alt={photos.constructionCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3 data-style-key="home.constructionCardTitle">{siteContent.home.constructionCardTitle}</h3><p data-style-key="home.constructionCardDescription">{siteContent.home.constructionCardDescription}</p></div></div></a>
+      <a class="editorial-card" href="/property-maintenance/"><div class="editorial-image"><img src={photos.maintenanceCard.src} alt={photos.maintenanceCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3 data-style-key="home.maintenanceCardTitle">{siteContent.home.maintenanceCardTitle}</h3><p data-style-key="home.maintenanceCardDescription">{siteContent.home.maintenanceCardDescription}</p></div></div></a>
     </div>
   </section>
 
