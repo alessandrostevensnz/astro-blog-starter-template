@@ -80,10 +80,10 @@ const text: Record<string, Row[]> = {
     ['heroDescription', '03 - Banner introduction paragraph', 'text'],
     ['galleryTip', '04 - Gallery instructions', 'text'],
     ['galleryNote', '05 - Paragraph below the project photos', 'text'],
-    ['featureEyebrow', '06 - Featured projects section small label'],
-    ['featureHeading', '07 - Featured projects section heading', 'text'],
-    ['featureText', '08 - Featured projects main paragraph', 'text'],
-    ['featureTextSecondary', '09 - Featured projects second paragraph', 'text'],
+    ['featureEyebrow', 'FEATURED STORY — Small label above heading'],
+    ['featureHeading', 'FEATURED STORY — Main heading', 'text'],
+    ['featureText', 'FEATURED STORY — Main paragraph', 'text'],
+    ['featureTextSecondary', 'FEATURED STORY — Second paragraph', 'text'],
     ['ctaHeading', '10 - Contact section heading', 'text'],
     ['ctaButtonText', '11 - Contact link wording'],
     ['metaTitle', 'Google and browser tab title'],
@@ -154,10 +154,17 @@ const pageFiles = entries.map(([name,label,path]) => {
   // public-facing Projects section is now editable without scrolling past photos.
   // Make the actual commercial row text immediately visible when opening the Construction editor.
   // Do not move the JSON keys: these are the existing stored fields, not a new collection.
+  const featuredProjectKeys = ['featureHeading','featureText','featureTextSecondary','featureEyebrow'];
   const textRows = name === 'construction'
     ? [
         ...text[name].filter(([key]) => key === 'commercialHeading' || key === 'commercialText'),
         ...text[name].filter(([key]) => key !== 'commercialHeading' && key !== 'commercialText'),
+      ]
+    : name === 'projects'
+    ? [
+        // A new story is clearly the first section, not hidden beneath banner and gallery fields.
+        ...featuredProjectKeys.map(key => text[name].find(([fieldName]) => fieldName === key)!),
+        ...text[name].filter(([key]) => !featuredProjectKeys.includes(key)),
       ]
     : text[name];
   const addTextFields = () => {
@@ -170,13 +177,15 @@ const pageFiles = entries.map(([name,label,path]) => {
       const textHint = 'Press Return for a new line. Leave a blank line (Return twice) for a paragraph gap. Both the preview and published website preserve the spacing.';
       const options = name === 'contact' && key === 'contactEmail'
         ? { required: false, hint: 'Optional. Leave blank to hide the email link. Use a full address such as hello@example.com.' }
+        : name === 'projects' && featuredProjectKeys.includes(key)
+          ? { required: key !== 'featureTextSecondary', hint: 'This wording appears in the NEW featured Projects section directly underneath the moving photo gallery. Change it here, then Publish.' }
         : isMultiline ? { hint: textHint } : {};
       fields.push(field(key,title,editorWidget,options));
       if (styled[name]?.includes(key)) fields.push(formatting(key,title));
-      if (name === 'projects' && key === 'featureTextSecondary') {
-        fields.push(field('featurePhoto','10 - Feature photograph (beside story)','object',{
+      if (name === 'projects' && key === 'featureEyebrow') {
+        fields.push(field('featurePhoto','FEATURED STORY — Photo beside this section','object',{
           collapsed:false,required:false,
-          hint:'One independent image beside your Projects story. This image and its alt text can be changed at any time; leave it empty to display the text without a picture.',
+          hint:'Image beside "The work behind the photographs" on /projects/. This is the NEW feature section, independent of your moving photo gallery. Choose a new photo and Publish. You may leave the photo empty to show text only.',
           fields:[
             field('src','Feature photograph','image',{required:false,choose_url:true}),
             field('alt','Image description (alt text)','string',{required:false}),

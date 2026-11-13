@@ -54,6 +54,10 @@
     '07 - featured projects section heading': 'featureHeading',
     '08 - featured projects main paragraph': 'featureText',
     '09 - featured projects second paragraph': 'featureTextSecondary',
+    'featured story — main heading': 'featureHeading',
+    'featured story — main paragraph': 'featureText',
+    'featured story — second paragraph': 'featureTextSecondary',
+    'featured story — small label above heading': 'featureEyebrow',
     '10 - contact section heading': 'ctaHeading',
     '11 - contact link wording': 'ctaButtonText',
     '01 - contact banner small label': 'heroEyebrow',
@@ -125,6 +129,8 @@
       heading.textContent = pages[page].label.toUpperCase() + ' PREVIEW';
       note.textContent = page === 'construction'
         ? 'Commercial text editing is at the very TOP of the left form. Open COMMERCIAL SERVICES to change the text beside photos or add rows. Publish, then refresh the preview.'
+        : page === 'projects'
+        ? 'The NEW FEATURED STORY controls, including its heading, paragraphs and photograph, now appear FIRST in the left-hand form. Publish and refresh to update the feature image.'
         : 'Press Return for a new line, or Return twice for a paragraph gap. Edited page text keeps the same spacing here and on the published site. Publish and refresh to update photos and gallery entries.';
       frame.title = pages[page].label + ' page preview';
       reloadPreview();

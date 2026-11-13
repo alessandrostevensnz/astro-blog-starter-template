@@ -68,7 +68,7 @@ test('Projects styles and live text preview work without impacting other pages',
   for (const name of ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText']) {
     assert(preview.includes("'"+name+"'"), 'Live preview key missing: '+name);
   }
-  assert(html.includes('preview.js?v=projects-feature-footer-size-v6'));
+  assert(html.includes('preview.js?v=projects-feature-editor-first-v7'));
   assert(html.includes('/admin/oauth-popup.js?v=6'), 'Do not disturb working v6 OAuth login');
   assert(siteLayout.includes('projects: pageContent.projects'), 'Projects inline font styles not passed through');
   const css = typographyCss(undefined, { projects: {
@@ -156,4 +156,26 @@ test('New Projects feature section displays after showcase with separately edita
     'Picture field should appear before the lengthy photo gallery');
   assert(html.includes('white-space: pre-line'), 'New paragraphs must preserve manual line breaks');
   assert(!html.includes('footerImages.badge'), 'Site Safe member badge must not reappear');
+});
+
+// Prevent the featured story editor from being buried behind the banner or gallery.
+test('New Projects featured story editing fields appear first and together in /admin', () => {
+  const projects = cmsConfig.collections.find(c => c.name === 'pages').files.find(f => f.name === 'projects');
+  const keys = projects.fields.map(field => field.name);
+  assert.deepEqual(keys.slice(0, 9), [
+    'featureHeading','featureHeadingStyle','featureText','featureTextStyle',
+    'featureTextSecondary','featureTextSecondaryStyle','featureEyebrow','featureEyebrowStyle','featurePhoto'
+  ], 'Projects editor should open with the entire featured story text and photo controls');
+  assert.equal(keys.filter(name => name === 'featurePhoto').length, 1);
+  const fields = projects.fields;
+  assert(fields.find(f => f.name === 'featurePhoto').fields.some(f => f.name === 'src' && f.widget === 'image'));
+  const preview = read('../public/admin/preview.js');
+  for (const label of ['featured story — main heading','featured story — main paragraph','featured story — second paragraph','featured story — small label above heading'])
+    assert(preview.includes(label), 'Live editor preview must recognize '+label);
+  const admin = read('../public/admin/index.html');
+  assert(admin.includes('/admin/config.yml?v=projects-feature-editor-first-v7'), 'Update cached editor config for new layout');
+  const data = JSON.parse(read('../content/pages/projects.json'));
+  for (const name of ['featureHeading','featureText','featureTextSecondary','featureEyebrow'])
+    assert(typeof data[name] === 'string' && data[name].length > 0, 'Feature copy must remain saved');
+  assert(data.featurePhoto.src, 'Current feature photo must remain saved');
 });
