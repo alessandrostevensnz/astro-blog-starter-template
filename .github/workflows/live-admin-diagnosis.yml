@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - ".github/workflows/live-admin-diagnosis.yml"
+      - "tests/admin-browser-diagnostic.mjs"
   workflow_dispatch:
 
 permissions:
@@ -42,3 +43,8 @@ jobs:
           console.log('POLL no-cookie safe status',e.r.status);
           if(a.r.status!==200 || !a.body.includes('oauth-popup.js?v=3') || c.r.status!==200 || !c.body.includes('/api/auth/poll?relay=')) process.exitCode=1;
           NODE
+
+      - name: Test actual admin page in Chromium without entering GitHub
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts playwright@1.56.1
+          node tests/admin-browser-diagnostic.mjs
