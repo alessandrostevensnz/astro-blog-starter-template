@@ -52,12 +52,12 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
       <nav class="andro-projects-navigation" data-project-navigation aria-label="Browse project photographs" hidden>
         <span class="andro-projects-count" data-project-count aria-live="polite" aria-atomic="true"></span>
         <div class="andro-projects-navigation-buttons">
-          <button class="andro-gallery-arrow" type="button" data-project-prev aria-label="Previous three project photos" disabled>
+          <button class="andro-gallery-arrow" type="button" data-project-prev aria-label="Slide project photos left" disabled>
             <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <path d="m15 18-6-6 6-6" />
             </svg>
           </button>
-          <button class="andro-gallery-arrow" type="button" data-project-next aria-label="Next three project photos">
+          <button class="andro-gallery-arrow" type="button" data-project-next aria-label="Slide project photos right">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <path d="m9 18 6-6-6-6" />
             </svg>
@@ -65,7 +65,8 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
         </div>
       </nav>
     </div>
-    <div class="andro-projects-grid" data-project-gallery aria-label="Project showcase, two rows of photos">
+    <div class="andro-projects-viewport" data-project-viewport tabindex="0" role="region" aria-label="Project photographs, arranged two rows high; use arrow buttons or swipe to browse">
+      <div class="andro-projects-grid" data-project-gallery aria-label="Project showcase, two rows of photographs">
       {siteContent.projects.map((entry) => (
         <button
           type="button"
@@ -77,7 +78,7 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
           <img
             src={galleryImages[entry.image]?.large ?? entry.image}
             srcset={galleryImages[entry.image] ? `${galleryImages[entry.image].small} 480w, ${galleryImages[entry.image].large} 960w` : undefined}
-            sizes={galleryImages[entry.image] ? '(max-width: 760px) 43vw, (max-width: 1200px) 27vw, 400px' : undefined}
+            sizes={galleryImages[entry.image] ? '(max-width: 760px) 44vw, 18vw' : undefined}
             alt={entry.alt}
             loading="lazy"
             decoding="async"
@@ -89,6 +90,7 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
           </span>
         </button>
       ))}
+      </div>
     </div>
     <p class="body-copy projects-note" data-style-key="projects.galleryNote">{projectCopy.galleryNote}</p>
   </section>
@@ -97,50 +99,77 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
 
 <script>
   const gallery = document.querySelector<HTMLElement>('[data-project-gallery]');
+  const viewport = document.querySelector<HTMLElement>('[data-project-viewport]');
   const tiles = Array.from(gallery?.querySelectorAll<HTMLButtonElement>('[data-project-tile]') ?? []);
   const galleryNavigation = document.querySelector<HTMLElement>('[data-project-navigation]');
   const previousButton = galleryNavigation?.querySelector<HTMLButtonElement>('[data-project-prev]');
   const nextButton = galleryNavigation?.querySelector<HTMLButtonElement>('[data-project-next]');
   const galleryCount = galleryNavigation?.querySelector<HTMLElement>('[data-project-count]');
   const smallScreen = window.matchMedia('(max-width: 760px)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const noHover = window.matchMedia('(hover: none)');
   const collapse = () => tiles.forEach(tile => tile.setAttribute('aria-expanded', 'false'));
 
-  // Show two rows: 3 across on desktop, 2 across on phones.
-  // The arrows move through 3 photos per click, with no automatic rotation.
-  if (gallery && galleryNavigation && previousButton && nextButton && galleryCount && tiles.length > 0) {
-    let firstPhoto = 0;
-    const moveBy = 3;
+  // The two rows move together. Five columns (10 photos) are visible on desktop.
+  // Advance by three COLUMNS (six new photos), leaving two columns (four photos)
+  // visible for continuity. Phones keep two columns and move one at a time.
+  if (gallery && viewport && galleryNavigation && previousButton && nextButton && galleryCount && tiles.length > 0) {
+    const rows = 2;
+    const totalColumns = Math.ceil(tiles.length / rows);
+    const visibleColumns = () => smallScreen.matches ? 2 : 5;
+    const advanceColumns = () => smallScreen.matches ? 1 : 3;
+    const maxColumn = () => Math.max(0, totalColumns - visibleColumns());
+    const clamp = (column: number) => Math.max(0, Math.min(maxColumn(), column));
+    const firstTileInColumn = (column: number) => tiles[column * rows];
     const format = (value: number) => String(value).padStart(2, '0');
-    const renderGallery = () => {
-      const visiblePhotos = smallScreen.matches ? 4 : 6;
-      const maxFirstPhoto = Math.max(0, tiles.length - visiblePhotos);
-      firstPhoto = Math.min(firstPhoto, maxFirstPhoto);
-      tiles.forEach((tile, index) => {
-        const visible = index >= firstPhoto && index < firstPhoto + visiblePhotos;
-        tile.hidden = !visible;
-        if (!visible) tile.setAttribute('aria-expanded', 'false');
-      });
-      previousButton.disabled = firstPhoto === 0;
-      nextButton.disabled = firstPhoto >= maxFirstPhoto;
-      galleryCount.textContent = `${format(firstPhoto + 1)}–${format(Math.min(tiles.length, firstPhoto + visiblePhotos))} / ${format(tiles.length)}`;
+    let firstColumn = 0;
+
+    const updateControls = () => {
+      const firstPhotoNumber = firstColumn * rows + 1;
+      const lastPhotoNumber = Math.min(tiles.length, (firstColumn + visibleColumns()) * rows);
+      previousButton.disabled = firstColumn === 0;
+      nextButton.disabled = firstColumn >= maxColumn();
+      galleryCount.textContent = `${format(firstPhotoNumber)}–${format(lastPhotoNumber)} / ${format(tiles.length)}`;
     };
+
+    const scrollToColumn = (column: number, animate: boolean) => {
+      firstColumn = clamp(column);
+      collapse();
+      updateControls();
+      viewport.scrollTo({
+        left: firstTileInColumn(firstColumn)?.offsetLeft ?? 0,
+        behavior: animate && !reducedMotion.matches ? 'smooth' : 'auto',
+      });
+    };
+
     galleryNavigation.hidden = false;
-    previousButton.addEventListener('click', () => {
-      firstPhoto = Math.max(0, firstPhoto - moveBy);
-      collapse();
-      renderGallery();
-    });
-    nextButton.addEventListener('click', () => {
-      firstPhoto = Math.min(Math.max(0, tiles.length - (smallScreen.matches ? 4 : 6)), firstPhoto + moveBy);
-      collapse();
-      renderGallery();
-    });
-    smallScreen.addEventListener('change', renderGallery);
-    renderGallery();
+    previousButton.addEventListener('click', () => scrollToColumn(firstColumn - advanceColumns(), true));
+    nextButton.addEventListener('click', () => scrollToColumn(firstColumn + advanceColumns(), true));
+
+    // Keep controls accurate when someone swipes the gallery on a touch device.
+    let scrollScheduled = false;
+    viewport.addEventListener('scroll', () => {
+      if (scrollScheduled) return;
+      scrollScheduled = true;
+      requestAnimationFrame(() => {
+        scrollScheduled = false;
+        const first = firstTileInColumn(0);
+        const second = firstTileInColumn(1);
+        if (first && second) {
+          const columnWidth = second.offsetLeft - first.offsetLeft;
+          if (columnWidth > 0) firstColumn = clamp(Math.round(viewport.scrollLeft / columnWidth));
+        }
+        updateControls();
+      });
+    }, { passive: true });
+
+    const realign = () => scrollToColumn(firstColumn, false);
+    smallScreen.addEventListener('change', realign);
+    window.addEventListener('resize', realign);
+    updateControls();
   }
 
-  // On touchscreens, tap a project to reveal or hide its description.
+  // The original project descriptions still reveal on hover or tap.
   tiles.forEach(tile => tile.addEventListener('click', () => {
     if (!noHover.matches) return;
     const shouldOpen = tile.getAttribute('aria-expanded') !== 'true';
@@ -150,6 +179,7 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
   document.addEventListener('pointerdown', event => {
     if (noHover.matches && event.target instanceof Node && !event.target.parentElement?.closest('[data-project-tile]')) collapse();
   });
+
 </script>
 <style>
   /* Projects photo header matches ANDRO's construction and other photo-led pages. */
@@ -234,10 +264,29 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
   .andro-gallery-arrow:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 3px; }
   .andro-gallery-arrow:disabled { opacity: .32; cursor: not-allowed; }
   .andro-gallery-arrow svg { display: block; }
-  /* A fixed two-row gallery; only the arrows change which photos are shown. */
-  .andro-projects-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
-  .andro-project-tile[hidden] { display: none !important; }
-  .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; cursor: pointer; }
+  /* Two rows x five columns. Native horizontal scrolling provides smooth sliding
+     and preserves the previous two columns when the next six photos enter. */
+  .andro-projects-viewport {
+    --project-gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .andro-projects-viewport::-webkit-scrollbar { display: none; }
+  .andro-projects-viewport:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 4px; }
+  .andro-projects-grid {
+    display: grid;
+    position: relative;
+    width: 100%;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 4 * var(--project-gap)) / 5);
+    gap: var(--project-gap);
+  }
+  .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; scroll-snap-align: start; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; cursor: pointer; }
   .andro-project-tile img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
   .andro-project-overlay { display: flex; flex-direction: column; justify-content: end; gap: 7px; position: absolute; inset: 0; padding: clamp(10px, 1.1vw, 18px); background: linear-gradient(180deg, rgba(10,12,11,.17), rgba(10,12,11,.89)); color: #fff; opacity: 0; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease; pointer-events: none; overflow: hidden; }
   .andro-project-category { color: #dfcba7; font-size: 10px; line-height: 1.3; letter-spacing: .07em; text-transform: uppercase; }
@@ -252,8 +301,8 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
   .andro-project-tile[aria-expanded="true"] img { transform: scale(1.045); }
   .projects-note { margin-top: 50px; max-width: 760px; }
   .projects-cta-heading { white-space: pre-line; }
-  @media (max-width: 760px) { .andro-projects-gallery-head { align-items: flex-start; } .andro-projects-navigation { margin-left: 0; } .andro-projects-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; } .andro-project-tile { aspect-ratio: 1 / 1.12; } .andro-project-title { font-size: clamp(15px, 3.5vw, 21px); } .andro-project-description { font-size: 11px; line-height: 1.45; } }
+  @media (max-width: 760px) { .andro-projects-gallery-head { align-items: flex-start; } .andro-projects-navigation { margin-left: 0; } .andro-projects-viewport { --project-gap: 12px; } .andro-projects-grid { grid-auto-columns: calc((100% - var(--project-gap)) / 2); } .andro-project-tile { aspect-ratio: 1 / 1.12; } .andro-project-title { font-size: clamp(15px, 3.5vw, 21px); } .andro-project-description { font-size: 11px; line-height: 1.45; } }
   @media (max-width: 420px) { .andro-projects-navigation { width: 100%; justify-content: space-between; } }
   @media (max-width: 400px) { .andro-project-overlay { padding: 10px; gap: 5px; } .andro-project-category { font-size: 9px; } .andro-project-title { font-size: 15px; } .andro-project-description { font-size: 10px; -webkit-line-clamp: 3; } }
-  @media (prefers-reduced-motion: reduce) { .andro-project-tile img, .andro-project-overlay { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .andro-project-tile img, .andro-project-overlay { transition: none; } .andro-projects-viewport { scroll-behavior: auto; } }
 </style>

@@ -80,25 +80,25 @@ test('Projects styles and live text preview work without impacting other pages',
 });
 
 
-test('Projects gallery is two rows with manually controlled three-photo pagination', () => {
+test('Projects showcase displays 2x5 photographs and slides six new photos while retaining two columns', () => {
   const source = read('../src/pages/projects.astro');
-  assert(source.includes('siteContent.projects.map'), 'Every CMS project should remain in the gallery');
-  assert(source.includes('data-project-gallery'), 'Missing project gallery');
-  assert(source.includes('data-project-navigation'), 'Missing manual navigation');
-  assert(source.includes('data-project-prev') && source.includes('data-project-next'), 'Missing previous / next photo controls');
-  assert(source.includes('const moveBy = 3'), 'Navigation must advance three pictures per click');
-  assert(source.includes('const visiblePhotos = smallScreen.matches ? 4 : 6'), 'Desktop gallery must show six photos, two rows of three');
-  assert(source.includes('grid-template-columns: repeat(3, minmax(0,1fr))'), 'Desktop must display three columns');
-  assert(source.includes('grid-template-columns: repeat(2, minmax(0,1fr))'), 'Mobile gallery must have two columns');
-  assert(source.includes('tile.hidden = !visible'), 'Pagination must show only the active gallery items');
-  assert(source.includes('nextButton.disabled = firstPhoto >= maxFirstPhoto'), 'Next button must stop at the last group');
-  assert(source.includes("smallScreen.addEventListener('change', renderGallery)"), 'Changing screen sizes must refresh the visible count');
-  assert(source.includes('aria-live="polite"'), 'Gallery progress must be screen reader friendly');
-  assert(!source.includes('setInterval('), 'Photo gallery must never autoplay');
-  assert(data.projects.length >= 6, 'Current showcase should have at least six images');
-  assert(source.includes('data-project-tile'), 'Mobile tap details must still work');
+  assert(source.includes('siteContent.projects.map'), 'CMS data and ordering must remain intact');
+  assert(source.includes('data-project-viewport') && source.includes('data-project-gallery'));
+  assert(source.includes('data-project-prev') && source.includes('data-project-next'));
+  assert(source.includes('grid-template-rows: repeat(2, auto)'), 'Two horizontal photo rows required');
+  assert(source.includes('grid-auto-flow: column'), 'Each column must contain two photos');
+  assert(source.includes('grid-auto-columns: calc((100% - 4 * var(--project-gap)) / 5)'), 'Five columns must be visible');
+  assert(source.includes('const advanceColumns = () => smallScreen.matches ? 1 : 3'), 'Move three columns, six new photos on desktop');
+  assert(source.includes('const visibleColumns = () => smallScreen.matches ? 2 : 5'), 'Two-row gallery must display ten desktop photos');
+  assert(source.includes('const rows = 2'), 'Each moving column must contain two photos');
+  assert(source.includes("behavior: animate && !reducedMotion.matches ? 'smooth' : 'auto'"), 'Arrow clicks should slide smoothly unless motion is reduced');
+  assert(source.includes('viewport.scrollTo({'), 'Slide horizontally rather than replacing items');
+  assert(!source.includes('tile.hidden = !visible'), 'Moving gallery should not swap images suddenly');
+  assert(!source.includes('setInterval('), 'Photo gallery must not autoplay');
+  assert(source.includes('scroll-snap-type: x proximity'), 'Mobile swipe should settle on a photo column');
+  assert(source.includes('data-project-tile'), 'Photos must remain interactive');
+  assert(data.projects.length >= 10, 'Gallery should contain at least ten photos');
 });
-
 
 test('Same supplied circular ANDRO footer logo is selected on all website pages', () => {
   for (const name of ['home','construction','maintenance','projects','about','contact']) {
