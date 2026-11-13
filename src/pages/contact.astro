@@ -1,20 +1,66 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
-import { site } from '../data/site';
+import { site, pageContent } from '../data/site';
+const contactCopy = pageContent.contact;
+const rawContactEmail = (contactCopy.contactEmail || site.email || '').trim();
+const contactEmail = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(rawContactEmail) ? rawContactEmail : '';
 ---
-<SiteLayout title="Contact ANDRO | Construction & Property Maintenance Auckland" description="Discuss a construction, renovation, building repair or property maintenance requirement with ANDRO Construction + Projects in Auckland.">
-  <section class="page-hero"><p class="eyebrow">CONTACT · AUCKLAND, NEW ZEALAND</p><h1>Let’s make a<br />good start.</h1><p class="lead">Have a maintenance issue you are unsure about, or planning a construction or improvement project? Tell us what is happening, what you would like to achieve and any timing or access considerations. We can discuss the property, the work required and a practical way forward.</p></section>
-  <section class="page-body section-pad"><div class="contact-layout"><div><p class="eyebrow">ANDRO CONSTRUCTION + PROJECTS</p><h2 class="display-heading">A considered<br />conversation.</h2><p class="body-copy">A few useful details help us understand your enquiry: the property type and location, what needs attention, and whether you have photos or a timeframe in mind. We will follow up to discuss the next steps.</p>{site.email && <p class="contact-details">Or email us at <a href={`mailto:${site.email}`}>{site.email}</a></p>}</div>
-  <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST"><input type="hidden" name="access_key" value="475ddde6-2a40-4c0a-80d8-3d5ecb6d90f5" /><input type="hidden" name="subject" value="New enquiry from the ANDRO website" /><input type="hidden" name="from_name" value="ANDRO website contact form" /><input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
-    <div class="form-field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required /></div><div class="form-field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
-    <div class="form-field full"><label for="service">What can we help with?</label><select id="service" name="service" required><option value="" disabled selected>Select a service</option><option>Residential construction or carpentry</option><option>Commercial construction or fit-out</option><option>Residential property maintenance</option><option>Commercial property maintenance</option><option>Asset maintenance</option><option>Repairs or property improvements</option><option>Other enquiry</option></select></div>
-    <div class="form-field full"><label for="message">A little about your property or project</label><textarea id="message" name="message" required></textarea></div><button class="form-submit" type="submit">Send enquiry</button><p class="form-status" id="form-status" role="status" aria-live="polite">Your details will be sent securely to ANDRO.</p>
+<SiteLayout title={contactCopy.metaTitle} description={contactCopy.metaDescription}>
+  <section class="page-hero contact-hero"><p class="eyebrow" data-style-key="contact.heroEyebrow">{contactCopy.heroEyebrow}</p><h1 data-style-key="contact.heroHeading">{contactCopy.heroHeading}</h1><p class="lead" data-style-key="contact.heroDescription">{contactCopy.heroDescription}</p></section>
+  <section class="page-body section-pad"><div class="contact-layout"><div><p class="eyebrow" data-style-key="contact.sectionEyebrow">{contactCopy.sectionEyebrow}</p><h2 class="display-heading contact-section-heading" data-style-key="contact.sectionHeading">{contactCopy.sectionHeading}</h2><p class="body-copy" data-style-key="contact.sectionDescription">{contactCopy.sectionDescription}</p>{contactEmail && <p class="contact-details"><span data-style-key="contact.emailPrefix">{contactCopy.emailPrefix}</span> <a href={'mailto:' + contactEmail}>{contactEmail}</a></p>}</div>
+  <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST"
+    data-sending-button={contactCopy.sendingButton}
+    data-sending-status={contactCopy.sendingStatus}
+    data-success-status={contactCopy.successStatus}
+    data-provider-error-fallback={contactCopy.providerErrorFallback}
+    data-error-suffix={contactCopy.errorSuffix}
+    data-generic-error={contactCopy.genericError}
+    data-submit-label={contactCopy.submitLabel}><input type="hidden" name="access_key" value="475ddde6-2a40-4c0a-80d8-3d5ecb6d90f5" /><input type="hidden" name="subject" value="New enquiry from the ANDRO website" /><input type="hidden" name="from_name" value="ANDRO website contact form" /><input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <div class="form-field"><label for="name" data-style-key="contact.nameLabel">{contactCopy.nameLabel}</label><input id="name" name="name" autocomplete="name" required /></div><div class="form-field"><label for="email" data-style-key="contact.emailLabel">{contactCopy.emailLabel}</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+    <div class="form-field full"><label for="service" data-style-key="contact.serviceLabel">{contactCopy.serviceLabel}</label><select id="service" name="service" required><option value="" disabled selected data-style-key="contact.servicePlaceholder">{contactCopy.servicePlaceholder}</option>{contactCopy.serviceOptions.map((option) => <option value={option.label}>{option.label}</option>)}</select></div>
+    <div class="form-field full"><label for="message" data-style-key="contact.messageLabel">{contactCopy.messageLabel}</label><textarea id="message" name="message" required></textarea></div><button class="form-submit" type="submit" data-style-key="contact.submitLabel">{contactCopy.submitLabel}</button><p class="form-status" id="form-status" role="status" aria-live="polite" data-style-key="contact.formNotice">{contactCopy.formNotice}</p>
   </form></div></section>
   <script>
     const form = document.querySelector<HTMLFormElement>('#contact-form');
     const status = document.querySelector<HTMLElement>('#form-status');
     const submitButton = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
-    form?.addEventListener('submit', async (event) => { event.preventDefault(); if (!form.reportValidity() || !status || !submitButton) return; const originalLabel = submitButton.textContent; submitButton.disabled = true; submitButton.textContent = 'Sending…'; status.textContent = 'Sending your enquiry…'; try { const response = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } }); const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.message || 'The form could not be sent.'); status.textContent = 'Thanks — your enquiry has been sent. ANDRO will be in touch.'; form.reset(); } catch (error) { status.textContent = error instanceof Error ? `${error.message} Please try again or email ANDRO directly.` : 'Sorry, your enquiry could not be sent. Please try again or email ANDRO directly.'; } finally { submitButton.disabled = false; submitButton.textContent = originalLabel || 'Send enquiry'; } });
+    // User-editable messages come from data-* attributes; the form destination,
+    // Web3Forms access key, field names, botcheck and validation stay unchanged.
+    const messages = form?.dataset;
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity() || !status || !submitButton) return;
+      const originalLabel = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = messages?.sendingButton || 'Sending…';
+      status.textContent = messages?.sendingStatus || 'Sending your enquiry…';
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' }
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || messages?.providerErrorFallback || 'The form could not be sent.');
+        }
+        status.textContent = messages?.successStatus || 'Thanks — your enquiry has been sent. ANDRO will be in touch.';
+        form.reset();
+      } catch (error) {
+        const suffix = messages?.errorSuffix || 'Please try again or email ANDRO directly.';
+        status.textContent = error instanceof Error
+          ? error.message + ' ' + suffix
+          : (messages?.genericError || 'Sorry, your enquiry could not be sent. Please try again or email ANDRO directly.');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalLabel || messages?.submitLabel || 'Send enquiry';
+      }
+    });
   </script>
 </SiteLayout>
-<style>.hidden{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}.form-status{min-height:1.6em}.form-submit:disabled{opacity:.65;cursor:wait}</style>
+<style>
+  .hidden{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+  .contact-hero h1,.contact-section-heading{white-space:pre-line}
+  .form-status{min-height:1.6em}
+  .form-submit:disabled{opacity:.65;cursor:wait}
+</style>
