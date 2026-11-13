@@ -24,7 +24,7 @@ test('Projects editor exposes all visible page copy before the existing photo ga
   assert(keys.includes('projects'));
   assert(keys.includes('heroVideo'));
   assert(keys.includes('heroVideoPoster'));
-  assert(keys.includes('footerImages'));
+  assert(!keys.includes('footerImages'), 'Footer controls belong in Website-wide settings');
   assert.equal(new Set(keys).size, keys.length, 'Duplicate Decap fields detected');
   for (const name of styled) assert(keys.includes(name+'Style'), 'Missing size/colour controls for '+name);
 });
@@ -39,7 +39,7 @@ test('all existing project photos and property copy remain intact', () => {
   }
   assert(data.photos.hero.src && data.photos.hero.alt);
   assert(data.heroVideo && data.heroVideoPoster);
-  assert(data.footerImages.logo.src);
+  assert.equal(data.footerImages, undefined, 'No duplicate footer settings on Projects');
   assert(typeof data.heroEyebrow === 'string' && data.heroEyebrow.trim(), 'Projects banner label must remain editable');
   assert(typeof data.heroHeading === 'string' && data.heroHeading.trim(), 'Projects banner heading must remain editable');
   assert(typeof data.heroDescription === 'string' && data.heroDescription.trim(), 'Projects intro should be present');
@@ -68,7 +68,7 @@ test('Projects styles and live text preview work without impacting other pages',
   for (const name of ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText']) {
     assert(preview.includes("'"+name+"'"), 'Live preview key missing: '+name);
   }
-  assert(html.includes('preview.js?v=commercial-text-first-20261113-v4'));
+  assert(html.includes('preview.js?v=global-footer-projects-gallery-v5'));
   assert(html.includes('/admin/oauth-popup.js?v=6'), 'Do not disturb working v6 OAuth login');
   assert(siteLayout.includes('projects: pageContent.projects'), 'Projects inline font styles not passed through');
   const css = typographyCss(undefined, { projects: {
@@ -100,29 +100,30 @@ test('Projects showcase displays 2x5 photographs and slides six new photos while
   assert(data.projects.length >= 10, 'Gallery should contain at least ten photos');
 });
 
-test('Same supplied circular ANDRO footer logo is selected on all website pages', () => {
-  for (const name of ['home','construction','maintenance','projects','about','contact']) {
-    const page = JSON.parse(read('../content/pages/' + name + '.json'));
-    assert.equal(page.footerImages.logo.src, '/images/andro-footer-circular.png',
-      'Missing updated circular ANDRO logo on ' + name);
-    assert(page.footerImages.logo.alt.includes('ANDRO'), 'Footer logo needs descriptive alt text on ' + name);
-    assert.equal(page.footerImages.badge, undefined, 'Remove Site Safe badge data on ' + name);
-  }
-  const layout = read('../src/components/SiteLayout.astro');
-  assert(layout.includes('footerImages.logo.src'), 'Footer logo must remain editable in Decap');
-  assert(layout.includes('height: 142px'), 'Circular lettering must be large enough to read');
-});
 
-
-// Site Safe member badge must never appear in the shared footer or page-specific editor.
-test('All ANDRO footers display only the company logo, without Site Safe member branding', () => {
-  const layout = read('../src/components/SiteLayout.astro');
-  const code = read('../src/lib/cms-config.ts');
-  assert(!layout.includes('footerImages.badge.src'), 'Do not render the membership badge in the footer');
-  assert(!code.includes("photo('badge'"), 'Remove membership badge field from /admin');
-  for (const page of ['home','construction','maintenance','projects','about','contact']) {
-    const data = JSON.parse(read('../content/pages/' + page + '.json'));
-    assert.equal(data.footerImages.badge, undefined, 'Stale membership badge remains in '+page);
-    assert.equal(data.footerImages.logo.src, '/images/andro-footer-circular.png');
+test('All six pages share ONE editable footer with no Site Safe badge field', () => {
+  const shared=JSON.parse(read('../content/site-footer.json'));
+  assert.equal(shared.logo.src, '/images/andro-footer-circular.png');
+  assert.equal(shared.companyName, 'Andro Construction Limited');
+  for(const name of ['home','construction','maintenance','projects','about','contact']){
+    const page=JSON.parse(read('../content/pages/' + name + '.json'));
+    assert.equal(page.footerImages, undefined, 'Duplicate footer in '+name);
   }
+  const layout=read('../src/components/SiteLayout.astro');
+  const siteData=read('../src/data/site.ts');
+  assert(layout.includes('siteFooter.logo.src') && layout.includes('siteFooter.companyName'));
+  assert(layout.includes('siteFooter.establishedText') && layout.includes('siteFooter.domainText'));
+  assert(!layout.includes('footerImages.badge') && !layout.includes('footerImagesForPath'));
+  assert(siteData.includes("import footerSettings from '../../content/site-footer.json'"));
+  assert(!siteData.includes('footerImagesForPath'));
+  const settings=cmsConfig.collections.find(c=>c.name==='settings');
+  const footer=settings.files.find(f=>f.name==='footer');
+  assert.equal(footer.file,'content/site-footer.json');
+  for(const name of ['logo','companyName','domainText','domainUrl','establishedText'])
+    assert(footer.fields.some(f=>f.name===name));
+  assert(!footer.fields.some(f=>f.name==='badge'));
+  for(const page of cmsConfig.collections.find(c=>c.name==='pages').files)
+    assert(!page.fields.some(f=>f.name==='footerImages'), 'Legacy footer editor remains on '+page.name);
+  assert(!read('../src/lib/cms-config.ts').includes("photo('badge'"));
+  assert(layout.includes('height: 142px'), 'Keep the circular logo large enough to read');
 });

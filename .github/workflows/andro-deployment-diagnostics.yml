@@ -40,7 +40,7 @@ jobs:
             echo "::group::GET https://andro.co.nz/${target}"
             if curl -fLsS --max-time 30 -H 'Cache-Control: no-cache' "https://andro.co.nz/${target}?diag=${GITHUB_SHA}" -o "$out"; then
               echo "HTTP fetch succeeded; bytes=$(wc -c < "$out")"
-              echo "Current admin version present? $(grep -q 'commercial-text-first-20261113-v4' "$out" && echo yes || echo no)"
+              echo "Current admin version present? $(grep -q 'global-footer-projects-gallery-v5' "$out" && echo yes || echo no)"
               echo "Editable residential list present? $(grep -q 'residentialServices' "$out" && echo yes || echo no)"
               echo "Legacy photo-only field present? $(grep -q '03 - General carpentry row photo' "$out" && echo yes || echo no)"
               echo "Current uploaded garden gate image mentioned? $(grep -q 'img_1299.jpg' "$out" && echo yes || echo no)"
@@ -48,9 +48,15 @@ jobs:
               echo "Editable commercial service list present? $(grep -q 'commercialServices' "$out" && echo yes || echo no)"
               echo "Commercial Add control config present? $(grep -q 'COMMERCIAL SERVICES - edit numbered text' "$out" && echo yes || echo no)"
               echo "Old commercial photo-only control present? $(grep -q '04 - Commercial carpentry and repairs row photo' "$out" && echo yes || echo no)"
+              if [ "$target" = "admin/config.yml" ]; then
+                echo "Shared footer editor live? $(grep -q 'content/site-footer.json' "$out" && echo yes || echo no)"
+                echo "Legacy per-page footer form present? $(grep -q 'Footer images on this page' "$out" && echo yes || echo no)"
+              fi
               if [ "$target" = "projects/" ]; then
                 echo "Projects 2x5 gallery viewport live? $(grep -q 'data-project-viewport' "$out" && echo yes || echo no)"
                 echo "Projects manual arrow controls live? $(grep -q 'data-project-next' "$out" && echo yes || echo no)"
+                echo "New site-wide footer live? $(grep -q 'andro-footer-circular.png' "$out" && echo yes || echo no)"
+                echo "Site Safe membership badge visible? $(grep -q 'MemberSticker' "$out" && echo yes || echo no)"
               fi
             else
               echo "::warning::Could not fetch this public URL from GitHub runner"

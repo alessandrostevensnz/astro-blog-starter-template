@@ -37,12 +37,6 @@
   "philosophyTextStyle": {
     "size": "100"
   },
-  "footerImages": {
-    "logo": {
-      "src": "/images/andro-footer-circular.png",
-      "alt": "ANDRO Construction + Projects circular A emblem — Est. 2020"
-    }
-  },
   "maintenanceCardTitle": "Property + asset maintenance",
   "introHeading": "Good work starts with knowledge",
   "constructionCardTitle": "Construction + renovations",

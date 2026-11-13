@@ -25,11 +25,6 @@ function formatting(name: string, label: string): Field {
     ],
   });
 }
-const footer = () => field('footerImages', 'Footer images on this page', 'object', {
-  collapsed: true,
-  hint: 'The ANDRO circular logo at the bottom of this page. You can replace it independently on each page.',
-  fields: [photo('logo', 'ANDRO footer logo', 'Circular logo shown in the footer.')],
-});
 const photos: Record<string, Array<[string, string, string]>> = {
   home: [
     ['hero', '01 - Main banner', 'Large image at the top of the homepage.'],
@@ -136,13 +131,13 @@ const projectCards = field('projects', 'Project gallery - photos, titles, catego
   label_singular: 'Project photograph',
   collapsed: false,
   summary: '{{fields.title}}',
-  hint: 'Photos appear on /projects/ and automatically scroll through the showcase on /construction/. Drag and drop to reorder both displays, then Publish. The fixed Construction banners and service photos are edited separately on the Construction page.',
+  hint: 'These photos appear in the gently moving Projects showcase and in the Construction gallery. Drag to reorder both displays; the shared footer is edited separately under Website-wide settings.',
   fields: [
     field('title', 'Project title'),
     field('image', 'Project photograph', 'image'),
     field('alt', 'Photo description (alt text)'),
     field('category', 'Category'),
-    field('description', 'Hover description (shown when the mouse is over this photo)', 'text', {required: false, hint: 'Write a short custom description of the work. On mobile, visitors can tap the image to read it.'}),
+    field('description', 'Project description (always visible on photo)', 'text', {required: false, hint: 'This description stays visible at the bottom of each project photo on desktop and mobile.'}),
   ],
 });
 const entries: Array<[string,string,string]> = [
@@ -287,9 +282,8 @@ const pageFiles = entries.map(([name,label,path]) => {
     fields.push(projectCards);
   }
   if (name !== 'projects' && name !== 'contact' && name !== 'construction') addTextFields();
-  fields.push(footer());
   return { name,label,file:'content/pages/'+name+'.json',preview_path:path,
-    description:name === 'contact' ? 'Edit all Contact page headings, explanations, form wording and service choices. The form integration and footer images stay intact.' : 'All photographs and existing editable text for '+label+'. Changing a photo here affects this page only.',fields };
+    description:name === 'contact' ? 'Edit Contact content. The footer is now a single setting under Website-wide settings.' : 'Edit page content and photos. The shared footer is under Website-wide settings.',fields };
 });
 const overrides = Object.entries(styled).flatMap(([page,keys])=>keys.map(key=>field(page+'__'+key,page+' - '+key,'object',{
   collapsed:true,required:false,fields:[field('size','Size (%)','number',{required:false,value_type:'int',min:60,max:180}),field('color','Colour','color',{required:false,allowInput:true})],
@@ -299,7 +293,7 @@ export const cmsConfig = {
   media_folder:'public/images',public_folder:'/images',
   collections:[
     {name:'pages',label:'Pages - photos and text',label_singular:'Page',delete:false,files:pageFiles},
-    {name:'settings',label:'Website-wide appearance',delete:false,editor:{preview:false},files:[{
+    {name:'settings',label:'Website-wide settings',delete:false,editor:{preview:false},files:[{
       name:'appearance',label:'Fonts and colours',file:'content/site-settings.json',fields:[field('typography','Website-wide fonts and colours','object',{
         collapsed:false,fields:[field('global','Default text appearance','object',{fields:[
           field('headingSize','Heading size (%)','number',{value_type:'int',min:70,max:150,default:100}),
@@ -307,6 +301,23 @@ export const cmsConfig = {
           field('headingColor','Heading colour','color',{default:'#1b1b19',allowInput:true}),field('bodyColor','Body colour','color',{default:'#77746e',allowInput:true}),
         ]}),field('overrides','Advanced text settings','object',{collapsed:true,required:false,fields:overrides})],
       })],
+    },{
+      name:'footer',label:'Footer - all pages',file:'content/site-footer.json',
+      description:'Edit once here to update the footer on Home, Construction, Asset maintenance, Projects, About and Contact. No Site Safe badge is used.',
+      fields:[
+        field('logo','ANDRO logo - all six pages','object',{
+          collapsed:false,
+          hint:'This one circular footer logo appears on every page. Replace it here, not in each page.',
+          fields:[
+            field('src','Footer logo image','image',{choose_url:true}),
+            field('alt','Logo description (alt text)','string'),
+          ],
+        }),
+        field('companyName','Company name displayed in footer','string'),
+        field('domainText','Website address displayed in footer','string'),
+        field('domainUrl','Website link address','string'),
+        field('establishedText','Established wording (e.g. EST. 2020)','string'),
+      ],
     }]},
   ],
 };

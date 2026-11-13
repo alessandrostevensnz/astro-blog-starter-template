@@ -1,11 +1,10 @@
 ---
 import BaseHead from './BaseHead.astro';
-import { navigation, site, siteContent, pageContent, footerImagesForPath } from '../data/site';
+import { navigation, siteContent, pageContent, siteFooter } from '../data/site';
 import { typographyCss } from '../lib/typography';
 interface Props { title?: string; description?: string; }
 const { title = 'ANDRO Construction + Projects — EST. 2020', description = 'Auckland construction, renovation, property maintenance and asset maintenance by ANDRO Construction + Projects.' } = Astro.props;
 const currentPath = Astro.url.pathname;
-const footerImages = footerImagesForPath(currentPath);
 ---
 <BaseHead title={title} description={description} />
 <meta name="theme-color" content="#fbfaf7" />
@@ -28,11 +27,11 @@ const footerImages = footerImagesForPath(currentPath);
   <main><slot /></main>
   <footer class="site-footer">
     <div class="footer-credentials" aria-label="ANDRO Construction logo">
-      <img src={footerImages.logo.src} alt={footerImages.logo.alt} loading="lazy" />
+      <img src={siteFooter.logo.src} alt={siteFooter.logo.alt} loading="lazy" />
     </div>
-    <p class="footer-company">{site.legalName}</p>
-    <a class="footer-domain" href="https://andro.co.nz">ANDRO.CO.NZ</a>
-    <p class="footer-established">EST. {site.established}</p>
+    <p class="footer-company">{siteFooter.companyName}</p>
+    <a class="footer-domain" href={siteFooter.domainUrl}>{siteFooter.domainText}</a>
+    <p class="footer-established">{siteFooter.establishedText}</p>
   </footer>
   <script is:inline>
     // Only enabled inside the same-origin CMS iframe; no effect on public visitors.

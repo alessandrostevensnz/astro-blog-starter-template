@@ -29,7 +29,7 @@ test('Contact is editable from page-first Decap, with every field above footer',
   const names = contact.fields.map(field => field.name);
   for (const key of [...textKeys, ...metaKeys, 'serviceOptions', 'contactEmail']) {
     assert(names.includes(key), 'Missing field in contact admin: ' + key);
-    assert(names.indexOf(key) < names.indexOf('footerImages'), 'Contact text should precede footer: ' + key);
+    assert(names.includes(key), 'Contact text field missing: ' + key);
     if(key !== 'contactEmail') assert(typeof content[key] === 'string' || key === 'serviceOptions',
       'Initial Contact wording missing: ' + key);
   }
@@ -54,8 +54,7 @@ test('owner-edited Contact copy, service dropdown and footer images remain valid
     assert(typeof item.label === 'string' && item.label.trim(),
       'Every Contact service choice should contain a label');
   }
-  assert(content.footerImages.logo.src);
-  assert.equal(content.footerImages.badge, undefined);
+  assert.equal(content.footerImages, undefined, 'Contact uses universal footer only');
 });
 
 test('Contact page uses editor copy but retains same working form integration', () => {
@@ -95,7 +94,7 @@ test('Contact font formatting, live preview and working GitHub login are preserv
     assert(preview.includes("'"+key+"'"), 'Missing preview key: '+key);
   }
   assert(preview.includes('Press Return for a new line'));
-  assert(index.includes('/admin/preview.js?v=commercial-text-first-20261113-v4'));
+  assert(index.includes('/admin/preview.js?v=global-footer-projects-gallery-v5'));
   assert(index.includes('/admin/oauth-popup.js?v=6'));
   const css = typographyCss(undefined,{ contact:{
     heroHeadingStyle:{sizePx:72,color:'#FFFFFF'},

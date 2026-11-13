@@ -6,6 +6,7 @@ import about from '../../content/pages/about.json';
 import projects from '../../content/pages/projects.json';
 import contact from '../../content/pages/contact.json';
 import settings from '../../content/site-settings.json';
+import footerSettings from '../../content/site-footer.json';
 
 export const site = {
   name: 'ANDRO',
@@ -38,15 +39,8 @@ export const imagery = {
   commercial: { ...legacy.images.commercial, placeholder: false },
 };
 
-export function footerImagesForPath(path: string) {
-  const key = path.replace(/^\/+|\/+$/g, '');
-  if (key === 'construction') return construction.footerImages;
-  if (key === 'property-maintenance') return maintenance.footerImages;
-  if (key === 'about') return about.footerImages;
-  if (key === 'projects') return projects.footerImages;
-  if (key === 'contact') return contact.footerImages;
-  return home.footerImages;
-}
+// One shared footer, edited in Website-wide settings under /admin.
+export const siteFooter = footerSettings;
 
 export const navigation = [
   { label: 'Construction', href: '/construction/' },
