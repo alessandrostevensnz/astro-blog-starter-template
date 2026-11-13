@@ -359,6 +359,7 @@ test('legacy login button can recover a token without intercepting the popup',as
   const cookieRelay=document.cookie.match(/editor_relay=([a-f0-9]{32})/)[1];
   assert(requests[0].url.endsWith('relay='+cookieRelay));
   assert.equal(requests[0].opts.credentials,'same-origin');
+  assert.equal(requests[0].opts.headers['X-ANDRO-Editor'],'login-v5');
   assert.equal(events[0].data,'authorizing:github');
   assert(events[1].data.startsWith('authorization:github:success:'));
   assert.equal(JSON.parse(events[1].data.slice('authorization:github:success:'.length)).token,'FALLBACK_TEST_TOKEN');
