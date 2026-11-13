@@ -84,11 +84,22 @@ const text: Record<string, Row[]> = {
     ['description','Page description','text'],['heroIntro','Banner introduction','text'],['whoHeading','Who we are heading'],['whoText','Who we are description','text'],
     ['craftHeading','Craftsmanship heading'],['craftText','Craftsmanship description','text'],['visionHeading','Vision heading'],['visionText','Vision description','text'],
   ],
-  projects: [], contact: [],
+  projects: [
+    ['heroEyebrow', '01 - Banner small label'],
+    ['heroHeading', '02 - Main Projects banner heading', 'text'],
+    ['heroDescription', '03 - Banner introduction paragraph', 'text'],
+    ['galleryTip', '04 - Gallery instructions', 'text'],
+    ['galleryNote', '05 - Paragraph below the project photos', 'text'],
+    ['ctaHeading', '06 - Contact section heading', 'text'],
+    ['ctaButtonText', '07 - Contact link wording'],
+    ['metaTitle', 'Google and browser tab title'],
+    ['metaDescription', 'Google search description', 'text'],
+  ], contact: [],
 };
 const styled: Record<string, string[]> = {
   home: ['title','subtitle','introHeading','introText','servicesHeading','featureHeading','closingHeading','philosophyHeading','philosophyText'],
   construction: ['introHeading','introText'], maintenance: ['introHeading','introText'], about: ['whoHeading','whoText'],
+  projects: ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText'],
 };
 const services = field('services', 'Service photographs and descriptions', 'list', {
   label_singular: 'Maintenance service', collapsed: false, summary: '{{fields.number}} - {{fields.title}}',
@@ -96,7 +107,7 @@ const services = field('services', 'Service photographs and descriptions', 'list
   fields: [field('number','Display number'),field('title','Service title'),field('image','Service photo','image',{required:false}),field('imageAlt','Photo description (alt text)','string',{required:false}),
     field('caption','Photo caption','string',{required:false}),field('description','Service description','text')],
 });
-const projectCards = field('projects', 'All Projects-page photographs', 'list', {
+const projectCards = field('projects', 'Project gallery - photos, titles, categories and descriptions', 'list', {
   label_singular: 'Project photograph',
   collapsed: false,
   summary: '{{fields.title}}',
@@ -115,6 +126,19 @@ const entries: Array<[string,string,string]> = [
 ];
 const pageFiles = entries.map(([name,label,path]) => {
   const fields: Field[] = [];
+  // Put the Projects writing controls above the long photo gallery. Every
+  // public-facing Projects section is now editable without scrolling past photos.
+  const addTextFields = () => {
+    for (const [key,title,widget] of text[name]) {
+      fields.push(field(key,title,widget, name === 'projects' && key === 'heroHeading'
+        ? { hint: 'Press Enter for a line break in the main banner heading.' }
+        : name === 'projects' && key === 'ctaHeading'
+          ? { hint: 'Press Enter for a line break in the bottom contact heading.' }
+          : {}));
+      if (styled[name]?.includes(key)) fields.push(formatting(key,title));
+    }
+  };
+  if (name === 'projects') addTextFields();
   // Show the Construction landing video FIRST. It was previously buried below eleven image
   // controls, which made it difficult to find on mobile. This is the same Decap file
   // widget / heroVideo data field used for the Projects landing video.
@@ -158,10 +182,7 @@ const pageFiles = entries.map(([name,label,path]) => {
     }));
     fields.push(projectCards);
   }
-  for (const [key,title,widget] of text[name]) {
-    fields.push(field(key,title,widget));
-    if (styled[name]?.includes(key)) fields.push(formatting(key,title));
-  }
+  if (name !== 'projects') addTextFields();
   fields.push(footer());
   return { name,label,file:'content/pages/'+name+'.json',preview_path:path,
     description:name === 'contact' ? 'Contact currently has no main-page photo. Its two footer images are here; the enquiry form is unchanged.' : 'All photographs and existing editable text for '+label+'. Changing a photo here affects this page only.',fields };
