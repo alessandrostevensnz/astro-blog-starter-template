@@ -8,10 +8,25 @@ try {
   await context.addInitScript(() => {
     const captured=[];
     Object.defineProperty(window,'__androDebugOpens',{value:captured,configurable:true});
+    const nativeOpen=window.open.bind(window);
+    const events=[];
+    window.__androAuthEvents=events;
+    window.addEventListener('message',e=>{
+      if(typeof e.data==='string' && /^(authorizing:github|authorization:github:)/.test(e.data)){
+        events.push(e.data.startsWith('authorization:github:success:')?'success':e.data.startsWith('authorization:github:error:')?'error':'authorizing');
+      }
+    });
     window.open=function(url,target,features){
       captured.push({url:String(url),target:String(target||''),features:String(features||'')});
-      return {focus(){},close(){},postMessage(){},closed:false};
+      // Keep a genuine WindowProxy: the browser validates MessageEvent.source.
+      return nativeOpen('about:blank',target,features);
     };
+  });
+  await context.route('https://andro.co.nz/api/auth/poll?relay=*',async route=>{
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({token:'DUMMY_TOKEN_NOT_REAL',provider:'github'})});
+  });
+  await context.route('https://api.github.com/**',async route=>{
+    await route.fulfill({status:401,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{}'});
   });
   const page=await context.newPage();
   const failures=[];
@@ -43,9 +58,14 @@ try {
       return {origin:u.origin,path:u.pathname,provider:u.searchParams.get('provider'),relayLength:u.searchParams.get('andro_relay')?.length||0,target};
     }),
     buttons:[...document.querySelectorAll('button')].map(x=>(x.textContent||'').trim().slice(0,90)).filter(Boolean).slice(0,15),
-    bodyText:(document.body.innerText||'').slice(0,350)
+    bodyText:(document.body.innerText||'').slice(0,350),
+    authEvents:window.__androAuthEvents
   }));
   console.log('AFTER_CLICK',JSON.stringify(after));
   console.log('FAILURES_AFTER',JSON.stringify(failures));
   if(!initial.helperInstalled) throw Error('OAuth helper did not install in real browser');
+  if(!after.opens.some(o=>o.relayLength===32))throw Error('GitHub popup missing relay');
+  if(!after.authEvents.includes('authorizing')||!after.authEvents.includes('success')){
+    throw Error('Decap did not receive synthetic polling token messages');
+  }
 } finally {await browser.close();}
