@@ -1,0 +1,24 @@
+name: Temporary live ANDRO v5 OAuth smoke test
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/admin-v5-live-smoke.yml"
+      - "tests/admin-v5-live-smoke.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated headless Chromium harness
+        run: npm install --no-save --no-package-lock --ignore-scripts playwright@1.56.1
+      - name: Check live v5 admin, legacy recovery, safety and Chromium login
+        run: node tests/admin-v5-live-smoke.mjs
