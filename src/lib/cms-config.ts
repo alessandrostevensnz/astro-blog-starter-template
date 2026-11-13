@@ -27,8 +27,8 @@ function formatting(name: string, label: string): Field {
 }
 const footer = () => field('footerImages', 'Footer images on this page', 'object', {
   collapsed: true,
-  hint: 'Both images at the very bottom of this page. Changing them here does not change another page.',
-  fields: [photo('logo', 'ANDRO footer logo', 'First footer image.'), photo('badge', 'Membership / safety badge', 'Second footer image. Only display a badge you are authorised to use.')],
+  hint: 'The ANDRO circular logo at the bottom of this page. You can replace it independently on each page.',
+  fields: [photo('logo', 'ANDRO footer logo', 'Circular logo shown in the footer.')],
 });
 const photos: Record<string, Array<[string, string, string]>> = {
   home: [

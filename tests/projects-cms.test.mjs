@@ -39,7 +39,7 @@ test('all existing project photos and property copy remain intact', () => {
   }
   assert(data.photos.hero.src && data.photos.hero.alt);
   assert(data.heroVideo && data.heroVideoPoster);
-  assert(data.footerImages.logo.src && data.footerImages.badge.src);
+  assert(data.footerImages.logo.src);
   assert(typeof data.heroEyebrow === 'string' && data.heroEyebrow.trim(), 'Projects banner label must remain editable');
   assert(typeof data.heroHeading === 'string' && data.heroHeading.trim(), 'Projects banner heading must remain editable');
   assert(typeof data.heroDescription === 'string' && data.heroDescription.trim(), 'Projects intro should be present');
@@ -106,9 +106,23 @@ test('Same supplied circular ANDRO footer logo is selected on all website pages'
     assert.equal(page.footerImages.logo.src, '/images/andro-footer-circular.png',
       'Missing updated circular ANDRO logo on ' + name);
     assert(page.footerImages.logo.alt.includes('ANDRO'), 'Footer logo needs descriptive alt text on ' + name);
-    assert(page.footerImages.badge.src, 'Existing optional footer badge must not be removed on ' + name);
+    assert.equal(page.footerImages.badge, undefined, 'Remove Site Safe badge data on ' + name);
   }
   const layout = read('../src/components/SiteLayout.astro');
   assert(layout.includes('footerImages.logo.src'), 'Footer logo must remain editable in Decap');
   assert(layout.includes('height: 142px'), 'Circular lettering must be large enough to read');
+});
+
+
+// Site Safe member badge must never appear in the shared footer or page-specific editor.
+test('All ANDRO footers display only the company logo, without Site Safe member branding', () => {
+  const layout = read('../src/components/SiteLayout.astro');
+  const code = read('../src/lib/cms-config.ts');
+  assert(!layout.includes('footerImages.badge.src'), 'Do not render the membership badge in the footer');
+  assert(!code.includes("photo('badge'"), 'Remove membership badge field from /admin');
+  for (const page of ['home','construction','maintenance','projects','about','contact']) {
+    const data = JSON.parse(read('../content/pages/' + page + '.json'));
+    assert.equal(data.footerImages.badge, undefined, 'Stale membership badge remains in '+page);
+    assert.equal(data.footerImages.logo.src, '/images/andro-footer-circular.png');
+  }
 });

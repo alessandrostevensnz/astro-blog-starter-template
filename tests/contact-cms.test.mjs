@@ -55,7 +55,7 @@ test('owner-edited Contact copy, service dropdown and footer images remain valid
       'Every Contact service choice should contain a label');
   }
   assert(content.footerImages.logo.src);
-  assert(content.footerImages.badge.src);
+  assert.equal(content.footerImages.badge, undefined);
 });
 
 test('Contact page uses editor copy but retains same working form integration', () => {
