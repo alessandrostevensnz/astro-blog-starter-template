@@ -308,3 +308,11 @@ test('editor finishes GitHub sign-in by polling even without BroadcastChannel',a
   assert(popup.closed,'stale popup is closed after successful receipt');
   assert.equal(handle.closed,true);
 });
+
+test('server OAuth failure is visible even when opener and relay are missing',async()=>{
+  const h=await harness('', 'csrf_state_mismatch', {missing:true});
+  assert.match(h.elements['login-status'].textContent,/csrf_state_mismatch/);
+  assert.equal(h.elements['login-help'].hidden,false);
+  assert.equal(h.messages.length,0);
+  assert.equal(h.timers.size,0);
+});
