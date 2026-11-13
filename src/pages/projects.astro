@@ -52,7 +52,7 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
       <nav class="andro-projects-navigation" data-project-navigation aria-label="Browse project photographs" hidden>
         <span class="andro-projects-count" data-project-count aria-live="polite" aria-atomic="true"></span>
         <div class="andro-projects-navigation-buttons">
-          <button class="andro-gallery-arrow" type="button" data-project-prev aria-label="Slide project photos left" disabled>
+          <button class="andro-gallery-arrow" type="button" data-project-prev aria-label="Slide project photos left">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <path d="m15 18-6-6 6-6" />
             </svg>
@@ -66,15 +66,9 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
       </nav>
     </div>
     <div class="andro-projects-viewport" data-project-viewport tabindex="0" role="region" aria-label="Project photographs, arranged two rows high; use arrow buttons or swipe to browse">
-      <div class="andro-projects-grid" data-project-gallery aria-label="Project showcase, two rows of photographs">
+      <div class="andro-projects-grid" data-project-gallery aria-label="Slowly moving project showcase, two rows of photographs">
       {siteContent.projects.map((entry) => (
-        <button
-          type="button"
-          class="andro-project-tile"
-          data-project-tile
-          aria-expanded="false"
-          aria-label={entry.title + (entry.description ? '. ' + entry.description : '. ' + entry.category)}
-        >
+        <figure class="andro-project-tile" data-project-tile>
           <img
             src={galleryImages[entry.image]?.large ?? entry.image}
             srcset={galleryImages[entry.image] ? `${galleryImages[entry.image].small} 480w, ${galleryImages[entry.image].large} 960w` : undefined}
@@ -83,12 +77,12 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
             loading="lazy"
             decoding="async"
           />
-          <span class="andro-project-overlay">
+          <figcaption class="andro-project-overlay">
             <span class="andro-project-category" data-cms-text>{entry.category}</span>
             <span class="andro-project-title" data-cms-text>{entry.title}</span>
             {entry.description && <span class="andro-project-description" data-cms-text>{entry.description}</span>}
-          </span>
-        </button>
+          </figcaption>
+        </figure>
       ))}
       </div>
     </div>
@@ -100,86 +94,123 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
 <script>
   const gallery = document.querySelector<HTMLElement>('[data-project-gallery]');
   const viewport = document.querySelector<HTMLElement>('[data-project-viewport]');
-  const tiles = Array.from(gallery?.querySelectorAll<HTMLButtonElement>('[data-project-tile]') ?? []);
-  const galleryNavigation = document.querySelector<HTMLElement>('[data-project-navigation]');
-  const previousButton = galleryNavigation?.querySelector<HTMLButtonElement>('[data-project-prev]');
-  const nextButton = galleryNavigation?.querySelector<HTMLButtonElement>('[data-project-next]');
-  const galleryCount = galleryNavigation?.querySelector<HTMLElement>('[data-project-count]');
+  const uniqueTiles = Array.from(gallery?.querySelectorAll<HTMLElement>('[data-project-tile]') ?? []);
+  const controls = document.querySelector<HTMLElement>('[data-project-navigation]');
+  const prev = controls?.querySelector<HTMLButtonElement>('[data-project-prev]');
+  const next = controls?.querySelector<HTMLButtonElement>('[data-project-next]');
+  const counter = controls?.querySelector<HTMLElement>('[data-project-count]');
   const smallScreen = window.matchMedia('(max-width: 760px)');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const noHover = window.matchMedia('(hover: none)');
-  const collapse = () => tiles.forEach(tile => tile.setAttribute('aria-expanded', 'false'));
 
-  // The two rows move together. Five columns (10 photos) are visible on desktop.
-  // Advance by three COLUMNS (six new photos), leaving two columns (four photos)
-  // visible for continuity. Phones keep two columns and move one at a time.
-  if (gallery && viewport && galleryNavigation && previousButton && nextButton && galleryCount && tiles.length > 0) {
+  // A column contains two photos. Duplicating each complete cycle permits
+  // continuously moving through projects without a visible jump at the end.
+  if (gallery && viewport && controls && prev && next && counter && uniqueTiles.length) {
+    const uniquePhotoCount = uniqueTiles.length;
     const rows = 2;
-    const totalColumns = Math.ceil(tiles.length / rows);
-    const visibleColumns = () => smallScreen.matches ? 2 : 5;
-    const advanceColumns = () => smallScreen.matches ? 1 : 3;
-    const maxColumn = () => Math.max(0, totalColumns - visibleColumns());
-    const clamp = (column: number) => Math.max(0, Math.min(maxColumn(), column));
-    const firstTileInColumn = (column: number) => tiles[column * rows];
-    const format = (value: number) => String(value).padStart(2, '0');
-    let firstColumn = 0;
+    const totalColumns = Math.ceil(uniquePhotoCount / rows);
+    const columnsPerClick = () => smallScreen.matches ? 1 : 3;
+    const decorate = (tile: HTMLElement) => {
+      tile.setAttribute('aria-hidden', 'true');
+      tile.querySelector('img')?.setAttribute('alt', '');
+      return tile;
+    };
+    // The odd final entry gets a matching partner to keep each repeated
+    // copy aligned as two complete rows (45 saved photos are preserved).
+    if (uniquePhotoCount % rows) {
+      gallery.appendChild(decorate(uniqueTiles[uniquePhotoCount - 1].cloneNode(true) as HTMLElement));
+    }
+    const firstCopy = Array.from(gallery.querySelectorAll<HTMLElement>('[data-project-tile]'));
+    const secondCopy = firstCopy.map(tile => decorate(tile.cloneNode(true) as HTMLElement));
+    secondCopy.forEach(tile => gallery.appendChild(tile));
 
-    const updateControls = () => {
-      const firstPhotoNumber = firstColumn * rows + 1;
-      const lastPhotoNumber = Math.min(tiles.length, (firstColumn + visibleColumns()) * rows);
-      previousButton.disabled = firstColumn === 0;
-      nextButton.disabled = firstColumn >= maxColumn();
-      galleryCount.textContent = `${format(firstPhotoNumber)}–${format(lastPhotoNumber)} / ${format(tiles.length)}`;
+    let columnWidth = 0;
+    let loopWidth = 0;
+    let lastTime = 0;
+    let pauseUntil = performance.now() + 750;
+    let pointerOver = false;
+    let touching = false;
+    let hasFocus = false;
+    let announcedColumn = -1;
+    const number = (value: number) => String(value).padStart(2, '0');
+    const measure = (preserve = false) => {
+      const previousLoop = loopWidth;
+      const previousScroll = viewport.scrollLeft;
+      columnWidth = firstCopy[2]
+        ? firstCopy[2].offsetLeft - firstCopy[0].offsetLeft
+        : viewport.clientWidth / (smallScreen.matches ? 2 : 5);
+      loopWidth = secondCopy[0].offsetLeft - firstCopy[0].offsetLeft;
+      if (preserve && previousLoop > 0 && loopWidth > 0)
+        viewport.scrollLeft = previousScroll / previousLoop * loopWidth;
+      announcedColumn = -1;
+    };
+    const updateCount = () => {
+      if (columnWidth <= 0 || loopWidth <= 0) return;
+      const offset = ((viewport.scrollLeft % loopWidth) + loopWidth) % loopWidth;
+      const column = Math.min(totalColumns - 1, Math.floor(offset / columnWidth));
+      if (column !== announcedColumn) {
+        announcedColumn = column;
+        counter.textContent = `COLUMN ${number(column + 1)} / ${number(totalColumns)}`;
+      }
     };
 
-    const scrollToColumn = (column: number, animate: boolean) => {
-      firstColumn = clamp(column);
-      collapse();
-      updateControls();
+    const pause = () => { pauseUntil = performance.now() + 8000; };
+    const move = (direction: number) => {
+      if (columnWidth <= 0 || loopWidth <= 0) return;
+      pause();
+      const offset = columnsPerClick() * columnWidth;
+      let start = viewport.scrollLeft;
+      const maximum = viewport.scrollWidth - viewport.clientWidth;
+      // Move between identical copies before sliding to avoid a hard stop.
+      if (direction < 0 && start < offset) start += loopWidth;
+      if (direction > 0 && start + offset > maximum) start -= loopWidth;
+      viewport.scrollLeft = start;
       viewport.scrollTo({
-        left: firstTileInColumn(firstColumn)?.offsetLeft ?? 0,
-        behavior: animate && !reducedMotion.matches ? 'smooth' : 'auto',
+        left: start + direction * offset,
+        behavior: reducedMotion.matches ? 'auto' : 'smooth'
       });
     };
+    controls.hidden = false;
+    prev.disabled = false;
+    next.disabled = false;
+    prev.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
 
-    galleryNavigation.hidden = false;
-    previousButton.addEventListener('click', () => scrollToColumn(firstColumn - advanceColumns(), true));
-    nextButton.addEventListener('click', () => scrollToColumn(firstColumn + advanceColumns(), true));
+    // Visitors can pause simply by hovering, touching, focusing or swiping.
+    viewport.addEventListener('pointerenter', () => { pointerOver = true; });
+    viewport.addEventListener('pointerleave', () => { pointerOver = false; touching = false; });
+    viewport.addEventListener('pointerdown', () => { touching = true; pause(); });
+    viewport.addEventListener('pointerup', () => { touching = false; pause(); });
+    viewport.addEventListener('pointercancel', () => { touching = false; });
+    viewport.addEventListener('focusin', () => { hasFocus = true; });
+    viewport.addEventListener('focusout', () => { hasFocus = viewport.contains(document.activeElement); });
+    viewport.addEventListener('wheel', pause, { passive: true });
+    viewport.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        move(event.key === 'ArrowLeft' ? -1 : 1);
+      }
+    });
+    viewport.addEventListener('scroll', updateCount, { passive: true });
+    window.addEventListener('resize', () => measure(true));
+    smallScreen.addEventListener('change', () => measure(true));
 
-    // Keep controls accurate when someone swipes the gallery on a touch device.
-    let scrollScheduled = false;
-    viewport.addEventListener('scroll', () => {
-      if (scrollScheduled) return;
-      scrollScheduled = true;
-      requestAnimationFrame(() => {
-        scrollScheduled = false;
-        const first = firstTileInColumn(0);
-        const second = firstTileInColumn(1);
-        if (first && second) {
-          const columnWidth = second.offsetLeft - first.offsetLeft;
-          if (columnWidth > 0) firstColumn = clamp(Math.round(viewport.scrollLeft / columnWidth));
-        }
-        updateControls();
-      });
-    }, { passive: true });
-
-    const realign = () => scrollToColumn(firstColumn, false);
-    smallScreen.addEventListener('change', realign);
-    window.addEventListener('resize', realign);
-    updateControls();
+    const animate = (time: number) => {
+      const elapsed = lastTime ? Math.min(0.08, (time - lastTime) / 1000) : 0;
+      lastTime = time;
+      if (loopWidth > 0 && !reducedMotion.matches && document.visibilityState === 'visible'
+          && !pointerOver && !touching && !hasFocus && time >= pauseUntil) {
+        // Approximately half the Construction photo-reel speed.
+        const pixelsPerSecond = smallScreen.matches ? 25 : 42;
+        viewport.scrollLeft += pixelsPerSecond * elapsed;
+        if (viewport.scrollLeft >= loopWidth) viewport.scrollLeft -= loopWidth;
+        updateCount();
+      }
+      requestAnimationFrame(animate);
+    };
+    measure();
+    updateCount();
+    requestAnimationFrame(animate);
   }
-
-  // The original project descriptions still reveal on hover or tap.
-  tiles.forEach(tile => tile.addEventListener('click', () => {
-    if (!noHover.matches) return;
-    const shouldOpen = tile.getAttribute('aria-expanded') !== 'true';
-    collapse();
-    if (shouldOpen) tile.setAttribute('aria-expanded', 'true');
-  }));
-  document.addEventListener('pointerdown', event => {
-    if (noHover.matches && event.target instanceof Node && !event.target.parentElement?.closest('[data-project-tile]')) collapse();
-  });
-
 </script>
 <style>
   /* Projects photo header matches ANDRO's construction and other photo-led pages. */
@@ -271,7 +302,7 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-inline: contain;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: none; /* Avoid snapping during the slow, continuous scroll. */
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -286,19 +317,14 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
     grid-auto-columns: calc((100% - 4 * var(--project-gap)) / 5);
     gap: var(--project-gap);
   }
-  .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; scroll-snap-align: start; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; cursor: pointer; }
+  .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; aspect-ratio: 4 / 3; margin: 0; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; }
   .andro-project-tile img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
-  .andro-project-overlay { display: flex; flex-direction: column; justify-content: end; gap: 7px; position: absolute; inset: 0; padding: clamp(10px, 1.1vw, 18px); background: linear-gradient(180deg, rgba(10,12,11,.17), rgba(10,12,11,.89)); color: #fff; opacity: 0; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease; pointer-events: none; overflow: hidden; }
+  .andro-project-overlay { display: flex; flex-direction: column; justify-content: end; gap: 7px; position: absolute; inset: 0; padding: clamp(10px, 1.1vw, 18px); background: linear-gradient(180deg, rgba(10,12,11,.17), rgba(10,12,11,.89)); color: #fff; opacity: 1; transform: none; pointer-events: none; overflow: hidden; }
   .andro-project-category { color: #dfcba7; font-size: 10px; line-height: 1.3; letter-spacing: .07em; text-transform: uppercase; }
   .andro-project-title { font-family: var(--font-display); font-size: clamp(15px, 1.35vw, 22px); font-weight: 400; letter-spacing: -.04em; line-height: 1.14; }
   .andro-project-description { color: rgba(255,255,255,.94); font-size: 12px; line-height: 1.5; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
-  @media (hover: hover) {
-    .andro-project-tile:hover img { transform: scale(1.045); }
-    .andro-project-tile:hover .andro-project-overlay { opacity: 1; transform: translateY(0); }
-  }
-  .andro-project-tile:focus-visible { outline: 3px solid var(--brand-accent); outline-offset: 3px; }
-  .andro-project-tile:focus-visible .andro-project-overlay, .andro-project-tile[aria-expanded="true"] .andro-project-overlay { opacity: 1; transform: translateY(0); }
-  .andro-project-tile[aria-expanded="true"] img { transform: scale(1.045); }
+  /* Photo titles and descriptions are always visible, without hover or tap. */
+  .andro-project-overlay { background: linear-gradient(180deg, transparent 6%, rgba(10,12,11,.32) 45%, rgba(10,12,11,.85) 100%); }
   .projects-note { margin-top: 50px; max-width: 760px; }
   .projects-cta-heading { white-space: pre-line; }
   @media (max-width: 760px) { .andro-projects-gallery-head { align-items: flex-start; } .andro-projects-navigation { margin-left: 0; } .andro-projects-viewport { --project-gap: 12px; } .andro-projects-grid { grid-auto-columns: calc((100% - var(--project-gap)) / 2); } .andro-project-tile { aspect-ratio: 1 / 1.12; } .andro-project-title { font-size: clamp(15px, 3.5vw, 21px); } .andro-project-description { font-size: 11px; line-height: 1.45; } }
