@@ -47,8 +47,25 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
     </div>
   </section>
   <section class="page-body section-pad">
-    <p class="andro-projects-tip" data-style-key="projects.galleryTip">{projectCopy.galleryTip}</p>
-    <div class="andro-projects-grid" aria-label="Project showcase">
+    <div class="andro-projects-gallery-head">
+      <p class="andro-projects-tip" data-style-key="projects.galleryTip">{projectCopy.galleryTip}</p>
+      <nav class="andro-projects-navigation" data-project-navigation aria-label="Browse project photographs" hidden>
+        <span class="andro-projects-count" data-project-count aria-live="polite" aria-atomic="true"></span>
+        <div class="andro-projects-navigation-buttons">
+          <button class="andro-gallery-arrow" type="button" data-project-prev aria-label="Previous three project photos" disabled>
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </button>
+          <button class="andro-gallery-arrow" type="button" data-project-next aria-label="Next three project photos">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+    <div class="andro-projects-grid" data-project-gallery aria-label="Project showcase, two rows of photos">
       {siteContent.projects.map((entry) => (
         <button
           type="button"
@@ -60,7 +77,7 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
           <img
             src={galleryImages[entry.image]?.large ?? entry.image}
             srcset={galleryImages[entry.image] ? `${galleryImages[entry.image].small} 480w, ${galleryImages[entry.image].large} 960w` : undefined}
-            sizes={galleryImages[entry.image] ? '(max-width: 760px) 50vw, (max-width: 1050px) 33vw, (max-width: 1180px) 25vw, 20vw' : undefined}
+            sizes={galleryImages[entry.image] ? '(max-width: 760px) 43vw, (max-width: 1200px) 27vw, 400px' : undefined}
             alt={entry.alt}
             loading="lazy"
             decoding="async"
@@ -79,10 +96,51 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
 </SiteLayout>
 
 <script>
-  // On touchscreens, tap a project to reveal or hide its description.
-  const tiles = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-project-tile]'));
+  const gallery = document.querySelector<HTMLElement>('[data-project-gallery]');
+  const tiles = Array.from(gallery?.querySelectorAll<HTMLButtonElement>('[data-project-tile]') ?? []);
+  const galleryNavigation = document.querySelector<HTMLElement>('[data-project-navigation]');
+  const previousButton = galleryNavigation?.querySelector<HTMLButtonElement>('[data-project-prev]');
+  const nextButton = galleryNavigation?.querySelector<HTMLButtonElement>('[data-project-next]');
+  const galleryCount = galleryNavigation?.querySelector<HTMLElement>('[data-project-count]');
+  const smallScreen = window.matchMedia('(max-width: 760px)');
   const noHover = window.matchMedia('(hover: none)');
   const collapse = () => tiles.forEach(tile => tile.setAttribute('aria-expanded', 'false'));
+
+  // Show two rows: 3 across on desktop, 2 across on phones.
+  // The arrows move through 3 photos per click, with no automatic rotation.
+  if (gallery && galleryNavigation && previousButton && nextButton && galleryCount && tiles.length > 0) {
+    let firstPhoto = 0;
+    const moveBy = 3;
+    const format = (value: number) => String(value).padStart(2, '0');
+    const renderGallery = () => {
+      const visiblePhotos = smallScreen.matches ? 4 : 6;
+      const maxFirstPhoto = Math.max(0, tiles.length - visiblePhotos);
+      firstPhoto = Math.min(firstPhoto, maxFirstPhoto);
+      tiles.forEach((tile, index) => {
+        const visible = index >= firstPhoto && index < firstPhoto + visiblePhotos;
+        tile.hidden = !visible;
+        if (!visible) tile.setAttribute('aria-expanded', 'false');
+      });
+      previousButton.disabled = firstPhoto === 0;
+      nextButton.disabled = firstPhoto >= maxFirstPhoto;
+      galleryCount.textContent = `${format(firstPhoto + 1)}–${format(Math.min(tiles.length, firstPhoto + visiblePhotos))} / ${format(tiles.length)}`;
+    };
+    galleryNavigation.hidden = false;
+    previousButton.addEventListener('click', () => {
+      firstPhoto = Math.max(0, firstPhoto - moveBy);
+      collapse();
+      renderGallery();
+    });
+    nextButton.addEventListener('click', () => {
+      firstPhoto = Math.min(Math.max(0, tiles.length - (smallScreen.matches ? 4 : 6)), firstPhoto + moveBy);
+      collapse();
+      renderGallery();
+    });
+    smallScreen.addEventListener('change', renderGallery);
+    renderGallery();
+  }
+
+  // On touchscreens, tap a project to reveal or hide its description.
   tiles.forEach(tile => tile.addEventListener('click', () => {
     if (!noHover.matches) return;
     const shouldOpen = tile.getAttribute('aria-expanded') !== 'true';
@@ -165,8 +223,20 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
     }
   }
 
-  .andro-projects-tip { margin: 0 0 22px; color: var(--brand-muted); font-size: 12px; line-height: 1.6; }
-  .andro-projects-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; }
+  .andro-projects-gallery-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px 24px; margin: 0 0 24px; }
+  .andro-projects-tip { flex: 1 1 320px; margin: 0; color: var(--brand-muted); font-size: 12px; line-height: 1.6; }
+  .andro-projects-navigation { display: flex; align-items: center; gap: 18px; margin-left: auto; }
+  .andro-projects-navigation[hidden] { display: none !important; }
+  .andro-projects-count { color: var(--brand-muted); font-size: 11px; letter-spacing: .13em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .andro-projects-navigation-buttons { display: flex; align-items: center; gap: 8px; }
+  .andro-gallery-arrow { display: grid; place-items: center; width: 45px; height: 45px; padding: 0; border: 1px solid #b49b70; border-radius: 0; color: #262724; background: transparent; cursor: pointer; transition: background .2s ease, color .2s ease; }
+  .andro-gallery-arrow:not(:disabled):hover { background: #262724; color: #fff; }
+  .andro-gallery-arrow:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 3px; }
+  .andro-gallery-arrow:disabled { opacity: .32; cursor: not-allowed; }
+  .andro-gallery-arrow svg { display: block; }
+  /* A fixed two-row gallery; only the arrows change which photos are shown. */
+  .andro-projects-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+  .andro-project-tile[hidden] { display: none !important; }
   .andro-project-tile { display: block; position: relative; min-width: 0; width: 100%; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; background: #d4d0c8; color: #fff; text-align: left; cursor: pointer; }
   .andro-project-tile img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
   .andro-project-overlay { display: flex; flex-direction: column; justify-content: end; gap: 7px; position: absolute; inset: 0; padding: clamp(10px, 1.1vw, 18px); background: linear-gradient(180deg, rgba(10,12,11,.17), rgba(10,12,11,.89)); color: #fff; opacity: 0; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease; pointer-events: none; overflow: hidden; }
@@ -182,9 +252,8 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
   .andro-project-tile[aria-expanded="true"] img { transform: scale(1.045); }
   .projects-note { margin-top: 50px; max-width: 760px; }
   .projects-cta-heading { white-space: pre-line; }
-  @media (max-width: 1180px) { .andro-projects-grid { grid-template-columns: repeat(4, minmax(0,1fr)); } }
-  @media (max-width: 1050px) { .andro-projects-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
-  @media (max-width: 760px) { .andro-projects-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; } .andro-project-tile { aspect-ratio: 1 / 1.12; } .andro-project-title { font-size: clamp(15px, 3.5vw, 21px); } .andro-project-description { font-size: 11px; line-height: 1.45; } }
+  @media (max-width: 760px) { .andro-projects-gallery-head { align-items: flex-start; } .andro-projects-navigation { margin-left: 0; } .andro-projects-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; } .andro-project-tile { aspect-ratio: 1 / 1.12; } .andro-project-title { font-size: clamp(15px, 3.5vw, 21px); } .andro-project-description { font-size: 11px; line-height: 1.45; } }
+  @media (max-width: 420px) { .andro-projects-navigation { width: 100%; justify-content: space-between; } }
   @media (max-width: 400px) { .andro-project-overlay { padding: 10px; gap: 5px; } .andro-project-category { font-size: 9px; } .andro-project-title { font-size: 15px; } .andro-project-description { font-size: 10px; -webkit-line-clamp: 3; } }
   @media (prefers-reduced-motion: reduce) { .andro-project-tile img, .andro-project-overlay { transition: none; } }
 </style>

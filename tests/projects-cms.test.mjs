@@ -78,3 +78,23 @@ test('Projects styles and live text preview work without impacting other pages',
   assert(css.includes('[data-style-key="projects.heroHeading"]{font-size:54px;color:#FFFFFF;'));
   assert(css.includes('[data-style-key="projects.galleryNote"]{font-size:17px;color:#315C48;'));
 });
+
+
+test('Projects gallery is two rows with manually controlled three-photo pagination', () => {
+  const source = read('../src/pages/projects.astro');
+  assert(source.includes('siteContent.projects.map'), 'Every CMS project should remain in the gallery');
+  assert(source.includes('data-project-gallery'), 'Missing project gallery');
+  assert(source.includes('data-project-navigation'), 'Missing manual navigation');
+  assert(source.includes('data-project-prev') && source.includes('data-project-next'), 'Missing previous / next photo controls');
+  assert(source.includes('const moveBy = 3'), 'Navigation must advance three pictures per click');
+  assert(source.includes('const visiblePhotos = smallScreen.matches ? 4 : 6'), 'Desktop gallery must show six photos, two rows of three');
+  assert(source.includes('grid-template-columns: repeat(3, minmax(0,1fr))'), 'Desktop must display three columns');
+  assert(source.includes('grid-template-columns: repeat(2, minmax(0,1fr))'), 'Mobile gallery must have two columns');
+  assert(source.includes('tile.hidden = !visible'), 'Pagination must show only the active gallery items');
+  assert(source.includes('nextButton.disabled = firstPhoto >= maxFirstPhoto'), 'Next button must stop at the last group');
+  assert(source.includes("smallScreen.addEventListener('change', renderGallery)"), 'Changing screen sizes must refresh the visible count');
+  assert(source.includes('aria-live="polite"'), 'Gallery progress must be screen reader friendly');
+  assert(!source.includes('setInterval('), 'Photo gallery must never autoplay');
+  assert(data.projects.length >= 6, 'Current showcase should have at least six images');
+  assert(source.includes('data-project-tile'), 'Mobile tap details must still work');
+});
