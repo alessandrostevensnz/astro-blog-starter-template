@@ -1,0 +1,35 @@
+name: Site-wide CMS paragraph spacing
+on:
+  pull_request:
+    paths:
+      - "src/pages/**"
+      - "src/components/SiteLayout.astro"
+      - "src/lib/cms-config.ts"
+      - "public/admin/preview.js"
+      - "public/admin/index.html"
+      - "tests/sitewide-linebreaks.test.mjs"
+      - ".github/workflows/sitewide-linebreaks.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/pages/**"
+      - "src/components/SiteLayout.astro"
+      - "src/lib/cms-config.ts"
+      - "public/admin/preview.js"
+      - "public/admin/index.html"
+      - "tests/sitewide-linebreaks.test.mjs"
+permissions:
+  contents: read
+jobs:
+  validate-sitewide-paragraphs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check editor formatting, project and contact regressions
+        run: node --experimental-strip-types --test tests/sitewide-linebreaks.test.mjs tests/projects-cms.test.mjs tests/contact-cms.test.mjs
+      - name: Check CMS preview JavaScript syntax
+        run: node --check public/admin/preview.js
