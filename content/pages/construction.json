@@ -76,6 +76,35 @@
     }
   ],
   "residentialHighlights": [],
+  "commercialServices": [
+    {
+      "image": "/images/screenshot-2026-11-13-at-10.07.51 pm.png",
+      "title": "Commercial New Builds ",
+      "description": "Construction of Commercial spaces, from warehouses to retail\nUndertaking full scope of work from earthworks to the final fit out. "
+    },
+    {
+      "title": "Commercial carpentry and repairs",
+      "description": "Carpentry, detailed improvements and practical repairs for commercial properties, with attention to workmanship and the people using the space.",
+      "image": "/images/comerrical GIB.png",
+      "imageAlt": "Commercial carpentry and feature wall installation in Auckland",
+      "bulletPoints": []
+    },
+    {
+      "title": "Fit-outs and interior improvements",
+      "description": "Interior framing, fit-outs and alterations planned around how offices, retail and hospitality spaces need to function. ",
+      "image": "/images/c77a9053.webp",
+      "imageAlt": "Commercial construction framing prior to fit-out in Auckland",
+      "bulletPoints": []
+    },
+    {
+      "title": "Alterations and refurbishments",
+      "description": "Upgrades, recladding and refurbishment work coordinated around access, sequencing and keeping disruption to a minimum.",
+      "image": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
+      "imageAlt": "Commercial recladding and joinery improvements in Remuera",
+      "bulletPoints": []
+    }
+  ],
+  "commercialHighlights": [],
   "residentialText": "From general carpentry and decks to fencing, minor alterations and interior or exterior improvements, the right approach depends on the property and its intended use. We consider how new work meets existing surfaces, how materials will weather and how details such as junctions, fixings and finishes affect day-to-day function. For renovations, existing structures can reveal unexpected conditions once work begins. If that happens, we explain what has been found and discuss the practical options before proceeding. Work requiring a licensed building practitioner, building consent or specialist trade is undertaken or coordinated in line with applicable requirements.",
   "gallery": [],
   "processHeading": "Preparation makes a difference.",
@@ -101,29 +130,5 @@
   },
   "processText": "A well-considered scope helps avoid mismatched expectations and rushed decisions. We talk through the intended outcome, identify visible constraints, consider suitable materials and clarify what is included. The aim is not to overcomplicate a project, but to make informed choices that support a durable, functional finish.",
   "description": "Residential and commercial construction, carpentry, renovations and property improvements across Auckland. We take time to understand the existing building, prepare carefully and agree a clear scope so the finished work is practical as well as considered.",
-  "residentialHeading": "Residential construction and carpentry",
-  "commercialServices": [
-    {
-      "title": "Commercial carpentry and repairs",
-      "description": "Carpentry, detailed improvements and practical repairs for commercial properties, with attention to workmanship and the people using the space.",
-      "image": "/images/comerrical GIB.png",
-      "imageAlt": "Commercial carpentry and feature wall installation in Auckland",
-      "bulletPoints": []
-    },
-    {
-      "title": "Fit-outs and interior improvements",
-      "description": "Interior framing, fit-outs and alterations planned around how offices, retail and hospitality spaces need to function.",
-      "image": "/images/c77a9053.webp",
-      "imageAlt": "Commercial construction framing prior to fit-out in Auckland",
-      "bulletPoints": []
-    },
-    {
-      "title": "Alterations and refurbishments",
-      "description": "Upgrades, recladding and refurbishment work coordinated around access, sequencing and keeping disruption to a minimum.",
-      "image": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
-      "imageAlt": "Commercial recladding and joinery improvements in Remuera",
-      "bulletPoints": []
-    }
-  ],
-  "commercialHighlights": []
+  "residentialHeading": "Residential construction and carpentry"
 }
