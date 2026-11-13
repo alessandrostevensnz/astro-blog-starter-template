@@ -48,7 +48,7 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
       <p class="lead" data-style-key="projects.heroDescription">{projectCopy.heroDescription}</p>
     </div>
   </section>
-  <section class="page-body section-pad">
+  <section class="page-body section-pad andro-projects-showcase">
     <div class="andro-projects-gallery-head">
       <p class="andro-projects-tip" data-style-key="projects.galleryTip">{projectCopy.galleryTip}</p>
       <nav class="andro-projects-navigation" data-project-navigation aria-label="Browse project photographs" hidden>
@@ -67,8 +67,8 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
         </div>
       </nav>
     </div>
-    <div class="andro-projects-viewport" data-project-viewport tabindex="0" role="region" aria-label="Project photographs, arranged two rows high; use arrow buttons or swipe to browse">
-      <div class="andro-projects-grid" data-project-gallery aria-label="Slowly moving project showcase, two rows of photographs">
+    <div class="andro-projects-viewport" data-project-viewport tabindex="0" role="region" aria-label="Project photographs, arranged three rows high; use arrow buttons or swipe to browse">
+      <div class="andro-projects-grid" data-project-gallery aria-label="Slowly moving project showcase, three rows of photographs">
       {siteContent.projects.map((entry) => (
         <figure class="andro-project-tile" data-project-tile>
           <img
@@ -130,11 +130,11 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
   const smallScreen = window.matchMedia('(max-width: 760px)');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // A column contains two photos. Duplicating each complete cycle permits
+  // A column contains three photos. Duplicating each complete cycle permits
   // continuously moving through projects without a visible jump at the end.
   if (gallery && viewport && controls && prev && next && counter && uniqueTiles.length) {
     const uniquePhotoCount = uniqueTiles.length;
-    const rows = 2;
+    const rows = 3;
     const totalColumns = Math.ceil(uniquePhotoCount / rows);
     const columnsPerClick = () => smallScreen.matches ? 1 : 3;
     const decorate = (tile: HTMLElement) => {
@@ -142,10 +142,14 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
       tile.querySelector('img')?.setAttribute('alt', '');
       return tile;
     };
-    // The odd final entry gets a matching partner to keep each repeated
-    // copy aligned as two complete rows (45 saved photos are preserved).
-    if (uniquePhotoCount % rows) {
-      gallery.appendChild(decorate(uniqueTiles[uniquePhotoCount - 1].cloneNode(true) as HTMLElement));
+    // If more photos are added in /admin, pad the last column so that
+    // all three rows stay aligned when the continuous gallery repeats.
+    // The originals remain untouched and decorative copies are hidden.
+    const remaining = uniquePhotoCount % rows;
+    if (remaining > 0) {
+      for (let i = remaining; i < rows; i++) {
+        gallery.appendChild(decorate(uniqueTiles[uniquePhotoCount - 1].cloneNode(true) as HTMLElement));
+      }
     }
     const firstCopy = Array.from(gallery.querySelectorAll<HTMLElement>('[data-project-tile]'));
     const secondCopy = firstCopy.map(tile => decorate(tile.cloneNode(true) as HTMLElement));
@@ -163,8 +167,8 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
     const measure = (preserve = false) => {
       const previousLoop = loopWidth;
       const previousScroll = viewport.scrollLeft;
-      columnWidth = firstCopy[2]
-        ? firstCopy[2].offsetLeft - firstCopy[0].offsetLeft
+      columnWidth = firstCopy[rows]
+        ? firstCopy[rows].offsetLeft - firstCopy[0].offsetLeft
         : viewport.clientWidth / (smallScreen.matches ? 2 : 5);
       loopWidth = secondCopy[0].offsetLeft - firstCopy[0].offsetLeft;
       if (preserve && previousLoop > 0 && loopWidth > 0)
@@ -323,8 +327,8 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
   .andro-gallery-arrow:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 3px; }
   .andro-gallery-arrow:disabled { opacity: .32; cursor: not-allowed; }
   .andro-gallery-arrow svg { display: block; }
-  /* Two rows x five columns. Native horizontal scrolling provides smooth sliding
-     and preserves the previous two columns when the next six photos enter. */
+  /* Three rows x five columns. Native horizontal scrolling provides smooth sliding
+     and preserves two columns of photos when three new columns enter. */
   .andro-projects-viewport {
     --project-gap: 14px;
     overflow-x: auto;
@@ -340,7 +344,7 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
     display: grid;
     position: relative;
     width: 100%;
-    grid-template-rows: repeat(2, auto);
+    grid-template-rows: repeat(3, auto);
     grid-auto-flow: column;
     grid-auto-columns: calc((100% - 4 * var(--project-gap)) / 5);
     gap: var(--project-gap);
@@ -353,9 +357,14 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
   .andro-project-description { color: rgba(255,255,255,.94); font-size: 12px; line-height: 1.5; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
   /* Photo titles and descriptions are always visible, without hover or tap. */
   .andro-project-overlay { background: linear-gradient(180deg, transparent 6%, rgba(10,12,11,.32) 45%, rgba(10,12,11,.85) 100%); }
-  .projects-note { margin-top: 50px; max-width: 760px; }
+  /* Tighten the transition from the gallery into the feature story. */
+  .page-body.andro-projects-showcase { padding-bottom: clamp(26px, 3vw, 44px); }
+  .projects-note { margin-top: 26px; max-width: 760px; }
   /* A separate, editable Projects story section beneath the moving photo showcase. */
-  .andro-projects-feature { background: #f0eee9; padding: clamp(65px, 8vw, 118px) 7%; }
+  .andro-projects-feature {
+    background: #f0eee9;
+    padding: clamp(38px, 4vw, 58px) 7% clamp(65px, 8vw, 118px);
+  }
   .andro-projects-feature-inner {
     max-width: 1490px; margin: 0 auto;
     display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
@@ -369,7 +378,9 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
   .andro-projects-feature-copy .body-copy { max-width: 690px; margin: 0 0 17px; color: var(--brand-muted); line-height: 1.85; white-space: pre-line; }
   .andro-projects-feature-copy .body-copy:last-child { margin-bottom: 0; }
   @media (max-width: 800px) {
-    .andro-projects-feature { padding: 62px 7%; }
+    .andro-projects-feature { padding: 32px 7% 62px; }
+    .page-body.andro-projects-showcase { padding-bottom: 26px; }
+    .projects-note { margin-top: 21px; }
     .andro-projects-feature-inner { grid-template-columns: 1fr; gap: 30px; }
     .andro-projects-feature-photo { aspect-ratio: 16 / 11; }
     .andro-projects-feature-copy h2 { font-size: clamp(42px, 9vw, 64px); margin-bottom: 20px; }

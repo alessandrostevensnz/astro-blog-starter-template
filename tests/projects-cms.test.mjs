@@ -80,13 +80,18 @@ test('Projects styles and live text preview work without impacting other pages',
 });
 
 
-test('Projects auto-scrolls slowly with readable captions and 2x5 manual navigation', () => {
+test('Projects auto-scrolls slowly with readable captions and 3x5 manual navigation', () => {
   const source=read('../src/pages/projects.astro');
   assert(source.includes('siteContent.projects.map'), 'All CMS project photos must remain');
   assert(source.includes('data-project-prev') && source.includes('data-project-next'), 'Manual arrows must remain');
-  assert(source.includes('grid-template-rows: repeat(2, auto)'), 'Two rows are required');
+  assert(source.includes('grid-template-rows: repeat(3, auto)'), 'Three rows are required');
   assert(source.includes('grid-auto-columns: calc((100% - 4 * var(--project-gap)) / 5)'), 'Five columns must remain visible');
-  assert(source.includes('const columnsPerClick = () => smallScreen.matches ? 1 : 3'), 'Desktop arrow must move three columns (six photos)');
+  assert(source.includes('const columnsPerClick = () => smallScreen.matches ? 1 : 3'), 'Desktop arrow must move three columns (nine photos)');
+  assert(source.includes('const rows = 3'), 'Each gallery column must contain three photos');
+  assert(source.includes('columnWidth = firstCopy[rows]'), 'Column width must account for the three-row layout');
+  assert(source.includes('const remaining = uniquePhotoCount % rows'), 'Incomplete future gallery columns must be padded');
+  assert(source.includes('padding-bottom: clamp(26px, 3vw, 44px)'), 'Reduce the gap below the gallery');
+  assert(source.includes('padding: clamp(38px, 4vw, 58px) 7%'), 'Reduce empty space above featured Projects');
   assert(source.includes('const pixelsPerSecond = smallScreen.matches ? 25 : 42'), 'Keep the automatic reel roughly half Construction speed');
   assert(source.includes('viewport.scrollLeft += pixelsPerSecond * elapsed'), 'Auto-scroll must advance smoothly');
   assert(source.includes('secondCopy.forEach(tile => gallery.appendChild(tile))'), 'Loop must be seamless');
