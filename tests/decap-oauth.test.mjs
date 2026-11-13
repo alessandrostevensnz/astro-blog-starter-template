@@ -168,9 +168,10 @@ test('popup launcher isolates attempts and passes unrelated windows through unch
   for(const [url,target] of [
     [SITE_ORIGIN+'/report','Netlify Authorization'],
     ['https://other.invalid/api/auth?provider=github','Netlify Authorization'],
-    [SITE_ORIGIN+'/api/auth?provider=gitlab','Netlify Authorization'],
-    [SITE_ORIGIN+'/api/auth?provider=github','anything-else'],
+    [SITE_ORIGIN+'/api/auth?provider=gitlab','Netlify Authorization']
   ]) { window.open(url,target,'height=600'); assert.deepEqual(calls.at(-1).args,[url,target,'height=600']); }
+  window.open(SITE_ORIGIN+'/api/auth?provider=github','different-popup-name','height=600');
+  assert.match(new URL(calls.at(-1).args[0]).searchParams.get('andro_relay'),/^[a-f0-9]{32}$/);
   const wrapper=window.open; vm.runInContext(source,ctx); assert.equal(window.open,wrapper,'No duplicate installation');
 });
 
@@ -315,4 +316,61 @@ test('server OAuth failure is visible even when opener and relay are missing',as
   assert.equal(h.elements['login-help'].hidden,false);
   assert.equal(h.messages.length,0);
   assert.equal(h.timers.size,0);
+});
+
+test('current ANDRO login v5 always reports its callback version and recovery state',async()=>{
+  const relay='f'.repeat(32);
+  const html=await popupResponse('TEST_TOKEN_NOT_REAL','unknown_failure',relay).text();
+  assert.match(html,/ANDRO GitHub login v5/);
+  assert(html.includes('const relay = "'+relay+'"'));
+});
+
+test('legacy login button can recover a token without intercepting the popup',async()=>{
+  const events=[],timers=[],requests=[],handlers={};
+  const document={
+    cookie:'',
+    addEventListener(type,fn){handlers[type]=fn;}
+  };
+  const window={
+    location:{href:SITE_ORIGIN+'/admin/',origin:SITE_ORIGIN},
+    document, crypto,addEventListener(){},
+    open(){throw Error('Legacy launcher test must not open the popup via wrapper');},
+    fetch(url,opts){
+      requests.push({url,opts});
+      return Promise.resolve({status:200,json:()=>Promise.resolve({token:'FALLBACK_TEST_TOKEN',provider:'github'})});
+    },
+    dispatchEvent(evt){events.push(evt);}
+  };
+  const src=readFileSync(new URL('../public/admin/oauth-popup.js',import.meta.url),'utf8');
+  vm.runInNewContext(src,{window,URL,Uint8Array,Array,Date,MessageEvent:class {
+    constructor(type,params){this.type=type;Object.assign(this,params);}
+  },setTimeout:(fn,delay)=>{timers.push({fn,delay});return timers.length;},
+    clearTimeout:()=>{},encodeURIComponent});
+  assert.match(document.cookie,/__Host-andro_oauth_editor_relay=[a-f0-9]{32}/);
+  assert.equal(typeof handlers.click,'function');
+  const button={getAttribute:()=>null,textContent:'Login with GitHub'};
+  handlers.click({target:{closest:()=>button}});
+  assert.equal(timers[0].delay,150);
+  timers[0].fn();
+  assert.equal(timers[1].delay,500);
+  timers[1].fn();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(requests.length,1);
+  const cookieRelay=document.cookie.match(/editor_relay=([a-f0-9]{32})/)[1];
+  assert(requests[0].url.endsWith('relay='+cookieRelay));
+  assert.equal(requests[0].opts.credentials,'same-origin');
+  assert.equal(requests[0].opts.headers['X-ANDRO-Editor'],'login-v5');
+  assert.equal(events[0].data,'authorizing:github');
+  assert(events[1].data.startsWith('authorization:github:success:'));
+  assert.equal(JSON.parse(events[1].data.slice('authorization:github:success:'.length)).token,'FALLBACK_TEST_TOKEN');
+  assert.equal(window.__androOAuthStatus.lastRecovery,'received');
+});
+
+test('server always creates a recovery slot even when an older launcher omits it',()=>{
+  const src=readFileSync(new URL('../src/pages/api/auth/index.ts',import.meta.url),'utf8');
+  assert.match(src,/validRelay\(editorRelay\) \? editorRelay : newState\(\)\.slice\(0, 32\)/);
+  assert.match(src,/const state = oauthState\(relay\)/);
+  const poll=readFileSync(new URL('../src/pages/api/auth/poll.ts',import.meta.url),'utf8');
+  assert.match(poll,/relay === "auto"/);
+  assert.match(poll,/multiple_login_receipts/);
 });
