@@ -65,3 +65,16 @@ jobs:
             fi
             echo "::endgroup::"
           done
+          # Safe OAuth check: no real user cookies, code, or credentials sent.
+          # A valid relay without a result should return 204 from the Worker;
+          # an edge 403 here explains why an approved login cannot reach Decap.
+          echo "::group::OAuth login handoff endpoint (no token)"
+          curl -sS --max-time 20 -D /tmp/andro-oauth-poll-headers \
+            -o /tmp/andro-oauth-poll-body \
+            -H 'Accept: application/json' \
+            -H 'X-ANDRO-Editor: login-v6' \
+            -H 'Sec-Fetch-Site: same-origin' \
+            -w 'OAuth poll HTTP status: %{http_code}\\n' \
+            'https://andro.co.nz/api/auth/poll?relay=00000000000000000000000000000000' || true
+          grep -iE '^(content-type|x-andro-poll-version|x-andro-poll-block|server|cf-ray|location):' /tmp/andro-oauth-poll-headers || true
+          echo "::endgroup::"
