@@ -23,7 +23,25 @@ export const GET: APIRoute = async ({ request, locals }) => {
       request.headers.get("Sec-Fetch-Site") === "cross-site") {
     return new Response(null, { status: 403, headers });
   }
-  const relay = url.searchParams.get("relay");
+  let relay = url.searchParams.get("relay");
+  if (relay === "auto") {
+    // Recover a login started by an older Decap launcher without an explicit
+    // relay query parameter. Never guess which token to use when two GitHub
+    // logins are pending in the same browser.
+    const prefix = "__Host-andro_oauth_result_";
+    const candidates = [...new Set((request.headers.get("Cookie") ?? "")
+      .split(";").map(part => part.trim().split("=")[0])
+      .filter(name => name.startsWith(prefix))
+      .map(name => name.slice(prefix.length))
+      .filter(value => validRelay(value)))];
+    if (candidates.length > 1)
+      return new Response(JSON.stringify({ error: "multiple_login_receipts" }), {
+        status: 409,
+        headers: { ...headers, "Content-Type": "application/json; charset=utf-8" }
+      });
+    if (candidates.length === 0) return new Response(null, { status: 204, headers });
+    relay = candidates[0];
+  }
   if (!validRelay(relay)) return new Response(null, { status: 400, headers });
   const env = oauthEnv(locals);
   if (!env) return new Response(null, { status: 503, headers });
