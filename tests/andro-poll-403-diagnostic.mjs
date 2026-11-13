@@ -50,6 +50,33 @@ try {
   console.log('BROWSER_REQUESTS', JSON.stringify(reqs));
   console.log('BROWSER_RESPONSES', JSON.stringify(responses));
   console.log('BROWSER_FETCH_RESULTS', JSON.stringify(results));
+
+  // Reproduce the cookie shape present after a successful GitHub callback.
+  // The value is deliberately invalid; no personal account or real token.
+  const cookieName='__Host-andro_oauth_result_'+relay;
+  async function setFakeReceipt() {
+    await ctx.addCookies([
+      {name:cookieName, value:'dummy-test-not-a-token', url:origin+'/', secure:true, httpOnly:true, sameSite:'Lax'},
+      {name:'__Host-andro_oauth_state_'+relay, value:'c'.repeat(64)+'.'+relay,
+       url:origin+'/', secure:true, httpOnly:true, sameSite:'Lax'}
+    ]);
+  }
+  for (const scenario of [
+    {label:'exact-with-httpOnly-result-cookie', type:'exact'},
+    {label:'auto-with-httpOnly-result-cookie', type:'auto'}
+  ]) {
+    await setFakeReceipt();
+    const state=await page.evaluate(async ({type,relay})=>{
+      const response=await fetch('/api/auth/poll?relay='+(type==='auto'?'auto':relay),{
+        credentials:'same-origin',cache:'no-store',
+        headers:{'X-ANDRO-Editor':'login-v5','Accept':'application/json'}
+      });
+      const body=await response.text();
+      return {status:response.status,bodyBytes:body.length,contentType:response.headers.get('content-type')||''};
+    },{type:scenario.type,relay});
+    console.log('FAKE_COOKIE',JSON.stringify({...scenario,...state}));
+  }
+
   const urls = [
     '/api/auth/poll?relay='+relay,
     '/api/auth/poll?relay=auto'
