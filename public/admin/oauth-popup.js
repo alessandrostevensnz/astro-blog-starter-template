@@ -84,7 +84,7 @@
   function consumeReceipt(relay) {
     return window.fetch('/api/auth/poll?relay=' + encodeURIComponent(relay), {
       method: 'GET', credentials: 'same-origin', cache: 'no-store',
-      headers: { Accept: 'application/json' }
+      headers: { Accept: 'application/json', 'X-ANDRO-Editor': 'login-v5' }
     }).then(function (response) {
       if (response.status === 409) {
         status.lastRecovery = 'multiple-pending';
