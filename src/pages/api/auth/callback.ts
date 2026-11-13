@@ -11,19 +11,26 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const state = url.searchParams.get("state");
   const relay = stateRelay(state);
   const finish = async (token?: string, reason?: string) => {
-    const response = popupResponse(token, reason, relay);
-    response.headers.set("Set-Cookie", expiredStateCookie(relay));
+    let receiptCookie: string | null = null;
     if (token && relay) {
       const env = oauthEnv(locals);
       if (env) {
         try {
-          response.headers.append("Set-Cookie",
-            await encryptedResultCookie(token, relay, env.GITHUB_CLIENT_SECRET));
+          receiptCookie = await encryptedResultCookie(
+            token, relay, env.GITHUB_CLIENT_SECRET
+          );
         } catch {
-          // Preserve the original popup OAuth handoff as the secure fallback.
+          // The existing popup/secure channel remains the fallback.
+          // Display this failure explicitly rather than silently claiming
+          // that the server handoff is ready.
         }
       }
     }
+    const response = popupResponse(token, reason, relay, Boolean(receiptCookie));
+    response.headers.set("Set-Cookie", expiredStateCookie(relay));
+    if (receiptCookie) response.headers.append("Set-Cookie", receiptCookie);
+    response.headers.set("X-ANDRO-Receipt-Status",
+      token && relay ? (receiptCookie ? "issued" : "not-issued") : "not-applicable");
     return response;
   };
 

@@ -72,7 +72,7 @@ function inlineJson(value: unknown): string {
     .replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
 }
 
-export function popupResponse(token?: string, failureReason = "unknown_failure", relay: string | null = null): Response {
+export function popupResponse(token?: string, failureReason = "unknown_failure", relay: string | null = null, receiptReady = false): Response {
   const reason = /^[a-z0-9_]{1,64}$/.test(failureReason) ? failureReason : "unknown_failure";
   // Both results must end in JSON: Decap parses the success AND error suffix.
   const message = token
@@ -81,7 +81,7 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   const nonce = newState();
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ANDRO GitHub login v5</title></head><body>
+<title>ANDRO GitHub login v6</title></head><body>
 <p id="login-status" role="status">Completing GitHub login...</p>
 <p id="login-help" hidden>Close this popup and start a new login from the ANDRO editor. Do not refresh this callback or clear your saved reports.</p>
 <script nonce="${nonce}">
@@ -91,6 +91,7 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   const relay = ${inlineJson(validRelay(relay) ? relay : "")};
   let result = ${inlineJson(message)};
   const success = ${Boolean(token)};
+  const receiptReady = ${Boolean(receiptReady)};
   const reason = ${inlineJson(reason)};
   const reasonHelp = ({
     csrf_state_mismatch: "The login state cookie was missing or did not match. This can happen after an expired tab or with blocked cookies.",
@@ -188,8 +189,10 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   // The editor can also retrieve a verified login receipt from the
   // server. Give useful feedback even when the popup's opener is gone.
   if (success && relay) {
-    show("GitHub authorised. Return to your ANDRO editor tab — sign-in should finish there automatically.", false);
-    setTimeout(function () { try { window.close(); } catch (_) {} }, 8000);
+    show(receiptReady
+      ? "GitHub authorised and the secure login handoff is ready. Return to your ANDRO editor tab."
+      : "GitHub authorised, but the secure login handoff was not created. The editor may still complete through the popup connection.", !receiptReady);
+    if (receiptReady) setTimeout(function () { try { window.close(); } catch (_) {} }, 8000);
   }
   if (success && !relay) {
     show("GitHub authorised, but this login was started without a recovery ID. Close this popup and reopen the ANDRO editor using the current login page.", true);

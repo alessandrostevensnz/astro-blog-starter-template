@@ -1,4 +1,4 @@
-/* ANDRO GitHub editor login v5.
+/* ANDRO GitHub editor login v6.
  * Receives a short-lived encrypted server receipt, even when a browser
  * disconnects window.opener or an old launcher omits its recovery ID.
  * OAuth access tokens are never stored in localStorage, cookies readable by
@@ -17,8 +17,9 @@
   var fallbackActive = false;
 
   var status = window.__androOAuthStatus = {
-    version: '5', helperLoaded: true, lastLaunch: 'none',
-    lastRecovery: 'none'
+    version: '6', helperLoaded: true, lastLaunch: 'none',
+    lastRecovery: 'none', lastHttpStatus: null, lastBlock: 'none',
+    blockedCount: 0
   };
 
   function makeId() {
@@ -81,16 +82,34 @@
     else { fallbackActive = false; clearTimers(); }
   }
 
+  // Keep the exact OAuth receipt tied to the login's random relay.
+  // When ANDRO itself rejects a poll it supplies an explicit safe reason.
+  // A 403 without those headers originates outside this endpoint (for
+  // example a Cloudflare firewall/challenge), not from a bad GitHub password.
   function consumeReceipt(relay) {
     return window.fetch('/api/auth/poll?relay=' + encodeURIComponent(relay), {
       method: 'GET', credentials: 'same-origin', cache: 'no-store',
-      headers: { Accept: 'application/json', 'X-ANDRO-Editor': 'login-v5' }
+      headers: { Accept: 'application/json', 'X-ANDRO-Editor': 'login-v6' }
     }).then(function (response) {
+      status.lastHttpStatus = response.status;
+      if (response.status === 403) {
+        status.blockedCount += 1;
+        status.lastBlock = response.headers.get('X-ANDRO-Poll-Block') ||
+          (response.headers.get('X-ANDRO-Poll-Version') === '6' ?
+            'site-other' : 'upstream-or-edge');
+        if (status.blockedCount === 1 && window.console &&
+            typeof window.console.warn === 'function') {
+          window.console.warn('ANDRO login recovery blocked (403). Reason: ' +
+            status.lastBlock + '. No login details have been logged.');
+        }
+        return null;
+      }
       if (response.status === 409) {
         status.lastRecovery = 'multiple-pending';
         return null;
       }
       if (response.status !== 200) return null;
+      status.lastBlock = 'none';
       return response.json();
     }).then(function (body) {
       if (body && body.provider === 'github' && typeof body.token === 'string' &&
@@ -110,17 +129,17 @@
     status.lastLaunch = 'legacy-click';
     function check() {
       if (!fallbackActive || activePopup) { fallbackActive = false; return; }
-      var relay = ++attempts > 5 && attempts % 3 === 0 ? 'auto' : editorRelay;
+      var relay = ++attempts > 5 && attempts % 4 === 0 ? 'auto' : editorRelay;
       consumeReceipt(relay).then(function (token) {
         if (!fallbackActive || activePopup) return;
         if (token) { finishWithToken(token, null); return; }
       }).catch(function () {}).finally(function () {
         if (fallbackActive && !activePopup && Date.now() - started < 120000) {
-          fallbackTimer = setTimeout(check, 900);
+          fallbackTimer = setTimeout(check, status.lastHttpStatus === 403 ? 8000 : 3500);
         } else { fallbackActive = false; }
       });
     }
-    fallbackTimer = setTimeout(check, 500);
+    fallbackTimer = setTimeout(check, 1300);
   }
 
   if (window.document && window.document.addEventListener) {
@@ -162,8 +181,12 @@
     activePopup = popup;
     status.lastLaunch = 'recovery-enabled';
     status.lastRecovery = 'pending';
+    status.lastHttpStatus = null;
+    status.lastBlock = 'none';
+    status.blockedCount = 0;
 
-    var waiting = true, channel = null, pollCount = 0;
+    var waiting = true, channel = null;
+    var pollingStartedAt = Date.now();
     function finish(message) {
       if (!waiting || activePopup !== popup) return;
       waiting = false;
@@ -190,24 +213,31 @@
 
     function poll() {
       if (!waiting || activePopup !== popup) return;
-      // A short wait lets the exact per-attempt receipt arrive first. After
-      // several attempts also check for a legacy receipt with unknown ID.
-      var lookup = ++pollCount > 6 && pollCount % 3 === 0 ? 'auto' : relay;
-      consumeReceipt(lookup).then(function (token) {
+      // The modern editor always has its exact per-attempt relay. Polling
+      // "auto" as well doubles traffic and can trigger edge rate limiting.
+      consumeReceipt(relay).then(function (token) {
         if (!token || !waiting || activePopup !== popup) return;
-        status.lastRecovery = lookup === relay ? 'exact' : 'legacy';
+        status.lastRecovery = 'exact';
         finish('authorization:github:success:' +
           JSON.stringify({ token: token, provider: 'github' }));
       }).catch(function () {
-        status.lastRecovery = 'retrying';
+        status.lastRecovery = 'network-retrying';
       }).finally(function () {
-        if (waiting && activePopup === popup) {
-          activePollTimer = setTimeout(poll, 850);
+        if (!waiting || activePopup !== popup) return;
+        if (Date.now() - pollingStartedAt > 120000) {
+          status.lastRecovery = 'receipt-expired';
+          dispose();
+          return;
         }
+        // An unsuccessful poll is not a reason to hammer Cloudflare.
+        // Slow down after a real 403, rather than repeatedly causing it.
+        var delay = status.lastHttpStatus === 403 ?
+          Math.min(20000, 5000 + status.blockedCount * 2500) : 3500;
+        activePollTimer = setTimeout(poll, delay);
       });
     }
     if (typeof window.fetch === 'function') {
-      activePollTimer = setTimeout(poll, 350);
+      activePollTimer = setTimeout(poll, 1200);
     }
 
     activeExpiry = setTimeout(function () {
@@ -215,7 +245,7 @@
         status.lastRecovery = 'expired';
         dispose();
       }
-    }, 10 * 60 * 1000);
+    }, 130 * 1000);
 
     return {
       focus: function () { try { popup.focus(); } catch (_) {} },

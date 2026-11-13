@@ -10,7 +10,9 @@ const headers = {
   "Cache-Control": "private, no-store, max-age=0",
   "Referrer-Policy": "no-referrer",
   "X-Content-Type-Options": "nosniff",
-  "X-Robots-Tag": "noindex"
+  "X-Robots-Tag": "noindex",
+  "X-ANDRO-Poll-Version": "6",
+  "Cross-Origin-Resource-Policy": "same-origin"
 };
 
 /** Polling works even when a GitHub COOP navigation has severed window.opener.
@@ -19,17 +21,24 @@ const headers = {
  */
 export const GET: APIRoute = async ({ request, locals }) => {
   const url = new URL(request.url);
-  if (url.origin !== SITE_ORIGIN ||
-      request.headers.get("Sec-Fetch-Site") === "cross-site") {
-    return new Response(null, { status: 403, headers });
-  }
+  // Keep strict cross-origin protection, but distinguish an ANDRO
+  // rejection from an upstream Cloudflare block without logging cookies.
+  const deny = (reason: "origin" | "fetch-site" | "editor-header") =>
+    new Response(null, {
+      status: 403,
+      headers: { ...headers, "X-ANDRO-Poll-Block": reason }
+    });
+  if (url.origin !== SITE_ORIGIN) return deny("origin");
+  if (request.headers.get("Sec-Fetch-Site") === "cross-site")
+    return deny("fetch-site");
   let relay = url.searchParams.get("relay");
   if (relay === "auto") {
     // Only the in-page editor's fetch can send this custom header. Refuse
     // normal cross-site links/navigations that could otherwise display a
     // browser's one-time OAuth receipt as JSON.
-    if (request.headers.get("X-ANDRO-Editor") !== "login-v5")
-      return new Response(null, { status: 403, headers });
+    const editorHeader = request.headers.get("X-ANDRO-Editor");
+    if (editorHeader !== "login-v5" && editorHeader !== "login-v6")
+      return deny("editor-header");
     // Recover a login started by an older Decap launcher without an explicit
     // relay query parameter. Never guess which token to use when two GitHub
     // logins are pending in the same browser.
