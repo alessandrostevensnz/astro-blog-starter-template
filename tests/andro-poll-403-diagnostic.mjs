@@ -2,6 +2,20 @@ import { chromium } from 'playwright';
 
 const origin = 'https://andro.co.nz';
 const relay = 'b'.repeat(32);
+for(let i=0;i<30;i++){
+  const response=await fetch(origin+'/admin/?v6-check='+i,{cache:'no-store'});
+  const html=await response.text();
+  if(response.status===200 && html.includes('oauth-popup.js?v=6'))break;
+  if(i===29)throw new Error('Live /admin/ did not deploy login v6');
+  await new Promise(resolve=>setTimeout(resolve,6000));
+}
+console.log('LIVE_VERSION_6',true);
+const blocked=await fetch(origin+'/api/auth/poll?relay=auto',{headers:{Accept:'application/json'},redirect:'manual'});
+const blockReason=blocked.headers.get('X-ANDRO-Poll-Block');
+const versionHeader=blocked.headers.get('X-ANDRO-Poll-Version');
+console.log('SITE_GUARD_403',JSON.stringify({status:blocked.status,blockReason,versionHeader}));
+if(blocked.status!==403 || blockReason!=='editor-header'||versionHeader!=='6')
+  throw new Error('Expected transparent site-side 403 diagnostics from v6');
 const browser = await chromium.launch({headless:true, channel:'chrome', args:['--no-sandbox']});
 try {
   const ctx = await browser.newContext();
@@ -50,6 +64,7 @@ try {
   console.log('BROWSER_REQUESTS', JSON.stringify(reqs));
   console.log('BROWSER_RESPONSES', JSON.stringify(responses));
   console.log('BROWSER_FETCH_RESULTS', JSON.stringify(results));
+  if(results.version!=='6')throw new Error('Browser did not load login v6');
 
   // Reproduce the cookie shape present after a successful GitHub callback.
   // The value is deliberately invalid; no personal account or real token.
