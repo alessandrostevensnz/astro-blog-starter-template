@@ -98,3 +98,17 @@ test('Projects gallery is two rows with manually controlled three-photo paginati
   assert(data.projects.length >= 6, 'Current showcase should have at least six images');
   assert(source.includes('data-project-tile'), 'Mobile tap details must still work');
 });
+
+
+test('Same supplied circular ANDRO footer logo is selected on all website pages', () => {
+  for (const name of ['home','construction','maintenance','projects','about','contact']) {
+    const page = JSON.parse(read('../content/pages/' + name + '.json'));
+    assert.equal(page.footerImages.logo.src, '/images/andro-footer-circular.png',
+      'Missing updated circular ANDRO logo on ' + name);
+    assert(page.footerImages.logo.alt.includes('ANDRO'), 'Footer logo needs descriptive alt text on ' + name);
+    assert(page.footerImages.badge.src, 'Existing optional footer badge must not be removed on ' + name);
+  }
+  const layout = read('../src/components/SiteLayout.astro');
+  assert(layout.includes('footerImages.logo.src'), 'Footer logo must remain editable in Decap');
+  assert(layout.includes('height: 142px'), 'Circular lettering must be large enough to read');
+});
