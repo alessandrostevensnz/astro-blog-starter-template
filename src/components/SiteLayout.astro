@@ -94,6 +94,15 @@ const footerImages = footerImagesForPath(currentPath);
 </body>
 
 <style is:global>
+  /* Mirror the plain-text fields in /admin throughout all six pages.
+     Return keeps a line break; a blank line keeps a paragraph gap.
+     Scope this to editor-managed copy so navigation/layout whitespace
+     and HTML forms continue behaving normally. Text remains escaped. */
+  [data-style-key], [data-cms-text] {
+    white-space: pre-wrap !important;
+    overflow-wrap: break-word;
+  }
+
   /* No native video controls or centre-play overlay on any ANDRO header film. */
   video[data-background-video]::-webkit-media-controls,
   video[data-background-video]::-webkit-media-controls-enclosure,
