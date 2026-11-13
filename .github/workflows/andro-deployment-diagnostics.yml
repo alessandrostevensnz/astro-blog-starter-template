@@ -55,7 +55,9 @@ jobs:
               if [ "$target" = "projects/" ]; then
                 echo "Projects 2x5 gallery viewport live? $(grep -q 'data-project-viewport' "$out" && echo yes || echo no)"
                 echo "Projects manual arrow controls live? $(grep -q 'data-project-next' "$out" && echo yes || echo no)"
-                echo "New site-wide footer live? $(grep -q 'andro-footer-circular.png' "$out" && echo yes || echo no)"
+                echo "Featured Projects story section visible? $(grep -q 'andro-projects-feature' "$out" && echo yes || echo no)"
+                echo "Featured Projects image present? $(grep -q 'Residential%20framing.png' "$out" && echo yes || echo no)"
+                echo "Owner-selected site-wide footer logo present? $(grep -q 'andro-caps.png' "$out" && echo yes || echo no)"
                 echo "Site Safe membership badge visible? $(grep -q 'MemberSticker' "$out" && echo yes || echo no)"
               fi
             else
