@@ -56,16 +56,16 @@ const maintenanceHeroPoster = siteContent.maintenance.heroVideoPoster?.trim() ||
       {services.map((service, index) => (
         <article class:list={['maintenance-service', { 'maintenance-service-reverse': index % 2 === 1 }]} data-reveal>
           <div class="maintenance-service-copy">
-            <span class="maintenance-service-number">{service.number}</span>
-            <h3>{service.title}</h3>
-            <p>{service.description}</p>
+            <span class="maintenance-service-number" data-cms-text>{service.number}</span>
+            <h3 data-cms-text>{service.title}</h3>
+            <p data-cms-text>{service.description}</p>
             <a class="maintenance-quote-link" href="/contact/" aria-label={`Request a quote for ${service.title}`}>Request a Quote </a>
           </div>
           <figure class="maintenance-service-visual">
             {service.image ? (
               <>
                 <img src={service.image} alt={service.imageAlt || service.title} loading="lazy" decoding="async" />
-                {service.caption && <figcaption>{service.caption}</figcaption>}
+                {service.caption && <figcaption data-cms-text>{service.caption}</figcaption>}
               </>
             ) : (
               <div class="service-photo-placeholder" role="img" aria-label={`${service.title} photography placeholder`}>
