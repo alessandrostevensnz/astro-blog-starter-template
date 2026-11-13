@@ -1,5 +1,9 @@
 {
   "photos": {
+    "serviceCarpentry": {
+      "src": "/images/img_0611.jpeg",
+      "alt": "a"
+    },
     "residential": {
       "src": "/images/screenshot-2026-11-07-at-4.53.17 pm.png",
       "alt": "Residential building framing during construction"
@@ -8,6 +12,10 @@
       "src": "/images/commercial%20framing.png",
       "alt": "Commercial construction "
     },
+    "serviceRenovations": {
+      "src": "/images/Bright Minimalist U-Shaped Kitchen.png",
+      "alt": "a"
+    },
     "serviceCommercialRefurbishment": {
       "src": "/images/b11af370-e076-4a57-b4c0-8892401150de_1_105_c.jpeg",
       "alt": "Commercial recladding and joinery improvements in Remuera"
@@ -15,6 +23,10 @@
     "processRight": {
       "src": "/images/screenshot-2026-11-08-at-7.50.20 pm.png",
       "alt": "Residential building framing during construction"
+    },
+    "serviceDecks": {
+      "src": "/images/img_1299.jpg",
+      "alt": "a"
     },
     "processLeft": {
       "src": "/images/Commercial cavity.png",
@@ -25,7 +37,7 @@
       "alt": "Commercial construction framing prior to fit-out in Auckland"
     },
     "serviceCommercialCarpentry": {
-      "src": "/images/img_0810.jpeg",
+      "src": "/images/comerrical GIB.png",
       "alt": "Commercial carpentry and feature wall installation in Auckland"
     },
     "hero": {
@@ -33,6 +45,31 @@
       "alt": "Residential framing during construction"
     }
   },
+  "heroVideo": "/images/construction-banner-1080p-smooth.mp4",
+  "residentialServices": [
+    {
+      "title": "General carpentry",
+      "description": "Careful carpentry for practical changes, repairs and improvements, with attention to how new work connects to the existing building.",
+      "image": "/images/img_0611.jpeg",
+      "imageAlt": "Custom carpentry work and cavity sliding door installation",
+      "bulletPoints": []
+    },
+    {
+      "title": "Decks and fencing",
+      "description": "Decking and fence work planned around the site, intended use, material exposure and the details that affect durability and everyday function.",
+      "image": "/images/img_0140.jpeg",
+      "imageAlt": "Deck and fencing project",
+      "bulletPoints": []
+    },
+    {
+      "title": "Renovations and alterations",
+      "description": "Thoughtful improvements to existing spaces, balancing appearance, function and the realities of working with an existing structure.",
+      "image": "/images/img_2966-2.jpg",
+      "imageAlt": "Villa renovation project",
+      "bulletPoints": []
+    }
+  ],
+  "residentialHighlights": [],
   "residentialText": "From general carpentry and decks to fencing, minor alterations and interior or exterior improvements, the right approach depends on the property and its intended use. We consider how new work meets existing surfaces, how materials will weather and how details such as junctions, fixings and finishes affect day-to-day function. For renovations, existing structures can reveal unexpected conditions once work begins. If that happens, we explain what has been found and discuss the practical options before proceeding. Work requiring a licensed building practitioner, building consent or specialist trade is undertaken or coordinated in line with applicable requirements.",
   "gallery": [],
   "processHeading": "Preparation makes a difference.",
@@ -58,30 +95,5 @@
   },
   "processText": "A well-considered scope helps avoid mismatched expectations and rushed decisions. We talk through the intended outcome, identify visible constraints, consider suitable materials and clarify what is included. The aim is not to overcomplicate a project, but to make informed choices that support a durable, functional finish.",
   "description": "Residential and commercial construction, carpentry, renovations and property improvements across Auckland. We take time to understand the existing building, prepare carefully and agree a clear scope so the finished work is practical as well as considered.",
-  "residentialHeading": "Residential construction and carpentry",
-  "heroVideo": "/images/construction-banner-1080p-smooth.mp4",
-  "residentialServices": [
-    {
-      "title": "General carpentry",
-      "description": "Careful carpentry for practical changes, repairs and improvements, with attention to how new work connects to the existing building.",
-      "image": "/images/img_0611.jpeg",
-      "imageAlt": "Custom carpentry work and cavity sliding door installation",
-      "bulletPoints": []
-    },
-    {
-      "title": "Decks and fencing",
-      "description": "Decking and fence work planned around the site, intended use, material exposure and the details that affect durability and everyday function.",
-      "image": "/images/img_0140.jpeg",
-      "imageAlt": "Deck and fencing project",
-      "bulletPoints": []
-    },
-    {
-      "title": "Renovations and alterations",
-      "description": "Thoughtful improvements to existing spaces, balancing appearance, function and the realities of working with an existing structure.",
-      "image": "/images/img_2966-2.jpg",
-      "imageAlt": "Villa renovation project",
-      "bulletPoints": []
-    }
-  ],
-  "residentialHighlights": []
+  "residentialHeading": "Residential construction and carpentry"
 }
