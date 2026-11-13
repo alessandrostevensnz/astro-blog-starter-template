@@ -112,7 +112,11 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
     if (channel) { channel.close(); channel = null; }
   }
   function abandon() { cleanup(); result = ""; }
-  function stop(text) { abandon(); show(text, true); }
+  function stop(text) {
+    abandon();
+    // Never replace a real OAuth failure with a misleading popup timeout.
+    show(success ? text : ("GitHub rejected this login (" + reason + "). " + text), true);
+  }
   function openerMissing() {
     try { return !opener || opener.closed; } catch (_) { return true; }
   }
@@ -161,7 +165,8 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
     };
     retryTimer = setInterval(announceBridge, 500);
     deadlineTimer = setTimeout(function () {
-      stop("The editor did not acknowledge this login within 45 seconds. Please start a new login.");
+      stop("The editor did not acknowledge this login within 45 seconds. " +
+        "The secure recovery channel could not finish. Please start a new login from ANDRO.");
     }, 45000);
     announceBridge();
     return true;
@@ -175,6 +180,9 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
     show("GitHub authorised. Return to your ANDRO editor tab — sign-in should finish there automatically.", false);
     setTimeout(function () { try { window.close(); } catch (_) {} }, 8000);
   }
+  // Display the verified server-side reason immediately on failure.
+  // The message handshake still runs to notify the original editor.
+  if (!success) show("GitHub login failed (" + reason + "). Close this window and start a new login from ANDRO.", true);
   // A same-origin relay survives GitHub navigation that severs window.opener.
   // The server-side receipt polling path remains available independently.
   if (beginBridge()) return;
@@ -189,7 +197,10 @@ export function popupResponse(token?: string, failureReason = "unknown_failure",
   // GitHub authorization-code exchange. A lost first handshake can recover.
   retryTimer = setInterval(announce, 500);
   deadlineTimer = setTimeout(function () {
-    stop("The editor did not acknowledge this login within 30 seconds. Please start a new login.");
+    stop("The editor did not acknowledge this login within 30 seconds. " +
+      (relay ? "The recovery connection was unavailable." :
+       "This attempt has no recovery ID; an old editor tab or a missing OAuth state may be involved.") +
+      " Please start a new login from ANDRO.");
   }, 30000);
   announce();
 })();
