@@ -1,0 +1,37 @@
+name: Projects admin text regression tests
+on:
+  pull_request:
+    paths:
+      - "content/pages/projects.json"
+      - "src/lib/cms-config.ts"
+      - "src/pages/projects.astro"
+      - "src/components/SiteLayout.astro"
+      - "public/admin/preview.js"
+      - "public/admin/index.html"
+      - "tests/projects-cms.test.mjs"
+      - ".github/workflows/projects-cms-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "content/pages/projects.json"
+      - "src/lib/cms-config.ts"
+      - "src/pages/projects.astro"
+      - "src/components/SiteLayout.astro"
+      - "public/admin/preview.js"
+      - "public/admin/index.html"
+      - "tests/projects-cms.test.mjs"
+permissions:
+  contents: read
+jobs:
+  test-projects-admin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate Projects editor fields and frontend binding
+        run: node --experimental-strip-types --test tests/projects-cms.test.mjs
+      - name: Validate preview JavaScript syntax
+        run: node --check public/admin/preview.js
