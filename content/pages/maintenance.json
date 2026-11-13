@@ -9,8 +9,10 @@
       "alt": "Exterior cladding on a property"
     }
   },
+  "heroVideo": "/images/andro-maintenance-banner-new-1080p-optimized.mp4",
   "improvementsHeading": "Repairs and improvements",
   "improvementsText": "Small repairs and carefully chosen improvements can make a property work better, look more cared for and remain useful for longer. We assess the issue, discuss options and recommend a practical way forward for the work in scope. Where an issue involves restricted building work, consent or specialist trades, the necessary appropriately licensed or qualified providers are engaged as required.",
+  "heroVideoPoster": "/images/andro-maintenance-banner-new-1080p-optimized-poster.jpg",
   "residentialText": "Homeowners, landlords, investors and property managers often need a reliable way to deal with a growing list of small jobs. We can help with general repairs, interior maintenance, worn doors and hardware, damaged timber, decks, fences, exterior upkeep and pre-sale or pre-tenancy improvements. We consider the condition of the property and how it is used, then agree a practical scope that addresses the priorities.",
   "assetHeading": "Asset maintenance and repair planning",
   "footerImages": {
@@ -31,7 +33,7 @@
     "size": "100"
   },
   "introText": "Paint weathers. Gutters clog. Timber takes on moisture. Doors and fittings loosen with use. A small problem can become a larger repair when it is left unattended, so maintenance is most useful when it is considered before something fails. We can help assess what needs attention now, what can be planned and where specialist advice or trades are needed.",
-  "preventativeText": "Auckland buildings face changing weather, moisture, movement, everyday wear and materials that age at different rates. Routine checks can help identify issues such as deteriorating paint, blocked gutters, damaged seals, loose fittings or early timber decay. Timely repairs do not prevent every future problem, but they can help reduce avoidable deterioration and give owners a clearer basis for planning upkeep.",
+  "preventativeText": "Buildings face changing weather, moisture, movement, everyday wear and materials that age at different rates. Routine checks can help identify issues such as deteriorating paint, blocked gutters, damaged seals, loose fittings or early timber decay. Timely repairs do not prevent every future problem, but they can help reduce avoidable deterioration and give owners a clearer basis for planning upkeep.",
   "introHeadingStyle": {
     "size": "100"
   },
@@ -55,7 +57,5 @@
       "caption": ""
     }
   ],
-  "residentialHeading": "Residential property maintenance",
-  "heroVideo": "/images/andro-maintenance-banner-new-1080p-optimized.mp4",
-  "heroVideoPoster": "/images/andro-maintenance-banner-new-1080p-optimized-poster.jpg"
+  "residentialHeading": "Residential property maintenance"
 }
