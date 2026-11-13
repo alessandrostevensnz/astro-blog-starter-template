@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/live-admin-diagnosis.yml"
       - "tests/admin-browser-diagnostic.mjs"
+      - "tests/admin-server-diagnostic.mjs"
   workflow_dispatch:
 
 permissions:
@@ -44,6 +45,8 @@ jobs:
           if(a.r.status!==200 || !a.body.includes('oauth-popup.js?v=3') || c.r.status!==200 || !c.body.includes('/api/auth/poll?relay=')) process.exitCode=1;
           NODE
 
+      - name: Validate OAuth state and callback on production using invalid test code
+        run: node tests/admin-server-diagnostic.mjs
       - name: Test actual admin page in Chromium without entering GitHub
         run: |
           npm install --no-save --no-package-lock --ignore-scripts playwright@1.56.1
