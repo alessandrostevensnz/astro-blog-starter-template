@@ -26,7 +26,8 @@
   },
   "servicesHeading": "Considered work. Practical solutions.",
   "featureHeadingStyle": {
-    "size": "100"
+    "size": "100",
+    "color": "#FFFFFF"
   },
   "featureHeading": "Quality is in the details.",
   "servicesHeadingStyle": {
