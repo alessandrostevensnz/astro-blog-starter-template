@@ -10,7 +10,7 @@ const footerImages = footerImagesForPath(currentPath);
 <BaseHead title={title} description={description} />
 <meta name="theme-color" content="#fbfaf7" />
 <body>
-  <style is:global set:html={typographyCss(siteContent.typography, { ...siteContent, projects: pageContent.projects })} />
+  <style is:global set:html={typographyCss(siteContent.typography, { ...siteContent, projects: pageContent.projects, contact: pageContent.contact })} />
   <header class="site-header">
     <a class="brand-lockup" href="/" aria-label="ANDRO home">
       <span class="brand-word">ANDRO</span>

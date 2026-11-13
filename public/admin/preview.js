@@ -23,7 +23,21 @@
     '04 - gallery instructions': 'galleryTip',
     '05 - paragraph below the project photos': 'galleryNote',
     '06 - contact section heading': 'ctaHeading',
-    '07 - contact link wording': 'ctaButtonText'
+    '07 - contact link wording': 'ctaButtonText',
+    '01 - contact banner small label': 'heroEyebrow',
+    '02 - contact banner heading': 'heroHeading',
+    '03 - contact banner introduction': 'heroDescription',
+    '04 - contact section small label': 'sectionEyebrow',
+    '05 - contact section heading': 'sectionHeading',
+    '06 - contact section description': 'sectionDescription',
+    '07 - words before contact email': 'emailPrefix',
+    '08 - your name field label': 'nameLabel',
+    '09 - email address field label': 'emailLabel',
+    '10 - service selection label': 'serviceLabel',
+    '11 - first service dropdown prompt': 'servicePlaceholder',
+    '13 - project message field label': 'messageLabel',
+    '14 - send button wording': 'submitLabel',
+    '15 - note underneath the form': 'formNotice'
   };
   function currentPage() {
     var match = window.location.hash.match(/^#\/?collections\/pages\/entries\/([^/?]+)/);
@@ -77,8 +91,8 @@
     if (page !== lastPage) {
       lastPage = page;
       heading.textContent = pages[page].label.toUpperCase() + ' PREVIEW';
-      note.textContent = page === 'projects'
-        ? 'Text changes appear here as you type. Publish to update the real website and any photos.'
+      note.textContent = page === 'projects' || page === 'contact'
+        ? 'Text changes appear here as you type. Publish to update the real site. Service dropdown lists and email details refresh after publishing.'
         : 'Photo selections appear in the form. Publish, then refresh this preview.';
       frame.title = pages[page].label + ' page preview';
       reloadPreview();

@@ -1,0 +1,42 @@
+name: Contact page admin regression tests
+
+on:
+  pull_request:
+    paths:
+      - "content/pages/contact.json"
+      - "src/pages/contact.astro"
+      - "src/lib/cms-config.ts"
+      - "src/components/SiteLayout.astro"
+      - "public/admin/preview.js"
+      - "public/admin/index.html"
+      - "tests/contact-cms.test.mjs"
+      - "tests/projects-cms.test.mjs"
+      - ".github/workflows/contact-cms-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "content/pages/contact.json"
+      - "src/pages/contact.astro"
+      - "src/lib/cms-config.ts"
+      - "src/components/SiteLayout.astro"
+      - "public/admin/preview.js"
+      - "public/admin/index.html"
+      - "tests/contact-cms.test.mjs"
+      - "tests/projects-cms.test.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  test-contact-admin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Contact and Projects CMS config, templates and form invariants
+        run: node --experimental-strip-types --test tests/contact-cms.test.mjs tests/projects-cms.test.mjs
+      - name: Syntax check shared admin preview JavaScript
+        run: node --check public/admin/preview.js

@@ -1,1 +1,58 @@
-{"footerImages":{"logo":{"src":"/images/andro%20caps%20copy.png","alt":"ANDRO Construction logo"},"badge":{"src":"/images/MemberSticker_Shop_Image_453x512.width-1000.png","alt":"Site Safe Member — Proud to be safe"}}}
+{
+  "heroEyebrow": "CONTACT · AUCKLAND, NEW ZEALAND",
+  "heroHeading": "Let’s make a\ngood start.",
+  "heroDescription": "Have a maintenance issue you are unsure about, or planning a construction or improvement project? Tell us what is happening, what you would like to achieve and any timing or access considerations. We can discuss the property, the work required and a practical way forward.",
+  "sectionEyebrow": "ANDRO CONSTRUCTION + PROJECTS",
+  "sectionHeading": "A considered\nconversation.",
+  "sectionDescription": "A few useful details help us understand your enquiry: the property type and location, what needs attention, and whether you have photos or a timeframe in mind. We will follow up to discuss the next steps.",
+  "contactEmail": "",
+  "emailPrefix": "Or email us at",
+  "nameLabel": "Your name",
+  "emailLabel": "Email address",
+  "serviceLabel": "What can we help with?",
+  "servicePlaceholder": "Select a service",
+  "serviceOptions": [
+    {
+      "label": "Residential construction or carpentry"
+    },
+    {
+      "label": "Commercial construction or fit-out"
+    },
+    {
+      "label": "Residential property maintenance"
+    },
+    {
+      "label": "Commercial property maintenance"
+    },
+    {
+      "label": "Asset maintenance"
+    },
+    {
+      "label": "Repairs or property improvements"
+    },
+    {
+      "label": "Other enquiry"
+    }
+  ],
+  "messageLabel": "A little about your property or project",
+  "submitLabel": "Send enquiry",
+  "formNotice": "Your details will be sent securely to ANDRO.",
+  "sendingButton": "Sending…",
+  "sendingStatus": "Sending your enquiry…",
+  "successStatus": "Thanks — your enquiry has been sent. ANDRO will be in touch.",
+  "providerErrorFallback": "The form could not be sent.",
+  "errorSuffix": "Please try again or email ANDRO directly.",
+  "genericError": "Sorry, your enquiry could not be sent. Please try again or email ANDRO directly.",
+  "metaTitle": "Contact ANDRO | Construction & Property Maintenance Auckland",
+  "metaDescription": "Discuss a construction, renovation, building repair or property maintenance requirement with ANDRO Construction + Projects in Auckland.",
+  "footerImages": {
+    "logo": {
+      "src": "/images/andro%20caps%20copy.png",
+      "alt": "ANDRO Construction logo"
+    },
+    "badge": {
+      "src": "/images/MemberSticker_Shop_Image_453x512.width-1000.png",
+      "alt": "Site Safe Member — Proud to be safe"
+    }
+  }
+}

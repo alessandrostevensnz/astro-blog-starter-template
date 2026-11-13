@@ -94,12 +94,42 @@ const text: Record<string, Row[]> = {
     ['ctaButtonText', '07 - Contact link wording'],
     ['metaTitle', 'Google and browser tab title'],
     ['metaDescription', 'Google search description', 'text'],
-  ], contact: [],
+  ],
+  contact: [
+    ['heroEyebrow', '01 - Contact banner small label'],
+    ['heroHeading', '02 - Contact banner heading', 'text'],
+    ['heroDescription', '03 - Contact banner introduction', 'text'],
+    ['sectionEyebrow', '04 - Contact section small label'],
+    ['sectionHeading', '05 - Contact section heading', 'text'],
+    ['sectionDescription', '06 - Contact section description', 'text'],
+    ['contactEmail', 'Optional email address shown on Contact'],
+    ['emailPrefix', '07 - Words before contact email'],
+    ['nameLabel', '08 - Your name field label'],
+    ['emailLabel', '09 - Email address field label'],
+    ['serviceLabel', '10 - Service selection label'],
+    ['servicePlaceholder', '11 - First service dropdown prompt'],
+    ['messageLabel', '13 - Project message field label'],
+    ['submitLabel', '14 - Send button wording'],
+    ['formNotice', '15 - Note underneath the form', 'text'],
+    ['sendingButton', '16 - Sending button wording'],
+    ['sendingStatus', '17 - Message while sending', 'text'],
+    ['successStatus', '18 - Success confirmation', 'text'],
+    ['providerErrorFallback', '19 - Form error fallback text', 'text'],
+    ['errorSuffix', '20 - Guidance when an error occurs', 'text'],
+    ['genericError', '21 - Unexpected error message', 'text'],
+    ['metaTitle', 'Google and browser tab title'],
+    ['metaDescription', 'Google search description', 'text'],
+  ],
 };
 const styled: Record<string, string[]> = {
   home: ['title','subtitle','introHeading','introText','servicesHeading','featureHeading','closingHeading','philosophyHeading','philosophyText'],
   construction: ['introHeading','introText'], maintenance: ['introHeading','introText'], about: ['whoHeading','whoText'],
   projects: ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText'],
+  contact: [
+    'heroEyebrow','heroHeading','heroDescription','sectionEyebrow','sectionHeading',
+    'sectionDescription','emailPrefix','nameLabel','emailLabel','serviceLabel',
+    'messageLabel','submitLabel','formNotice',
+  ],
 };
 const services = field('services', 'Service photographs and descriptions', 'list', {
   label_singular: 'Maintenance service', collapsed: false, summary: '{{fields.number}} - {{fields.title}}',
@@ -130,15 +160,25 @@ const pageFiles = entries.map(([name,label,path]) => {
   // public-facing Projects section is now editable without scrolling past photos.
   const addTextFields = () => {
     for (const [key,title,widget] of text[name]) {
-      fields.push(field(key,title,widget, name === 'projects' && key === 'heroHeading'
-        ? { hint: 'Press Enter for a line break in the main banner heading.' }
-        : name === 'projects' && key === 'ctaHeading'
-          ? { hint: 'Press Enter for a line break in the bottom contact heading.' }
-          : {}));
+      fields.push(field(key,title,widget,
+        (name === 'projects' && (key === 'heroHeading' || key === 'ctaHeading')) ||
+        (name === 'contact' && (key === 'heroHeading' || key === 'sectionHeading'))
+          ? { hint: 'Press Enter to create a new line in the heading.' }
+          : name === 'contact' && key === 'contactEmail'
+            ? { required: false, hint: 'Optional. Leave blank to hide the email link. Use a full address such as hello@example.com.' }
+            : {}));
       if (styled[name]?.includes(key)) fields.push(formatting(key,title));
+      if (name === 'contact' && key === 'servicePlaceholder') {
+        fields.push(field('serviceOptions', '12 - Service dropdown choices', 'list', {
+          label_singular: 'Service choice', collapsed: true, min: 1,
+          summary: '{{fields.label}}',
+          hint: 'These are the choices in the Contact form. Editing a choice changes the wording sent with an enquiry, not the form submission service.',
+          fields: [field('label', 'Service name')],
+        }));
+      }
     }
   };
-  if (name === 'projects') addTextFields();
+  if (name === 'projects' || name === 'contact') addTextFields();
   // Show the Construction landing video FIRST. It was previously buried below eleven image
   // controls, which made it difficult to find on mobile. This is the same Decap file
   // widget / heroVideo data field used for the Projects landing video.
@@ -182,10 +222,10 @@ const pageFiles = entries.map(([name,label,path]) => {
     }));
     fields.push(projectCards);
   }
-  if (name !== 'projects') addTextFields();
+  if (name !== 'projects' && name !== 'contact') addTextFields();
   fields.push(footer());
   return { name,label,file:'content/pages/'+name+'.json',preview_path:path,
-    description:name === 'contact' ? 'Contact currently has no main-page photo. Its two footer images are here; the enquiry form is unchanged.' : 'All photographs and existing editable text for '+label+'. Changing a photo here affects this page only.',fields };
+    description:name === 'contact' ? 'Edit all Contact page headings, explanations, form wording and service choices. The form integration and footer images stay intact.' : 'All photographs and existing editable text for '+label+'. Changing a photo here affects this page only.',fields };
 });
 const overrides = Object.entries(styled).flatMap(([page,keys])=>keys.map(key=>field(page+'__'+key,page+' - '+key,'object',{
   collapsed:true,required:false,fields:[field('size','Size (%)','number',{required:false,value_type:'int',min:60,max:180}),field('color','Colour','color',{required:false,allowInput:true})],
