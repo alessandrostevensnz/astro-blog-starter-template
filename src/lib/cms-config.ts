@@ -40,15 +40,12 @@ const photos: Record<string, Array<[string, string, string]>> = {
   construction: [
     ['hero', '01 - Main construction banner', 'Large image at the very top of Construction.'],
     ['residential', '02 - Residential construction photo header', 'Photo behind Residential construction and carpentry heading and description.'],
-    ['serviceCarpentry', '03 - General carpentry row photo', 'Small photo on the right of General carpentry.'],
-    ['serviceDecks', '04 - Decks and fencing row photo', 'Small photo on the right of Decks and fencing.'],
-    ['serviceRenovations', '05 - Renovations and alterations row photo', 'Small photo on the right of Renovations and alterations.'],
-    ['commercial', '06 - Commercial construction photo header', 'Photo behind Commercial construction and fit-outs heading and description.'],
-    ['serviceCommercialCarpentry', '07 - Commercial carpentry and repairs row photo', 'Small photo to the right of Commercial carpentry and repairs.'],
-    ['serviceCommercialFitouts', '08 - Commercial fit-outs and interior improvements row photo', 'Small photo to the right of Fit-outs and interior improvements.'],
-    ['serviceCommercialRefurbishment', '09 - Commercial alterations and refurbishments row photo', 'Small photo to the right of Alterations and refurbishments.'],
-    ['processLeft', '10 - Process photograph, left', 'Left photo in the Preparation makes a difference pair.'],
-    ['processRight', '11 - Process photograph, right', 'Right photo in the Preparation makes a difference pair.'],
+    ['commercial', '03 - Commercial construction photo header', 'Photo behind Commercial construction and fit-outs heading and description.'],
+    ['serviceCommercialCarpentry', '04 - Commercial carpentry and repairs row photo', 'Small photo to the right of Commercial carpentry and repairs.'],
+    ['serviceCommercialFitouts', '05 - Commercial fit-outs and interior improvements row photo', 'Small photo to the right of Fit-outs and interior improvements.'],
+    ['serviceCommercialRefurbishment', '06 - Commercial alterations and refurbishments row photo', 'Small photo to the right of Alterations and refurbishments.'],
+    ['processLeft', '07 - Process photograph, left', 'Left photo in the Preparation makes a difference pair.'],
+    ['processRight', '08 - Process photograph, right', 'Right photo in the Preparation makes a difference pair.'],
   ],
   maintenance: [
     ['hero', '01 - Main maintenance banner', 'Large image behind Look after what matters.'],
@@ -72,7 +69,7 @@ const text: Record<string, Row[]> = {
   ],
   construction: [
     ['description','Page description','text'],['introHeading','Introduction heading'],['introText','Introduction text','text'],
-    ['residentialHeading','Residential photo header heading'],['residentialText','Residential introduction (above three service rows)','text'],['commercialHeading','Commercial photo header heading'],['commercialText','Commercial introduction (above three service rows)','text'],
+    ['residentialHeading','Residential photo header heading'],['residentialText','Residential introduction (above residential services)','text'],['commercialHeading','Commercial photo header heading'],['commercialText','Commercial introduction (above three service rows)','text'],
     ['processHeading','Process heading'],['processText','Process description','text'],
   ],
   maintenance: [
@@ -172,6 +169,32 @@ const pageFiles = entries.map(([name,label,path]) => {
         : isMultiline ? { hint: textHint } : {};
       fields.push(field(key,title,editorWidget,options));
       if (styled[name]?.includes(key)) fields.push(formatting(key,title));
+      if (name === 'construction' && key === 'residentialText') {
+        fields.push(field('residentialHighlights', 'Residential - additional bullet points', 'list', {
+          label_singular: 'Bullet point',
+          required: false,
+          hint: 'Optional short bullet points shown below the residential introduction. Use Add to create more, drag to reorder, or delete any point.',
+          field: field('text', 'Bullet point', 'string'),
+        }));
+        fields.push(field('residentialServices', 'Residential services - edit or add service rows', 'list', {
+          label_singular: 'Residential service',
+          collapsed: false,
+          summary: '{{fields.title}}',
+          hint: 'The numbered General carpentry / Decks / Renovations rows on the public site. Edit any title, description or photo. Use Add to create new rows, drag to reorder, or remove a row. Photos are optional.',
+          fields: [
+            field('title', 'Service heading'),
+            field('description', 'Description', 'text', { required: false }),
+            field('bulletPoints', 'Optional bullet points under this service', 'list', {
+              label_singular: 'Bullet point',
+              required: false,
+              field: field('text', 'Bullet point', 'string'),
+              hint: 'Use Add to list specific types of work beneath this service description.',
+            }),
+            field('image', 'Service photograph (optional)', 'image', { required: false, choose_url: true }),
+            field('imageAlt', 'Photo description (alt text)', 'string', { required: false }),
+          ],
+        }));
+      }
       if (name === 'contact' && key === 'servicePlaceholder') {
         fields.push(field('serviceOptions', '12 - Service dropdown choices', 'list', {
           label_singular: 'Service choice', collapsed: true, min: 1,
@@ -192,9 +215,10 @@ const pageFiles = entries.map(([name,label,path]) => {
       hint: 'This is the FIRST banner at the top of /construction/, behind Built with purpose. Upload an MP4 here and click Publish, exactly as you do on the Projects page. The video plays automatically, silently and on repeat. Your main Construction banner photograph below remains the fallback. For fast mobile loading, use an optimised MP4 (ideally under 10 MB).',
     }));
   }
+  if (name === 'construction') addTextFields();
   if (photos[name]) fields.push(field('photos','Page photographs','object',{
     collapsed:false, hint:name === 'construction'
-      ? 'The first Main construction banner photo is the fallback behind the landing VIDEO field above. All other photos belong to their own Construction sections and service rows.'
+      ? 'Residential service row photographs are edited inside the Residential services list above. This panel controls the remaining fixed Construction banners and Commercial / Process photographs.'
       : 'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
     fields:photos[name].map(([key,title,hint])=>key === 'whoWeAre'
       ? field(key,title,'object',{
@@ -232,7 +256,7 @@ const pageFiles = entries.map(([name,label,path]) => {
     }));
     fields.push(projectCards);
   }
-  if (name !== 'projects' && name !== 'contact') addTextFields();
+  if (name !== 'projects' && name !== 'contact' && name !== 'construction') addTextFields();
   fields.push(footer());
   return { name,label,file:'content/pages/'+name+'.json',preview_path:path,
     description:name === 'contact' ? 'Edit all Contact page headings, explanations, form wording and service choices. The form integration and footer images stay intact.' : 'All photographs and existing editable text for '+label+'. Changing a photo here affects this page only.',fields };

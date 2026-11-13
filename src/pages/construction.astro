@@ -9,6 +9,17 @@ const galleryThumbs = optimizedGallery as Record<string, { small: string; large:
 // The Construction showcase uses the SAME ordered photos as /projects/ and /admin.
 const projects = siteContent.projects.filter((project) => typeof project.image === 'string' && project.image.length > 0);
 const slideshowDuration = Math.max(50, projects.length * 3.6);
+type ResidentialService = {
+  title: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  bulletPoints?: string[];
+};
+const residentialServices = (siteContent.construction.residentialServices ?? []) as ResidentialService[];
+const residentialHighlights = (siteContent.construction.residentialHighlights ?? [] as string[])
+  .filter((point) => typeof point === 'string' && point.trim().length > 0);
+
 ---
 <SiteLayout title="Construction, Carpentry & Renovations Auckland | ANDRO" description={siteContent.construction.description}>
   <section class="construction-hero" aria-labelledby="construction-title">
@@ -41,25 +52,38 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
 
   <section class="content-block residential-services" aria-label="Residential construction services">
     <p class="body-copy construction-services-intro" data-style-key="construction.residentialText">{siteContent.construction.residentialText}</p>
+    {residentialHighlights.length > 0 && (
+      <ul class="residential-highlights" aria-label="Additional residential work">
+        {residentialHighlights.map((point) => <li>{point}</li>)}
+      </ul>
+    )}
     <div class="service-list construction-service-list">
-      <article class="service-item">
-        <span>01</span>
-        <h3>General carpentry</h3>
-        <p>Careful carpentry for practical changes, repairs and improvements, with attention to how new work connects to the existing building.</p>
-        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCarpentry.src]?.small ?? photos.serviceCarpentry.src} alt={photos.serviceCarpentry.alt} loading="lazy" decoding="async" />
-      </article>
-      <article class="service-item">
-        <span>02</span>
-        <h3>Decks and fencing</h3>
-        <p>Decking and fence work planned around the site, intended use, material exposure and the details that affect durability and everyday function.</p>
-        <img class="construction-service-photo" src={galleryThumbs[photos.serviceDecks.src]?.small ?? photos.serviceDecks.src} alt={photos.serviceDecks.alt} loading="lazy" decoding="async" />
-      </article>
-      <article class="service-item">
-        <span>03</span>
-        <h3>Renovations and alterations</h3>
-        <p>Thoughtful improvements to existing spaces, balancing appearance, function and the realities of working with an existing structure.</p>
-        <img class="construction-service-photo" src={galleryThumbs[photos.serviceRenovations.src]?.small ?? photos.serviceRenovations.src} alt={photos.serviceRenovations.alt} loading="lazy" decoding="async" />
-      </article>
+      {residentialServices.map((service, index) => {
+        const image = (service.image || '').trim();
+        const bulletPoints = Array.isArray(service.bulletPoints)
+          ? service.bulletPoints.filter((point) => typeof point === 'string' && point.trim().length > 0)
+          : [];
+        return (
+          <article class:list={['service-item', { 'no-service-photo': !image }]}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <h3>{service.title}</h3>
+            <div class="residential-service-details">
+              {service.description && <p>{service.description}</p>}
+              {bulletPoints.length > 0 && (
+                <ul class="residential-service-bullets">
+                  {bulletPoints.map((point) => <li>{point}</li>)}
+                </ul>
+              )}
+            </div>
+            {image && (
+              <img class="construction-service-photo"
+                src={galleryThumbs[image]?.small ?? image}
+                alt={service.imageAlt || service.title}
+                loading="lazy" decoding="async" />
+            )}
+          </article>
+        );
+      })}
     </div>
   </section>
 
@@ -252,6 +276,40 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
   .construction-service-list .service-item h3 { font-size: clamp(18px,4.5vw,23px); }
   .construction-service-list .service-item p { font-size: 12px; }
   .construction-service-list .construction-service-photo { grid-column: 3; grid-row: 1 / span 2; }
+}
+
+/* Editable residential services and optional bullet lists (managed in /admin). */
+.residential-highlights {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 30px; max-width: 900px; margin: 0 0 34px; padding: 0; list-style: none;
+}
+.residential-highlights li, .residential-service-bullets li {
+  position: relative; padding-left: 17px; color: var(--brand-muted); line-height: 1.75;
+}
+.residential-highlights li { font-size: 14px; }
+.residential-highlights li::before, .residential-service-bullets li::before {
+  content: '•'; color: var(--brand-accent); position: absolute; left: 0;
+}
+.residential-services .service-item .residential-service-details {
+  grid-column: 2; grid-row: 2; min-width: 0;
+}
+.residential-services .service-item .residential-service-details p {
+  margin: 0; max-width: 760px;
+}
+.residential-service-bullets {
+  display: grid; gap: 6px; padding: 0; margin: 12px 0 0; list-style: none;
+}
+.residential-service-bullets li { font-size: 13px; }
+.residential-services .construction-service-list .service-item.no-service-photo {
+  grid-template-columns: clamp(50px,5vw,70px) minmax(0,1fr);
+}
+@media (max-width: 680px) {
+  .residential-highlights { grid-template-columns: 1fr; gap: 8px; margin-bottom: 25px; }
+  .residential-highlights li { font-size: 13px; }
+  .residential-service-bullets li { font-size: 12px; }
+  .residential-services .construction-service-list .service-item.no-service-photo {
+    grid-template-columns: 26px minmax(0,1fr);
+  }
 }
 
 /* Keep the new commercial rows close to their photographic banner. */
