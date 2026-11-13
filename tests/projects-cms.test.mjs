@@ -104,6 +104,25 @@ test('Projects auto-scrolls slowly with readable captions and 3x5 manual navigat
   assert.equal(data.projects.length >= 10,true);
 });
 
+test('Projects gallery is independently shuffled each visit without altering the Construction showcase', () => {
+  const projectsPage = read('../src/pages/projects.astro');
+  const constructionPage = read('../src/pages/construction.astro');
+  const contents = JSON.parse(read('../content/pages/projects.json'));
+  assert(projectsPage.includes('siteContent.projects.map'), 'Projects must keep reading the same CMS entries');
+  assert(constructionPage.includes('siteContent.projects.filter('), 'Construction must retain its unshuffled CMS order');
+  assert(projectsPage.includes('Math.floor(Math.random() * (i + 1))'), 'Shuffle must choose a random index from Fisher-Yates');
+  assert(projectsPage.includes('[uniqueTiles[i], uniqueTiles[randomIndex]]'), 'Reorder complete gallery tiles');
+  assert(projectsPage.includes('uniqueTiles[0] === originalFirstTile'), 'Avoid opening on the same first photo as Construction');
+  assert(projectsPage.includes('gallery.replaceChildren(...uniqueTiles)'), 'Apply the shuffled order to the Projects gallery only');
+  assert(projectsPage.indexOf('gallery.replaceChildren(...uniqueTiles)') < projectsPage.indexOf('const firstCopy ='),
+    'Shuffle must happen before the repeat slides are generated');
+  assert(projectsPage.includes('const rows = 3'), 'Keep the existing three-row layout');
+  assert(projectsPage.includes('const columnsPerClick = () => smallScreen.matches ? 1 : 3'), 'Keep manual navigation intact');
+  assert(projectsPage.includes('viewport.scrollLeft += pixelsPerSecond * elapsed'), 'Keep gentle automatic movement intact');
+  assert.equal(new Set(contents.projects.map(item => item.image)).size, new Set(contents.projects.map(item => item.image)).size,
+    'Never change the original project data');
+});
+
 test('All six pages share ONE editable footer with no Site Safe badge field', () => {
   const shared=JSON.parse(read('../content/site-footer.json'));
   // The owner can replace the shared logo in /admin. Never hard-code its filename.

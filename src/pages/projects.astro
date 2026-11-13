@@ -133,6 +133,21 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
   // A column contains three photos. Duplicating each complete cycle permits
   // continuously moving through projects without a visible jump at the end.
   if (gallery && viewport && controls && prev && next && counter && uniqueTiles.length) {
+    // Randomise the Projects gallery on each visit without changing the saved
+    // order in /admin. Construction continues to use that original order.
+    const originalFirstTile = uniqueTiles[0];
+    for (let i = uniqueTiles.length - 1; i > 0; i--) {
+      const randomIndex = Math.floor(Math.random() * (i + 1));
+      [uniqueTiles[i], uniqueTiles[randomIndex]] = [uniqueTiles[randomIndex], uniqueTiles[i]];
+    }
+    // Always start with a different photo than the Construction reel.
+    if (uniqueTiles.length > 1 && uniqueTiles[0] === originalFirstTile) {
+      uniqueTiles.push(uniqueTiles.shift()!);
+    }
+    // Reorder entire tiles (photo + its heading, category and description)
+    // before making the decorative copies used for seamless scrolling.
+    gallery.replaceChildren(...uniqueTiles);
+
     const uniquePhotoCount = uniqueTiles.length;
     const rows = 3;
     const totalColumns = Math.ceil(uniquePhotoCount / rows);
