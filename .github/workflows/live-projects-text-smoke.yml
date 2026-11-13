@@ -1,0 +1,19 @@
+name: Temporary live Projects text editing verification
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/live-projects-text-smoke.yml"
+      - "tests/live-projects-text-smoke.mjs"
+permissions:
+  contents: read
+jobs:
+  live-projects:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify live /admin Projects fields and rendered page copy
+        run: node tests/live-projects-text-smoke.mjs
