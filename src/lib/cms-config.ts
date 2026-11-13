@@ -41,11 +41,8 @@ const photos: Record<string, Array<[string, string, string]>> = {
     ['hero', '01 - Main construction banner', 'Large image at the very top of Construction.'],
     ['residential', '02 - Residential construction photo header', 'Photo behind Residential construction and carpentry heading and description.'],
     ['commercial', '03 - Commercial construction photo header', 'Photo behind Commercial construction and fit-outs heading and description.'],
-    ['serviceCommercialCarpentry', '04 - Commercial carpentry and repairs row photo', 'Small photo to the right of Commercial carpentry and repairs.'],
-    ['serviceCommercialFitouts', '05 - Commercial fit-outs and interior improvements row photo', 'Small photo to the right of Fit-outs and interior improvements.'],
-    ['serviceCommercialRefurbishment', '06 - Commercial alterations and refurbishments row photo', 'Small photo to the right of Alterations and refurbishments.'],
-    ['processLeft', '07 - Process photograph, left', 'Left photo in the Preparation makes a difference pair.'],
-    ['processRight', '08 - Process photograph, right', 'Right photo in the Preparation makes a difference pair.'],
+    ['processLeft', '04 - Process photograph, left', 'Left photo in the Preparation makes a difference pair.'],
+    ['processRight', '05 - Process photograph, right', 'Right photo in the Preparation makes a difference pair.'],
   ],
   maintenance: [
     ['hero', '01 - Main maintenance banner', 'Large image behind Look after what matters.'],
@@ -69,7 +66,7 @@ const text: Record<string, Row[]> = {
   ],
   construction: [
     ['description','Page description','text'],['introHeading','Introduction heading'],['introText','Introduction text','text'],
-    ['residentialHeading','Residential photo header heading'],['residentialText','Residential introduction (above residential services)','text'],['commercialHeading','Commercial photo header heading'],['commercialText','Commercial introduction (above three service rows)','text'],
+    ['residentialHeading','Residential photo header heading'],['residentialText','Residential introduction (above residential services)','text'],['commercialHeading','Commercial photo header heading'],['commercialText','Commercial introduction (above commercial services)','text'],
     ['processHeading','Process heading'],['processText','Process description','text'],
   ],
   maintenance: [
@@ -195,6 +192,32 @@ const pageFiles = entries.map(([name,label,path]) => {
           ],
         }));
       }
+      if (name === 'construction' && key === 'commercialText') {
+        fields.push(field('commercialHighlights', 'Commercial - extra bullet points (click Add)', 'list', {
+          label_singular: 'Bullet point',
+          required: false, allow_add: true, allow_remove: true, allow_reorder: true,
+          hint: 'Optional bullet points shown beneath the commercial introduction. Click Add to enter another type of commercial work, then Publish.',
+          field: field('text', 'Bullet point', 'string'),
+        }));
+        fields.push(field('commercialServices', 'Commercial services - edit text / add service rows', 'list', {
+          label_singular: 'Commercial service',
+          collapsed: false, allow_add: true, allow_remove: true, allow_reorder: true,
+          summary: '{{fields.title}}',
+          hint: 'Edit each commercial service title, description, bullet points and photo right here. Use Add to create another numbered service, drag to reorder, or remove a row. Photos are optional.',
+          fields: [
+            field('title', 'Service heading'),
+            field('description', 'Description', 'text', { required: false }),
+            field('bulletPoints', 'Optional bullet points under this service', 'list', {
+              label_singular: 'Bullet point',
+              required: false, allow_add: true, allow_remove: true, allow_reorder: true,
+              field: field('text', 'Bullet point', 'string'),
+              hint: 'Click Add to list specific types of work beneath this commercial service description.',
+            }),
+            field('image', 'Service photograph (optional)', 'image', { required: false, choose_url: true }),
+            field('imageAlt', 'Photo description (alt text)', 'string', { required: false }),
+          ],
+        }));
+      }
       if (name === 'contact' && key === 'servicePlaceholder') {
         fields.push(field('serviceOptions', '12 - Service dropdown choices', 'list', {
           label_singular: 'Service choice', collapsed: true, min: 1,
@@ -218,7 +241,7 @@ const pageFiles = entries.map(([name,label,path]) => {
   if (name === 'construction') addTextFields();
   if (photos[name]) fields.push(field('photos','Page photographs','object',{
     collapsed:false, hint:name === 'construction'
-      ? 'Residential service row photographs are edited inside the Residential services list above. This panel controls the remaining fixed Construction banners and Commercial / Process photographs.'
+      ? 'Residential and commercial service photographs are edited inside their respective service lists above. This panel controls the fixed Construction banners and Process photographs only.'
       : 'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
     fields:photos[name].map(([key,title,hint])=>key === 'whoWeAre'
       ? field(key,title,'object',{

@@ -68,7 +68,7 @@ test('Projects styles and live text preview work without impacting other pages',
   for (const name of ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText']) {
     assert(preview.includes("'"+name+"'"), 'Live preview key missing: '+name);
   }
-  assert(html.includes('preview.js?v=residential-editor-20261113-v2'));
+  assert(html.includes('preview.js?v=construction-services-editor-20261113-v3'));
   assert(html.includes('/admin/oauth-popup.js?v=6'), 'Do not disturb working v6 OAuth login');
   assert(siteLayout.includes('projects: pageContent.projects'), 'Projects inline font styles not passed through');
   const css = typographyCss(undefined, { projects: {

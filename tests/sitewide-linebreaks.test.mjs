@@ -93,7 +93,7 @@ test('live CMS preview mirrors typed newlines and preserves working authenticati
     "'preventative maintenance description': 'preventativeText'"
   ])assert(preview.includes(label),'Missing instant preview mapping '+label);
   assert(preview.includes('Press Return for a new line'));
-  assert(admin.includes('/admin/preview.js?v=residential-editor-20261113-v2'));
+  assert(admin.includes('/admin/preview.js?v=construction-services-editor-20261113-v3'));
   assert(admin.includes('/admin/oauth-popup.js?v=6'),'Working admin OAuth v6 must stay intact');
 });
 
@@ -132,4 +132,39 @@ test('Construction editor loads a fresh configuration with editable, repeatable 
   const page = read('../src/pages/construction.astro');
   assert(page.includes('residentialServices.map'), 'Public site must render the repeatable rows');
   assert(page.includes('residentialHighlights.map'), 'Public site must render extra bullet points');
+});
+
+
+test('Commercial Construction has fully editable service text, bullet points and photos like Residential', () => {
+  const cmsPage = cmsConfig.collections.find(c => c.name === 'pages').files.find(f => f.name === 'construction');
+  const fields = cmsPage.fields;
+  const commercial = fields.find(f => f.name === 'commercialServices');
+  const highlights = fields.find(f => f.name === 'commercialHighlights');
+  assert(commercial && highlights, 'Commercial service and bullet editors must be accessible');
+  assert.equal(commercial.widget, 'list');
+  assert.equal(highlights.widget, 'list');
+  assert.equal(commercial.allow_add, true);
+  assert.equal(commercial.allow_remove, true);
+  assert.equal(commercial.allow_reorder, true);
+  assert.equal(highlights.allow_add, true);
+  const fieldNames = commercial.fields.map(f => f.name);
+  for (const name of ['title','description','bulletPoints','image','imageAlt']) assert(fieldNames.includes(name), 'Commercial editor missing '+name);
+  const nestedBullets = commercial.fields.find(f => f.name === 'bulletPoints');
+  assert.equal(nestedBullets.widget, 'list');
+  assert.equal(nestedBullets.field.widget, 'string');
+  assert.equal(nestedBullets.allow_add, true);
+  const photos = fields.find(f => f.name === 'photos');
+  for (const k of ['serviceCommercialCarpentry','serviceCommercialFitouts','serviceCommercialRefurbishment']) {
+    assert(!photos.fields.some(f => f.name === k), 'Old duplicate photo field remains in /admin: '+k);
+  }
+  const data = JSON.parse(read('../content/pages/construction.json'));
+  assert(Array.isArray(data.commercialServices) && data.commercialServices.length >= 3, 'Original three commercial services must survive');
+  assert(data.commercialServices.every(s => s.title && s.description && s.image), 'All migrated commercial services should retain text and photos');
+  assert(Array.isArray(data.commercialHighlights));
+  assert(Array.isArray(data.residentialServices) && data.residentialServices.length >= 3, 'Do not change residential data');
+  const source = read('../src/pages/construction.astro');
+  assert(source.includes('commercialServices.map'), 'Live commercial rows should render from new editable data');
+  assert(source.includes('commercialHighlights.map'), 'Live commercial bullet list is missing');
+  assert(!source.includes('photos.serviceCommercialCarpentry.src'), 'Old fixed commercial photo reference must not override CMS');
+  assert(read('../public/admin/index.html').includes('construction-services-editor-20261113-v3'), 'CMS should load a fresh configuration');
 });

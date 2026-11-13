@@ -9,15 +9,18 @@ const galleryThumbs = optimizedGallery as Record<string, { small: string; large:
 // The Construction showcase uses the SAME ordered photos as /projects/ and /admin.
 const projects = siteContent.projects.filter((project) => typeof project.image === 'string' && project.image.length > 0);
 const slideshowDuration = Math.max(50, projects.length * 3.6);
-type ResidentialService = {
+type ConstructionService = {
   title: string;
   description?: string;
   image?: string;
   imageAlt?: string;
   bulletPoints?: string[];
 };
-const residentialServices = (siteContent.construction.residentialServices ?? []) as ResidentialService[];
+const residentialServices = (siteContent.construction.residentialServices ?? []) as ConstructionService[];
 const residentialHighlights = (siteContent.construction.residentialHighlights ?? [] as string[])
+  .filter((point) => typeof point === 'string' && point.trim().length > 0);
+const commercialServices = (siteContent.construction.commercialServices ?? []) as ConstructionService[];
+const commercialHighlights = (siteContent.construction.commercialHighlights ?? [] as string[])
   .filter((point) => typeof point === 'string' && point.trim().length > 0);
 
 ---
@@ -99,25 +102,38 @@ const residentialHighlights = (siteContent.construction.residentialHighlights ??
 
   <section class="content-block commercial-services" aria-label="Commercial construction services">
     <p class="body-copy construction-services-intro" data-style-key="construction.commercialText">{siteContent.construction.commercialText}</p>
+    {commercialHighlights.length > 0 && (
+      <ul class="residential-highlights" aria-label="Additional commercial work">
+        {commercialHighlights.map((point) => <li data-cms-text>{point}</li>)}
+      </ul>
+    )}
     <div class="service-list construction-service-list">
-      <article class="service-item">
-        <span>01</span>
-        <h3>Commercial carpentry and repairs</h3>
-        <p>Carpentry, detailed improvements and practical repairs for commercial properties, with attention to workmanship and the people using the space.</p>
-        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCommercialCarpentry.src]?.small ?? photos.serviceCommercialCarpentry.src} alt={photos.serviceCommercialCarpentry.alt} loading="lazy" decoding="async" />
-      </article>
-      <article class="service-item">
-        <span>02</span>
-        <h3>Fit-outs and interior improvements</h3>
-        <p>Interior framing, fit-outs and alterations planned around how offices, retail and hospitality spaces need to function.</p>
-        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCommercialFitouts.src]?.small ?? photos.serviceCommercialFitouts.src} alt={photos.serviceCommercialFitouts.alt} loading="lazy" decoding="async" />
-      </article>
-      <article class="service-item">
-        <span>03</span>
-        <h3>Alterations and refurbishments</h3>
-        <p>Upgrades, recladding and refurbishment work coordinated around access, sequencing and keeping disruption to a minimum.</p>
-        <img class="construction-service-photo" src={galleryThumbs[photos.serviceCommercialRefurbishment.src]?.small ?? photos.serviceCommercialRefurbishment.src} alt={photos.serviceCommercialRefurbishment.alt} loading="lazy" decoding="async" />
-      </article>
+      {commercialServices.map((service, index) => {
+        const image = (service.image || '').trim();
+        const bulletPoints = Array.isArray(service.bulletPoints)
+          ? service.bulletPoints.filter((point) => typeof point === 'string' && point.trim().length > 0)
+          : [];
+        return (
+          <article class:list={['service-item', { 'no-service-photo': !image }]}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <h3 data-cms-text>{service.title}</h3>
+            <div class="residential-service-details">
+              {service.description && <p data-cms-text>{service.description}</p>}
+              {bulletPoints.length > 0 && (
+                <ul class="residential-service-bullets">
+                  {bulletPoints.map((point) => <li data-cms-text>{point}</li>)}
+                </ul>
+              )}
+            </div>
+            {image && (
+              <img class="construction-service-photo"
+                src={galleryThumbs[image]?.small ?? image}
+                alt={service.imageAlt || service.title}
+                loading="lazy" decoding="async" />
+            )}
+          </article>
+        );
+      })}
     </div>
   </section>
 
@@ -290,24 +306,28 @@ const residentialHighlights = (siteContent.construction.residentialHighlights ??
 .residential-highlights li::before, .residential-service-bullets li::before {
   content: '•'; color: var(--brand-accent); position: absolute; left: 0;
 }
-.residential-services .service-item .residential-service-details {
+.residential-services .service-item .residential-service-details,
+.commercial-services .service-item .residential-service-details {
   grid-column: 2; grid-row: 2; min-width: 0;
 }
-.residential-services .service-item .residential-service-details p {
+.residential-services .service-item .residential-service-details p,
+.commercial-services .service-item .residential-service-details p {
   margin: 0; max-width: 760px;
 }
 .residential-service-bullets {
   display: grid; gap: 6px; padding: 0; margin: 12px 0 0; list-style: none;
 }
 .residential-service-bullets li { font-size: 13px; }
-.residential-services .construction-service-list .service-item.no-service-photo {
+.residential-services .construction-service-list .service-item.no-service-photo,
+.commercial-services .construction-service-list .service-item.no-service-photo {
   grid-template-columns: clamp(50px,5vw,70px) minmax(0,1fr);
 }
 @media (max-width: 680px) {
   .residential-highlights { grid-template-columns: 1fr; gap: 8px; margin-bottom: 25px; }
   .residential-highlights li { font-size: 13px; }
   .residential-service-bullets li { font-size: 12px; }
-  .residential-services .construction-service-list .service-item.no-service-photo {
+  .residential-services .construction-service-list .service-item.no-service-photo,
+.commercial-services .construction-service-list .service-item.no-service-photo {
     grid-template-columns: 26px minmax(0,1fr);
   }
 }

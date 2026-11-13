@@ -32,6 +32,7 @@
     'residential introduction (above residential services)': 'residentialText',
     'commercial photo header heading': 'commercialHeading',
     'commercial introduction (above three service rows)': 'commercialText',
+    'commercial introduction (above commercial services)': 'commercialText',
     'process heading': 'processHeading',
     'process description': 'processText',
     'preventative maintenance heading': 'preventativeHeading',
@@ -119,7 +120,7 @@
       lastPage = page;
       heading.textContent = pages[page].label.toUpperCase() + ' PREVIEW';
       note.textContent = page === 'construction'
-        ? 'Edit residential service headings, descriptions, photos and bullet points in the Residential services list on the left. Publish, then refresh to update the service rows here.'
+        ? 'Edit residential and commercial service titles, descriptions, photos and bullet points in their service lists on the left. Publish, then refresh the preview to see the rows update.'
         : 'Press Return for a new line, or Return twice for a paragraph gap. Edited page text keeps the same spacing here and on the published site. Publish and refresh to update photos and gallery entries.';
       frame.title = pages[page].label + ' page preview';
       reloadPreview();
