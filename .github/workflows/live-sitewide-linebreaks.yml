@@ -1,0 +1,21 @@
+name: Temporary read-only check of live paragraph breaks
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/live-sitewide-linebreaks.yml"
+      - "tests/live-sitewide-linebreaks.mjs"
+permissions:
+  contents: read
+jobs:
+  validate-public-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium harness (no user credentials)
+        run: npm install --no-save --no-package-lock --ignore-scripts playwright@1.56.1
+      - name: Verify all six production pages preserve paragraph spacing in Chrome
+        run: node tests/live-sitewide-linebreaks.mjs
