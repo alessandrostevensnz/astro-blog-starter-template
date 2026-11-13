@@ -153,8 +153,16 @@ const pageFiles = entries.map(([name,label,path]) => {
   const fields: Field[] = [];
   // Put the Projects writing controls above the long photo gallery. Every
   // public-facing Projects section is now editable without scrolling past photos.
+  // Make the actual commercial row text immediately visible when opening the Construction editor.
+  // Do not move the JSON keys: these are the existing stored fields, not a new collection.
+  const textRows = name === 'construction'
+    ? [
+        ...text[name].filter(([key]) => key === 'commercialHeading' || key === 'commercialText'),
+        ...text[name].filter(([key]) => key !== 'commercialHeading' && key !== 'commercialText'),
+      ]
+    : text[name];
   const addTextFields = () => {
-    for (const [key,title,widget] of text[name]) {
+    for (const [key,title,widget] of textRows) {
       // All page headings and paragraphs accept Return. Decap's single-line
       // string input does not, so use a multiline widget for headings too.
       // This changes only the editor input, never the stored string value.
@@ -193,27 +201,27 @@ const pageFiles = entries.map(([name,label,path]) => {
         }));
       }
       if (name === 'construction' && key === 'commercialText') {
-        fields.push(field('commercialHighlights', 'Commercial - extra bullet points (click Add)', 'list', {
+        fields.push(field('commercialHighlights', 'COMMERCIAL - extra bullet points (click Add)', 'list', {
           label_singular: 'Bullet point',
           required: false, allow_add: true, allow_remove: true, allow_reorder: true,
           hint: 'Optional bullet points shown beneath the commercial introduction. Click Add to enter another type of commercial work, then Publish.',
           field: field('text', 'Bullet point', 'string'),
         }));
-        fields.push(field('commercialServices', 'Commercial services - edit text / add service rows', 'list', {
+        fields.push(field('commercialServices', 'COMMERCIAL SERVICES - edit numbered text / photos / add rows', 'list', {
           label_singular: 'Commercial service',
           collapsed: false, allow_add: true, allow_remove: true, allow_reorder: true,
           summary: '{{fields.title}}',
-          hint: 'Edit each commercial service title, description, bullet points and photo right here. Use Add to create another numbered service, drag to reorder, or remove a row. Photos are optional.',
+          hint: 'THIS is where you edit the text beside numbered services 01, 02, 03. Open each service row and change the Heading beside photo or Paragraph beside photo. You can also change its photo, add bullets, or click Add Commercial service to create a new numbered row.',
           fields: [
-            field('title', 'Service heading'),
-            field('description', 'Description', 'text', { required: false }),
-            field('bulletPoints', 'Optional bullet points under this service', 'list', {
+            field('title', 'Heading beside photo (editable)', 'text'),
+            field('description', 'PARAGRAPH BESIDE PHOTO - EDIT THIS TEXT', 'text', { required: false }),
+            field('bulletPoints', 'Extra bullet points under this service (click Add)', 'list', {
               label_singular: 'Bullet point',
               required: false, allow_add: true, allow_remove: true, allow_reorder: true,
               field: field('text', 'Bullet point', 'string'),
               hint: 'Click Add to list specific types of work beneath this commercial service description.',
             }),
-            field('image', 'Service photograph (optional)', 'image', { required: false, choose_url: true }),
+            field('image', 'Photo beside this text (optional)', 'image', { required: false, choose_url: true }),
             field('imageAlt', 'Photo description (alt text)', 'string', { required: false }),
           ],
         }));
@@ -228,7 +236,7 @@ const pageFiles = entries.map(([name,label,path]) => {
       }
     }
   };
-  if (name === 'projects' || name === 'contact') addTextFields();
+  if (name === 'projects' || name === 'contact' || name === 'construction') addTextFields();
   // Show the Construction landing video FIRST. It was previously buried below eleven image
   // controls, which made it difficult to find on mobile. This is the same Decap file
   // widget / heroVideo data field used for the Projects landing video.
@@ -238,10 +246,9 @@ const pageFiles = entries.map(([name,label,path]) => {
       hint: 'This is the FIRST banner at the top of /construction/, behind Built with purpose. Upload an MP4 here and click Publish, exactly as you do on the Projects page. The video plays automatically, silently and on repeat. Your main Construction banner photograph below remains the fallback. For fast mobile loading, use an optimised MP4 (ideally under 10 MB).',
     }));
   }
-  if (name === 'construction') addTextFields();
   if (photos[name]) fields.push(field('photos','Page photographs','object',{
     collapsed:false, hint:name === 'construction'
-      ? 'Residential and commercial service photographs are edited inside their respective service lists above. This panel controls the fixed Construction banners and Process photographs only.'
+      ? 'This panel is ONLY for large banners and Process photographs. To edit text and small images beside numbered Commercial Construction services, use the COMMERCIAL SERVICES list at the top of this editor.'
       : 'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
     fields:photos[name].map(([key,title,hint])=>key === 'whoWeAre'
       ? field(key,title,'object',{

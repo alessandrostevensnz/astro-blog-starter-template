@@ -120,7 +120,7 @@
       lastPage = page;
       heading.textContent = pages[page].label.toUpperCase() + ' PREVIEW';
       note.textContent = page === 'construction'
-        ? 'Edit residential and commercial service titles, descriptions, photos and bullet points in their service lists on the left. Publish, then refresh the preview to see the rows update.'
+        ? 'Commercial text editing is at the very TOP of the left form. Open COMMERCIAL SERVICES to change the text beside photos or add rows. Publish, then refresh the preview.'
         : 'Press Return for a new line, or Return twice for a paragraph gap. Edited page text keeps the same spacing here and on the published site. Publish and refresh to update photos and gallery entries.';
       frame.title = pages[page].label + ' page preview';
       reloadPreview();

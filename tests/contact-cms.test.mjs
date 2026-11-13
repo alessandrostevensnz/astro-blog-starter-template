@@ -95,7 +95,7 @@ test('Contact font formatting, live preview and working GitHub login are preserv
     assert(preview.includes("'"+key+"'"), 'Missing preview key: '+key);
   }
   assert(preview.includes('Press Return for a new line'));
-  assert(index.includes('/admin/preview.js?v=construction-services-editor-20261113-v3'));
+  assert(index.includes('/admin/preview.js?v=commercial-text-first-20261113-v4'));
   assert(index.includes('/admin/oauth-popup.js?v=6'));
   const css = typographyCss(undefined,{ contact:{
     heroHeadingStyle:{sizePx:72,color:'#FFFFFF'},
