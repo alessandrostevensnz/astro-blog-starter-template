@@ -35,7 +35,7 @@ jobs:
         run: |
           set -eu
           mkdir -p /tmp/andro-live
-          for target in admin/ admin/config.yml construction/; do
+          for target in admin/ admin/config.yml construction/ projects/; do
             out="/tmp/andro-live/$(printf '%s' "$target" | tr '/' '_')"
             echo "::group::GET https://andro.co.nz/${target}"
             if curl -fLsS --max-time 30 -H 'Cache-Control: no-cache' "https://andro.co.nz/${target}?diag=${GITHUB_SHA}" -o "$out"; then
@@ -48,6 +48,10 @@ jobs:
               echo "Editable commercial service list present? $(grep -q 'commercialServices' "$out" && echo yes || echo no)"
               echo "Commercial Add control config present? $(grep -q 'COMMERCIAL SERVICES - edit numbered text' "$out" && echo yes || echo no)"
               echo "Old commercial photo-only control present? $(grep -q '04 - Commercial carpentry and repairs row photo' "$out" && echo yes || echo no)"
+              if [ "$target" = "projects/" ]; then
+                echo "Projects 2x5 gallery viewport live? $(grep -q 'data-project-viewport' "$out" && echo yes || echo no)"
+                echo "Projects manual arrow controls live? $(grep -q 'data-project-next' "$out" && echo yes || echo no)"
+              fi
             else
               echo "::warning::Could not fetch this public URL from GitHub runner"
             fi
