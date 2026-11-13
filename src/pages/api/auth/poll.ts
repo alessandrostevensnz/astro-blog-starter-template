@@ -25,6 +25,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
   let relay = url.searchParams.get("relay");
   if (relay === "auto") {
+    // Only the in-page editor's fetch can send this custom header. Refuse
+    // normal cross-site links/navigations that could otherwise display a
+    // browser's one-time OAuth receipt as JSON.
+    if (request.headers.get("X-ANDRO-Editor") !== "login-v5")
+      return new Response(null, { status: 403, headers });
     // Recover a login started by an older Decap launcher without an explicit
     // relay query parameter. Never guess which token to use when two GitHub
     // logins are pending in the same browser.
