@@ -1,0 +1,44 @@
+name: Diagnose live ANDRO admin login assets
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/live-admin-diagnosis.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-admin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inspect production admin assets and OAuth routing (no user tokens)
+        run: |
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          const origin = 'https://andro.co.nz';
+          async function inspect(path, opts={}) {
+            const r = await fetch(origin + path, { redirect: 'manual', cache: 'no-store', headers: { 'User-Agent': 'ANDRO-admin-diagnostic/1.0', 'Accept': 'text/html,*/*' }, ...opts });
+            const body = await r.text();
+            console.log(JSON.stringify({ path, status:r.status, locationPath:(r.headers.get('location')||'').split('?')[0], cacheControl:r.headers.get('cache-control'), cfCacheStatus:r.headers.get('cf-cache-status'), age:r.headers.get('age'), contentType:r.headers.get('content-type'), bodyBytes:body.length, sha256:createHash('sha256').update(body).digest('hex').slice(0,16) }));
+            return {r,body};
+          }
+          const a=await inspect('/admin/?diag=20261113');
+          const b=await inspect('/admin/index.html?diag=20261113');
+          const c=await inspect('/admin/oauth-popup.js?v=3');
+          const d=await inspect('/admin/oauth-popup.js?v=diagnostic');
+          const e=await inspect('/api/auth/poll?relay=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+          console.log('ADMIN html has oauth popup v3',a.body.includes('oauth-popup.js?v=3'));
+          console.log('INDEX html has oauth popup v3',b.body.includes('oauth-popup.js?v=3'));
+          console.log('POPUP v3 has /api/auth/poll',c.body.includes('/api/auth/poll?relay='));
+          console.log('POPUP diagnostic has /api/auth/poll',d.body.includes('/api/auth/poll?relay='));
+          console.log('POPUP v3 JS preview',c.body.slice(0,140).replace(/\s+/g,' '));
+          console.log('POLL no-cookie safe status',e.r.status);
+          if(a.r.status!==200 || !a.body.includes('oauth-popup.js?v=3') || c.r.status!==200 || !c.body.includes('/api/auth/poll?relay=')) process.exitCode=1;
+          NODE
