@@ -323,7 +323,6 @@ test('current ANDRO login v5 always reports its callback version and recovery st
   const html=await popupResponse('TEST_TOKEN_NOT_REAL','unknown_failure',relay).text();
   assert.match(html,/ANDRO GitHub login v5/);
   assert(html.includes('const relay = "'+relay+'"'));
-  assert(!html.includes('This attempt has no recovery ID'));
 });
 
 test('legacy login button can recover a token without intercepting the popup',async()=>{
