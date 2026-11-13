@@ -93,6 +93,43 @@ test('live CMS preview mirrors typed newlines and preserves working authenticati
     "'preventative maintenance description': 'preventativeText'"
   ])assert(preview.includes(label),'Missing instant preview mapping '+label);
   assert(preview.includes('Press Return for a new line'));
-  assert(admin.includes('/admin/preview.js?v=linebreaks-3'));
+  assert(admin.includes('/admin/preview.js?v=residential-editor-20261113-v2'));
   assert(admin.includes('/admin/oauth-popup.js?v=6'),'Working admin OAuth v6 must stay intact');
+});
+
+// Regression: the Construction editor must not fall back to photo-only fields.
+test('Construction editor loads a fresh configuration with editable, repeatable residential services', () => {
+  const html = read('../public/admin/index.html');
+  assert(html.includes('rel="cms-config-url"'), 'Decap must use the versioned configuration link');
+  assert(html.includes('/admin/config.yml?v=residential-editor-20261113-v2'), 'Versioned CMS URL must bypass stale browser cache');
+  const pages = cmsConfig.collections.find(c => c.name === 'pages');
+  const construction = pages.files.find(entry => entry.name === 'construction');
+  const rootFields = construction.fields;
+  const get = name => rootFields.find(item => item.name === name);
+  const services = get('residentialServices');
+  const bullets = get('residentialHighlights');
+  assert(services, 'Residential service list must be editable');
+  assert(bullets, 'Additional residential bullet points must be editable');
+  assert.equal(services.widget, 'list');
+  assert.equal(bullets.widget, 'list');
+  assert.equal(services.allow_add, true, 'Add residential service button must be enabled');
+  assert.equal(bullets.allow_add, true, 'Add bullet point button must be enabled');
+  assert(rootFields.indexOf(services) < rootFields.findIndex(x => x.name === 'photos'), 'Residential text edits must be above the photo gallery');
+  for (const key of ['title','description','bulletPoints','image','imageAlt']) {
+    assert(services.fields.some(f => f.name === key), 'Missing editable residential service field: ' + key);
+  }
+  const subBullets = services.fields.find(f => f.name === 'bulletPoints');
+  assert.equal(subBullets.widget, 'list');
+  assert.equal(subBullets.allow_add, true);
+  assert.equal(subBullets.field?.widget, 'string');
+  const content = JSON.parse(read('../content/pages/construction.json'));
+  assert(content.residentialServices.length >= 3, 'Original residential services must be preserved');
+  assert(content.residentialServices.every(s => typeof s.title === 'string' && typeof s.description === 'string' && s.image));
+  const photoFields = rootFields.find(f => f.name === 'photos').fields.map(f => f.name);
+  for(const key of ['serviceCarpentry','serviceDecks','serviceRenovations']) {
+    assert(!photoFields.includes(key), 'Duplicate residential photo field must not remain: ' + key);
+  }
+  const page = read('../src/pages/construction.astro');
+  assert(page.includes('residentialServices.map'), 'Public site must render the repeatable rows');
+  assert(page.includes('residentialHighlights.map'), 'Public site must render extra bullet points');
 });

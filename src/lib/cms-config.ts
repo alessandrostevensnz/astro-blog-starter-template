@@ -170,15 +170,15 @@ const pageFiles = entries.map(([name,label,path]) => {
       fields.push(field(key,title,editorWidget,options));
       if (styled[name]?.includes(key)) fields.push(formatting(key,title));
       if (name === 'construction' && key === 'residentialText') {
-        fields.push(field('residentialHighlights', 'Residential - additional bullet points', 'list', {
+        fields.push(field('residentialHighlights', 'Residential - extra bullet points (click Add)', 'list', {
           label_singular: 'Bullet point',
-          required: false,
+          required: false, allow_add: true, allow_remove: true, allow_reorder: true,
           hint: 'Optional short bullet points shown below the residential introduction. Use Add to create more, drag to reorder, or delete any point.',
           field: field('text', 'Bullet point', 'string'),
         }));
-        fields.push(field('residentialServices', 'Residential services - edit or add service rows', 'list', {
+        fields.push(field('residentialServices', 'Residential services - edit text / add service rows', 'list', {
           label_singular: 'Residential service',
-          collapsed: false,
+          collapsed: false, allow_add: true, allow_remove: true, allow_reorder: true,
           summary: '{{fields.title}}',
           hint: 'The numbered General carpentry / Decks / Renovations rows on the public site. Edit any title, description or photo. Use Add to create new rows, drag to reorder, or remove a row. Photos are optional.',
           fields: [
@@ -186,7 +186,7 @@ const pageFiles = entries.map(([name,label,path]) => {
             field('description', 'Description', 'text', { required: false }),
             field('bulletPoints', 'Optional bullet points under this service', 'list', {
               label_singular: 'Bullet point',
-              required: false,
+              required: false, allow_add: true, allow_remove: true, allow_reorder: true,
               field: field('text', 'Bullet point', 'string'),
               hint: 'Use Add to list specific types of work beneath this service description.',
             }),
