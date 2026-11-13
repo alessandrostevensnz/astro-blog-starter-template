@@ -296,8 +296,8 @@ test('editor finishes GitHub sign-in by polling even without BroadcastChannel',a
   const handle=window.open(SITE_ORIGIN+'/api/auth?provider=github','Netlify Authorization');
   const loginRelay=new URL(requests[0].url).searchParams.get('andro_relay');
   assert.match(loginRelay,/^[a-f0-9]{32}$/);
-  assert.equal(timers.filter(t=>t.ms===350).length,1,'polling starts');
-  timers.find(t=>t.ms===350).fn();
+  assert.equal(timers.filter(t=>t.ms===1200).length,1,'polling starts');
+  timers.find(t=>t.ms===1200).fn();
   await new Promise(resolve=>setImmediate(resolve));
   const fetchRequest=requests.find(r=>r.kind==='fetch');
   assert(fetchRequest.url.endsWith('relay='+loginRelay));
@@ -318,10 +318,10 @@ test('server OAuth failure is visible even when opener and relay are missing',as
   assert.equal(h.timers.size,0);
 });
 
-test('current ANDRO login v5 always reports its callback version and recovery state',async()=>{
+test('current ANDRO login v6 always reports its callback version and recovery state',async()=>{
   const relay='f'.repeat(32);
   const html=await popupResponse('TEST_TOKEN_NOT_REAL','unknown_failure',relay).text();
-  assert.match(html,/ANDRO GitHub login v5/);
+  assert.match(html,/ANDRO GitHub login v6/);
   assert(html.includes('const relay = "'+relay+'"'));
 });
 
@@ -352,14 +352,14 @@ test('legacy login button can recover a token without intercepting the popup',as
   handlers.click({target:{closest:()=>button}});
   assert.equal(timers[0].delay,150);
   timers[0].fn();
-  assert.equal(timers[1].delay,500);
+  assert.equal(timers[1].delay,1300);
   timers[1].fn();
   await new Promise(resolve=>setImmediate(resolve));
   assert.equal(requests.length,1);
   const cookieRelay=document.cookie.match(/editor_relay=([a-f0-9]{32})/)[1];
   assert(requests[0].url.endsWith('relay='+cookieRelay));
   assert.equal(requests[0].opts.credentials,'same-origin');
-  assert.equal(requests[0].opts.headers['X-ANDRO-Editor'],'login-v5');
+  assert.equal(requests[0].opts.headers['X-ANDRO-Editor'],'login-v6');
   assert.equal(events[0].data,'authorizing:github');
   assert(events[1].data.startsWith('authorization:github:success:'));
   assert.equal(JSON.parse(events[1].data.slice('authorization:github:success:'.length)).token,'FALLBACK_TEST_TOKEN');
@@ -373,4 +373,55 @@ test('server always creates a recovery slot even when an older launcher omits it
   const poll=readFileSync(new URL('../src/pages/api/auth/poll.ts',import.meta.url),'utf8');
   assert.match(poll,/relay === "auto"/);
   assert.match(poll,/multiple_login_receipts/);
+});
+
+test('403 on login receipt polling uses backoff and identifies the exact site block',async()=>{
+  const events=[],requests=[],timers=[],warns=[];
+  const popup={closed:false,focus(){},close(){this.closed=true;}};
+  const window={
+    location:{href:SITE_ORIGIN+'/admin/',origin:SITE_ORIGIN},
+    crypto,
+    addEventListener(){},
+    console:{warn(msg){warns.push(msg);}},
+    open(url,name){requests.push({kind:'popup',url,name});return popup;},
+    fetch(url,options){
+      requests.push({kind:'fetch',url,options});
+      return Promise.resolve({status:403,headers:{get(name){
+        if(name==='X-ANDRO-Poll-Block')return 'fetch-site';
+        return null;
+      }}});
+    },
+    dispatchEvent(event){events.push(event);}
+  };
+  const src=readFileSync(new URL('../public/admin/oauth-popup.js',import.meta.url),'utf8');
+  vm.runInNewContext(src,{window,URL,Uint8Array,Array,Date,MessageEvent:class{
+    constructor(type,opts){Object.assign(this,opts);}
+  },setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length;},
+    clearTimeout:()=>{},encodeURIComponent
+  });
+  window.open(SITE_ORIGIN+'/api/auth?provider=github','Netlify Authorization');
+  const initial=timers.find(t=>t.ms===1200);
+  assert(initial,'initial poll should start without delay flood');
+  initial.fn();
+  await new Promise(resolve=>setImmediate(resolve));
+  const state=window.__androOAuthStatus;
+  assert.equal(state.version,'6');
+  assert.equal(state.lastHttpStatus,403);
+  assert.equal(state.lastBlock,'fetch-site');
+  assert.equal(state.blockedCount,1);
+  assert.equal(warns.length,1);
+  assert(timers.some(t=>t.ms>=7500),'subsequent request must back off after 403');
+  assert.equal(requests.filter(r=>r.kind==='fetch').length,1);
+  assert(requests.filter(r=>r.kind==='fetch').every(r=>!r.url.includes('relay=auto')),
+    'modern popup should not double-poll auto recovery');
+  assert.equal(events.length,0);
+  assert.equal(popup.closed,false);
+});
+
+test('polling endpoint marks site-side forbidden reasons without exposing credentials',()=>{
+  const source=readFileSync(new URL('../src/pages/api/auth/poll.ts',import.meta.url),'utf8');
+  assert(source.includes('"X-ANDRO-Poll-Block": reason'));
+  assert(source.includes('"X-ANDRO-Poll-Version": "6"'));
+  assert(source.includes('request.headers.get("Sec-Fetch-Site") === "cross-site"'));
+  assert(source.includes('editorHeader !== "login-v5" && editorHeader !== "login-v6"'));
 });
