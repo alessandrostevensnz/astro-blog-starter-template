@@ -1,0 +1,21 @@
+name: Temporary ANDRO poll 403 browser diagnostic
+on:
+  pull_request:
+    paths:
+      - .github/workflows/andro-poll-403-diagnostic.yml
+      - tests/andro-poll-403-diagnostic.mjs
+permissions:
+  contents: read
+jobs:
+  test-403:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium test harness
+        run: npm install --no-save --no-package-lock --ignore-scripts playwright@1.56.1
+      - name: Compare actual browser and server poll responses without secrets
+        run: node tests/andro-poll-403-diagnostic.mjs
