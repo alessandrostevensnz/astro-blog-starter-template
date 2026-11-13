@@ -19,9 +19,28 @@ const aboutHeroVideo = siteContent.about.heroVideo?.trim() || '';
       <p class="lead">{siteContent.about.heroIntro}</p>
     </div>
   </section>
-  <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">WHO WE ARE</p><h2><span data-style-key="about.whoHeading">{siteContent.about.whoHeading}</span></h2></div><div><p class="body-copy"><span data-style-key="about.whoText">{siteContent.about.whoText}</span></p><p class="body-copy">{siteContent.about.craftText}</p></div></div></section>
+  <section class="page-body section-pad">
+    <div class="two-col">
+      <div class="about-intro-left">
+        <p class="eyebrow">WHO WE ARE</p>
+        <h2><span data-style-key="about.whoHeading">{siteContent.about.whoHeading}</span></h2>
+        {photos.whoWeAre?.src && (
+          <figure class="about-team-photo">
+            <img src={photos.whoWeAre.src} alt={photos.whoWeAre.alt || 'ANDRO worker on a rooftop project'} loading="lazy" decoding="async" />
+          </figure>
+        )}
+      </div>
+      <div>
+        <p class="body-copy"><span data-style-key="about.whoText">{siteContent.about.whoText}</span></p>
+        <p class="body-copy">{siteContent.about.craftText}</p>
+      </div>
+    </div>
+  </section>
 </SiteLayout>
 <style>
+  .about-team-photo { margin: 34px 0 0; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #ebe8e2; }
+  .about-team-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 47% center; }
+  @media (max-width: 680px) { .about-team-photo { margin-top: 26px; aspect-ratio: 16 / 10; } }
   .about-hero { position: relative; isolation: isolate; overflow: hidden; color: #fff; background: #555; }
   .about-hero-image, .about-hero-video, .about-hero::after { position: absolute; inset: 0; width: 100%; height: 100%; }
   .about-hero-image { z-index: -2; object-fit: cover; object-position: center 48%; }
