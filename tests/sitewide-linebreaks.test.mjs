@@ -101,7 +101,7 @@ test('live CMS preview mirrors typed newlines and preserves working authenticati
 test('Construction editor loads a fresh configuration with editable, repeatable residential services', () => {
   const html = read('../public/admin/index.html');
   assert(html.includes('rel="cms-config-url"'), 'Decap must use the versioned configuration link');
-  assert(html.includes('/admin/config.yml?v=residential-editor-20261113-v2'), 'Versioned CMS URL must bypass stale browser cache');
+  assert(html.includes('/admin/config.yml?v=construction-services-editor-20261113-v3'), 'Versioned CMS URL must bypass stale browser cache');
   const pages = cmsConfig.collections.find(c => c.name === 'pages');
   const construction = pages.files.find(entry => entry.name === 'construction');
   const rootFields = construction.fields;
