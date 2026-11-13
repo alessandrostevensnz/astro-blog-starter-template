@@ -48,6 +48,12 @@
   "heroVideo": "/images/construction-banner-1080p-smooth.mp4",
   "residentialServices": [
     {
+      "title": "New Build Homes",
+      "description": "Construction of New Residential homes through out Auckland. We work the full scope from Civil to landscaping so no element goes unturned",
+      "image": "/images/preston.png",
+      "imageAlt": ""
+    },
+    {
       "title": "General carpentry",
       "description": "Careful carpentry for practical changes, repairs and improvements, with attention to how new work connects to the existing building.",
       "image": "/images/img_0611.jpeg",
@@ -56,14 +62,14 @@
     },
     {
       "title": "Decks and fencing",
-      "description": "Decking and fence work planned around the site, intended use, material exposure and the details that affect durability and everyday function.",
+      "description": "New Decks, fence and hardscape elements, worked around your site, thought taken into its intended use, material exposure and everyday function.",
       "image": "/images/img_1299.jpg",
       "imageAlt": "Residential garden gate and fencing",
       "bulletPoints": []
     },
     {
       "title": "Renovations and alterations",
-      "description": "Thoughtful improvements to existing spaces, balancing appearance, function and the realities of working with an existing structure.",
+      "description": "Thoughtful Renovations and improvements to existing spaces, balancing appearance, function and the realities of working with an existing structure and materials. ",
       "image": "/images/Bright Minimalist U-Shaped Kitchen.png",
       "imageAlt": "Renovated residential kitchen",
       "bulletPoints": []
