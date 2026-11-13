@@ -1,4 +1,13 @@
 {
+  "heroEyebrow": "PROJECTS · AUCKLAND, NEW ZEALAND",
+  "heroHeading": "Every brief\nstarts somewhere.",
+  "heroDescription": "Buildings are shaped by hundreds of decisions, from the structure and materials to the way each finish meets. This selection shows examples of residential and commercial construction work, including framing, interior lining, fencing and balustrade details.",
+  "galleryTip": "Hover over a photo to learn more. On a phone, tap to reveal the description.",
+  "galleryNote": "Every property and project has its own requirements. If you have a similar brief—or a different one—get in touch and tell us what you are looking to achieve.",
+  "ctaHeading": "Have a brief\nto share?",
+  "ctaButtonText": "Let’s discuss it",
+  "metaTitle": "Projects | ANDRO Construction + Projects Auckland",
+  "metaDescription": "Explore a selection of residential and commercial construction work, carpentry, interior lining and property improvements by ANDRO in Auckland.",
   "photos": {
     "hero": {
       "src": "/images/Bright Minimalist U-Shaped Kitchen.png",
