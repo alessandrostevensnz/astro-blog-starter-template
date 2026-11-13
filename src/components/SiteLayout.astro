@@ -1,6 +1,6 @@
 ---
 import BaseHead from './BaseHead.astro';
-import { navigation, site, siteContent, footerImagesForPath } from '../data/site';
+import { navigation, site, siteContent, pageContent, footerImagesForPath } from '../data/site';
 import { typographyCss } from '../lib/typography';
 interface Props { title?: string; description?: string; }
 const { title = 'ANDRO Construction + Projects — EST. 2020', description = 'Auckland construction, renovation, property maintenance and asset maintenance by ANDRO Construction + Projects.' } = Astro.props;
@@ -10,7 +10,7 @@ const footerImages = footerImagesForPath(currentPath);
 <BaseHead title={title} description={description} />
 <meta name="theme-color" content="#fbfaf7" />
 <body>
-  <style is:global set:html={typographyCss(siteContent.typography, siteContent)} />
+  <style is:global set:html={typographyCss(siteContent.typography, { ...siteContent, projects: pageContent.projects })} />
   <header class="site-header">
     <a class="brand-lockup" href="/" aria-label="ANDRO home">
       <span class="brand-word">ANDRO</span>

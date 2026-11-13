@@ -16,7 +16,14 @@
     'services heading': 'servicesHeading', 'feature section heading': 'featureHeading',
     'bottom call-to-action heading': 'closingHeading', 'philosophy heading': 'philosophyHeading',
     'philosophy text': 'philosophyText', 'who we are heading': 'whoHeading',
-    'who we are description': 'whoText'
+    'who we are description': 'whoText',
+    '01 - banner small label': 'heroEyebrow',
+    '02 - main projects banner heading': 'heroHeading',
+    '03 - banner introduction paragraph': 'heroDescription',
+    '04 - gallery instructions': 'galleryTip',
+    '05 - paragraph below the project photos': 'galleryNote',
+    '06 - contact section heading': 'ctaHeading',
+    '07 - contact link wording': 'ctaButtonText'
   };
   function currentPage() {
     var match = window.location.hash.match(/^#\/?collections\/pages\/entries\/([^/?]+)/);
@@ -70,6 +77,9 @@
     if (page !== lastPage) {
       lastPage = page;
       heading.textContent = pages[page].label.toUpperCase() + ' PREVIEW';
+      note.textContent = page === 'projects'
+        ? 'Text changes appear here as you type. Publish to update the real website and any photos.'
+        : 'Photo selections appear in the form. Publish, then refresh this preview.';
       frame.title = pages[page].label + ' page preview';
       reloadPreview();
     }
