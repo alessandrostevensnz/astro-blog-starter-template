@@ -59,7 +59,8 @@ const photos: Record<string, Array<[string, string, string]>> = {
   ],
   about: [
     ['hero', '01 - About banner', 'Image behind Built on care. Grounded in craft.'],
-    ['approach', '02 - Our approach photo', 'Wide image behind the craftsmanship heading.'],
+    ['whoWeAre', '02 - Photo below Good people. Good work.', 'Portrait or worksite photo shown beneath the heading on the left of the About introduction. Upload the finished photo here; leave it blank to hide the photo until ready.'],
+    ['approach', '03 - Our approach photo', 'Wide image behind the craftsmanship heading.'],
   ],
 };
 const text: Record<string, Row[]> = {
@@ -192,7 +193,13 @@ const pageFiles = entries.map(([name,label,path]) => {
     collapsed:false, hint:name === 'construction'
       ? 'The first Main construction banner photo is the fallback behind the landing VIDEO field above. All other photos belong to their own Construction sections and service rows.'
       : 'All fixed photograph positions on this page, including repeated pictures. Every position has its own photo and description.',
-    fields:photos[name].map(([key,title,hint])=>photo(key,title,hint)),
+    fields:photos[name].map(([key,title,hint])=>key === 'whoWeAre'
+      ? field(key,title,'object',{
+          collapsed:false,required:false,hint,
+          fields:[field('src','Photo','image',{required:false,choose_url:true}),
+                  field('alt','Photo description (alt text)','string',{required:false})],
+        })
+      : photo(key,title,hint)),
   }));
   if (name === 'home' || name === 'about') {
     fields.push(field('heroVideo', name === 'home' ? '02 - Home header background video (MP4)' : '02 - About header background video (MP4)', 'file', {
