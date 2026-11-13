@@ -66,9 +66,9 @@ const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (opti
             decoding="async"
           />
           <span class="andro-project-overlay">
-            <span class="andro-project-category">{entry.category}</span>
-            <span class="andro-project-title">{entry.title}</span>
-            {entry.description && <span class="andro-project-description">{entry.description}</span>}
+            <span class="andro-project-category" data-cms-text>{entry.category}</span>
+            <span class="andro-project-title" data-cms-text>{entry.title}</span>
+            {entry.description && <span class="andro-project-description" data-cms-text>{entry.description}</span>}
           </span>
         </button>
       ))}
