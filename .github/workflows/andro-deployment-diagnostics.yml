@@ -1,0 +1,52 @@
+name: ANDRO site build and live deployment diagnostics
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'content/**'
+      - 'public/admin/**'
+      - 'public/images/**'
+      - '.github/workflows/andro-deployment-diagnostics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+  check-live-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Diagnose current public website version (does not deploy)
+        shell: bash
+        run: |
+          set -eu
+          mkdir -p /tmp/andro-live
+          for target in admin/ admin/config.yml construction/; do
+            out="/tmp/andro-live/$(printf '%s' "$target" | tr '/' '_')"
+            echo "::group::GET https://andro.co.nz/${target}"
+            if curl -fLsS --max-time 30 -H 'Cache-Control: no-cache' "https://andro.co.nz/${target}?diag=${GITHUB_SHA}" -o "$out"; then
+              echo "HTTP fetch succeeded; bytes=$(wc -c < "$out")"
+              echo "New editor config URL present? $(grep -q 'residential-editor-20261113-v2' "$out" && echo yes || echo no)"
+              echo "Editable residential list present? $(grep -q 'residentialServices' "$out" && echo yes || echo no)"
+              echo "Legacy photo-only field present? $(grep -q '03 - General carpentry row photo' "$out" && echo yes || echo no)"
+              echo "Current uploaded garden gate image mentioned? $(grep -q 'img_1299.jpg' "$out" && echo yes || echo no)"
+              echo "New residential services list label present? $(grep -q 'Residential services - edit text' "$out" && echo yes || echo no)"
+            else
+              echo "::warning::Could not fetch this public URL from GitHub runner"
+            fi
+            echo "::endgroup::"
+          done
