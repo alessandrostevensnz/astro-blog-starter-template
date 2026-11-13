@@ -112,6 +112,8 @@ const maintenanceHeroPoster = siteContent.maintenance.heroVideoPoster?.trim() ||
   .maintenance-hero-shade { z-index: 0; background: linear-gradient(90deg, rgba(15,16,14,.58), rgba(15,16,14,.08) 85%), linear-gradient(0deg, rgba(15,16,14,.2), transparent 55%); pointer-events: none; }
   .maintenance-hero-copy { position: relative; z-index: 1; max-width: 900px; }
   .maintenance-hero h1 { margin: 22px 0 0; color: #fff; font-family: var(--font-display); font-size: clamp(68px,10vw,136px); font-weight: 300; line-height: .92; letter-spacing: -.085em; }
+  /* Keep only the closing "Practical support" statement white over its photo. */
+  .image-band .image-band-copy h2 { color: #fff; }
   .maintenance-detail-block h2, .maintenance-services-heading h2 { max-width: 760px; margin: 14px 0 38px; font-family: var(--font-display); font-size: clamp(36px,4.5vw,60px); font-weight: 300; line-height: 1.08; letter-spacing: -.065em; }
   .maintenance-detail-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 34px 8%; }
   .maintenance-detail-grid article { padding-top: 20px; border-top: 1px solid var(--brand-line); }
