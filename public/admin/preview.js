@@ -17,6 +17,32 @@
     'bottom call-to-action heading': 'closingHeading', 'philosophy heading': 'philosophyHeading',
     'philosophy text': 'philosophyText', 'who we are heading': 'whoHeading',
     'who we are description': 'whoText',
+    'banner introduction': 'heroIntro',
+    'page description': 'description',
+    'craftsmanship heading': 'craftHeading',
+    'craftsmanship description': 'craftText',
+    'vision heading': 'visionHeading',
+    'vision description': 'visionText',
+    'construction card title': 'constructionCardTitle',
+    'construction card description': 'constructionCardDescription',
+    'maintenance card title': 'maintenanceCardTitle',
+    'maintenance card description': 'maintenanceCardDescription',
+    'residential photo header heading': 'residentialHeading',
+    'residential introduction (above three service rows)': 'residentialText',
+    'commercial photo header heading': 'commercialHeading',
+    'commercial introduction (above three service rows)': 'commercialText',
+    'process heading': 'processHeading',
+    'process description': 'processText',
+    'preventative maintenance heading': 'preventativeHeading',
+    'preventative maintenance description': 'preventativeText',
+    'residential heading': 'residentialHeading',
+    'residential description': 'residentialText',
+    'commercial heading': 'commercialHeading',
+    'commercial description': 'commercialText',
+    'asset maintenance heading': 'assetHeading',
+    'asset maintenance description': 'assetText',
+    'repairs and improvements heading': 'improvementsHeading',
+    'repairs and improvements description': 'improvementsText',
     '01 - banner small label': 'heroEyebrow',
     '02 - main projects banner heading': 'heroHeading',
     '03 - banner introduction paragraph': 'heroDescription',
@@ -91,9 +117,7 @@
     if (page !== lastPage) {
       lastPage = page;
       heading.textContent = pages[page].label.toUpperCase() + ' PREVIEW';
-      note.textContent = page === 'projects' || page === 'contact'
-        ? 'Text changes appear here as you type. Publish to update the real site. Service dropdown lists and email details refresh after publishing.'
-        : 'Photo selections appear in the form. Publish, then refresh this preview.';
+      note.textContent = 'Press Return for a new line, or Return twice for a paragraph gap. Edited page text keeps the same spacing here and on the published site. Publish and refresh to update photos and gallery entries.';
       frame.title = pages[page].label + ' page preview';
       reloadPreview();
     }

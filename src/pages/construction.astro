@@ -23,7 +23,7 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
     <div class="construction-hero-copy">
       <p class="eyebrow inverse">CONSTRUCTION · AUCKLAND</p>
       <h1 id="construction-title">Built with<br />purpose.</h1>
-      <p class="lead">{siteContent.construction.description}</p>
+      <p class="lead" data-style-key="construction.description">{siteContent.construction.description}</p>
     </div>
   </section>
 
@@ -34,13 +34,13 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
     <div class="construction-hero-shade" aria-hidden="true"></div>
     <div class="construction-hero-copy">
       <p class="eyebrow inverse">RESIDENTIAL CONSTRUCTION</p>
-      <h2 id="residential-construction-title">{siteContent.construction.residentialHeading}</h2>
+      <h2 id="residential-construction-title" data-style-key="construction.residentialHeading">{siteContent.construction.residentialHeading}</h2>
       <a class="construction-section-hero-link" href="/contact/">Discuss a residential project </a>
     </div>
   </section>
 
   <section class="content-block residential-services" aria-label="Residential construction services">
-    <p class="body-copy construction-services-intro">{siteContent.construction.residentialText}</p>
+    <p class="body-copy construction-services-intro" data-style-key="construction.residentialText">{siteContent.construction.residentialText}</p>
     <div class="service-list construction-service-list">
       <article class="service-item">
         <span>01</span>
@@ -68,13 +68,13 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
     <div class="construction-hero-shade" aria-hidden="true"></div>
     <div class="construction-hero-copy">
       <p class="eyebrow inverse">COMMERCIAL CONSTRUCTION</p>
-      <h2 id="commercial-construction-title">{siteContent.construction.commercialHeading}</h2>
+      <h2 id="commercial-construction-title" data-style-key="construction.commercialHeading">{siteContent.construction.commercialHeading}</h2>
       <a class="construction-section-hero-link" href="/contact/">Talk through a commercial brief </a>
     </div>
   </section>
 
   <section class="content-block commercial-services" aria-label="Commercial construction services">
-    <p class="body-copy construction-services-intro">{siteContent.construction.commercialText}</p>
+    <p class="body-copy construction-services-intro" data-style-key="construction.commercialText">{siteContent.construction.commercialText}</p>
     <div class="service-list construction-service-list">
       <article class="service-item">
         <span>01</span>
@@ -97,7 +97,7 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
     </div>
   </section>
 
-  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2>{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy">{siteContent.construction.processText}</p><div class="editorial-grid construction-process-photos"><div class="editorial-image"><img src={photos.processLeft.src} alt={photos.processLeft.alt} loading="lazy" decoding="async" /></div><div class="editorial-image"><img src={photos.processRight.src} alt={photos.processRight.alt} loading="lazy" decoding="async" /></div></div></section>
+  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2 data-style-key="construction.processHeading">{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy" data-style-key="construction.processText">{siteContent.construction.processText}</p><div class="editorial-grid construction-process-photos"><div class="editorial-image"><img src={photos.processLeft.src} alt={photos.processLeft.alt} loading="lazy" decoding="async" /></div><div class="editorial-image"><img src={photos.processRight.src} alt={photos.processRight.alt} loading="lazy" decoding="async" /></div></div></section>
 
   <section class="construction-showcase" aria-labelledby="construction-showcase-title">
     <div class="construction-showcase-top">
@@ -126,8 +126,8 @@ const slideshowDuration = Math.max(50, projects.length * 3.6);
                     decoding="async"
                   />
                   <figcaption>
-                    <span class="construction-photo-category">{project.category}</span>
-                    <span class="construction-photo-title">{project.title}</span>
+                    <span class="construction-photo-category" data-cms-text>{project.category}</span>
+                    <span class="construction-photo-title" data-cms-text>{project.title}</span>
                   </figcaption>
                 </figure>
               ))}

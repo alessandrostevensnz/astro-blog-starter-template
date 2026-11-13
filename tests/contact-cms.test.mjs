@@ -42,24 +42,18 @@ test('Contact is editable from page-first Decap, with every field above footer',
   assert.equal(contact.fields.find(field => field.name === 'contactEmail').required, false);
 });
 
-test('initial Contact copy, service dropdown and footer images are preserved', () => {
-  assert.equal(content.heroHeading, 'Let’s make a\ngood start.');
-  assert.equal(content.sectionHeading, 'A considered\nconversation.');
-  assert.equal(content.metaTitle, 'Contact ANDRO | Construction & Property Maintenance Auckland');
-  assert.match(content.heroDescription, /maintenance issue/);
-  assert.match(content.sectionDescription, /property type and location/);
-  assert.equal(content.submitLabel, 'Send enquiry');
-  assert.equal(content.formNotice, 'Your details will be sent securely to ANDRO.');
-  assert.equal(content.serviceOptions.length, 7);
-  assert.deepEqual(content.serviceOptions.map(item => item.label), [
-    'Residential construction or carpentry',
-    'Commercial construction or fit-out',
-    'Residential property maintenance',
-    'Commercial property maintenance',
-    'Asset maintenance',
-    'Repairs or property improvements',
-    'Other enquiry',
-  ]);
+test('owner-edited Contact copy, service dropdown and footer images remain valid', () => {
+  // Text in /admin belongs to the site owner: never insist on the launch
+  // wording once the user has published a custom headline or paragraph.
+  for (const key of [...textKeys, ...metaKeys]) {
+    assert(typeof content[key] === 'string' && content[key].trim(),
+      'Missing published Contact text: ' + key);
+  }
+  assert(Array.isArray(content.serviceOptions) && content.serviceOptions.length > 0);
+  for (const item of content.serviceOptions) {
+    assert(typeof item.label === 'string' && item.label.trim(),
+      'Every Contact service choice should contain a label');
+  }
   assert(content.footerImages.logo.src);
   assert(content.footerImages.badge.src);
 });
@@ -100,8 +94,8 @@ test('Contact font formatting, live preview and working GitHub login are preserv
   for (const key of styled.filter(x => x !== 'emailPrefix')) {
     assert(preview.includes("'"+key+"'"), 'Missing preview key: '+key);
   }
-  assert(preview.includes("page === 'projects' || page === 'contact'"));
-  assert(index.includes('/admin/preview.js?v=projects-contact-text-2'));
+  assert(preview.includes('Press Return for a new line'));
+  assert(index.includes('/admin/preview.js?v=linebreaks-3'));
   assert(index.includes('/admin/oauth-popup.js?v=6'));
   const css = typographyCss(undefined,{ contact:{
     heroHeadingStyle:{sizePx:72,color:'#FFFFFF'},
