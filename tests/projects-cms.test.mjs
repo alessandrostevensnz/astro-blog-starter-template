@@ -119,8 +119,9 @@ test('Projects gallery is independently shuffled each visit without altering the
   assert(projectsPage.includes('const rows = 3'), 'Keep the existing three-row layout');
   assert(projectsPage.includes('const columnsPerClick = () => smallScreen.matches ? 1 : 3'), 'Keep manual navigation intact');
   assert(projectsPage.includes('viewport.scrollLeft += pixelsPerSecond * elapsed'), 'Keep gentle automatic movement intact');
-  assert.equal(new Set(contents.projects.map(item => item.image)).size, new Set(contents.projects.map(item => item.image)).size,
-    'Never change the original project data');
+  assert(contents.projects.length > 0, 'The saved gallery must retain its photos');
+  assert(contents.projects.every(item => item.image && item.title && item.category),
+    'Shuffle must not depend on changing the CMS photo records');
 });
 
 test('All six pages share ONE editable footer with no Site Safe badge field', () => {
