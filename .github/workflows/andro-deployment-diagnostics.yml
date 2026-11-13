@@ -40,7 +40,7 @@ jobs:
             echo "::group::GET https://andro.co.nz/${target}"
             if curl -fLsS --max-time 30 -H 'Cache-Control: no-cache' "https://andro.co.nz/${target}?diag=${GITHUB_SHA}" -o "$out"; then
               echo "HTTP fetch succeeded; bytes=$(wc -c < "$out")"
-              echo "Current admin version present? $(grep -q 'global-footer-projects-gallery-v5' "$out" && echo yes || echo no)"
+              echo "Current admin version present? $(grep -q 'projects-feature-footer-size-v6' "$out" && echo yes || echo no)"
               echo "Editable residential list present? $(grep -q 'residentialServices' "$out" && echo yes || echo no)"
               echo "Legacy photo-only field present? $(grep -q '03 - General carpentry row photo' "$out" && echo yes || echo no)"
               echo "Current uploaded garden gate image mentioned? $(grep -q 'img_1299.jpg' "$out" && echo yes || echo no)"

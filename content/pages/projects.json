@@ -291,5 +291,13 @@
       "alt": "Construction · Residential ",
       "category": "Construction · Residential "
     }
-  ]
+  ],
+  "featureEyebrow": "A CLOSER LOOK",
+  "featureHeading": "The work behind the photographs.",
+  "featureText": "Every property presents its own considerations. From residential improvements and renovation work to commercial carpentry, fit-outs and repairs, the approach depends on the building, the brief and the people who use the space. We pay attention to the practical details that make work fit naturally into its surroundings.",
+  "featureTextSecondary": "The photographs above offer a look at the variety of projects and tasks we take on. If you are considering a similar improvement, we are happy to discuss what your property needs and the options available.",
+  "featurePhoto": {
+    "src": "/images/Residential%20framing.png",
+    "alt": "Residential construction timber framing during building work"
+  }
 }

@@ -93,7 +93,7 @@ test('live CMS preview mirrors typed newlines and preserves working authenticati
     "'preventative maintenance description': 'preventativeText'"
   ])assert(preview.includes(label),'Missing instant preview mapping '+label);
   assert(preview.includes('Press Return for a new line'));
-  assert(admin.includes('/admin/preview.js?v=global-footer-projects-gallery-v5'));
+  assert(admin.includes('/admin/preview.js?v=projects-feature-footer-size-v6'));
   assert(admin.includes('/admin/oauth-popup.js?v=6'),'Working admin OAuth v6 must stay intact');
 });
 
@@ -101,7 +101,7 @@ test('live CMS preview mirrors typed newlines and preserves working authenticati
 test('Construction editor loads a fresh configuration with editable, repeatable residential services', () => {
   const html = read('../public/admin/index.html');
   assert(html.includes('rel="cms-config-url"'), 'Decap must use the versioned configuration link');
-  assert(html.includes('/admin/config.yml?v=global-footer-projects-gallery-v5'), 'Versioned CMS URL must bypass stale browser cache');
+  assert(html.includes('/admin/config.yml?v=projects-feature-footer-size-v6'), 'Versioned CMS URL must bypass stale browser cache');
   const pages = cmsConfig.collections.find(c => c.name === 'pages');
   const construction = pages.files.find(entry => entry.name === 'construction');
   const rootFields = construction.fields;
@@ -166,7 +166,7 @@ test('Commercial Construction has fully editable service text, bullet points and
   assert(source.includes('commercialServices.map'), 'Live commercial rows should render from new editable data');
   assert(source.includes('commercialHighlights.map'), 'Live commercial bullet list is missing');
   assert(!source.includes('photos.serviceCommercialCarpentry.src'), 'Old fixed commercial photo reference must not override CMS');
-  assert(read('../public/admin/index.html').includes('global-footer-projects-gallery-v5'), 'CMS should load a fresh configuration');
+  assert(read('../public/admin/index.html').includes('projects-feature-footer-size-v6'), 'CMS should load a fresh configuration');
 });
 
 
@@ -184,5 +184,5 @@ test('Commercial service wording is the first edit section of Construction, not 
   assert(description.label.includes('EDIT THIS TEXT'), 'Editor must clearly identify the text next to each photo');
   assert(services.fields.some(f => f.name === 'image' && f.widget === 'image'), 'Commercial image control must sit beside the corresponding text');
   const html=read('../public/admin/index.html');
-  assert(html.includes('global-footer-projects-gallery-v5'), 'Admin should request current CMS configuration');
+  assert(html.includes('projects-feature-footer-size-v6'), 'Admin should request current CMS configuration');
 });

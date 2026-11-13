@@ -80,8 +80,12 @@ const text: Record<string, Row[]> = {
     ['heroDescription', '03 - Banner introduction paragraph', 'text'],
     ['galleryTip', '04 - Gallery instructions', 'text'],
     ['galleryNote', '05 - Paragraph below the project photos', 'text'],
-    ['ctaHeading', '06 - Contact section heading', 'text'],
-    ['ctaButtonText', '07 - Contact link wording'],
+    ['featureEyebrow', '06 - Featured projects section small label'],
+    ['featureHeading', '07 - Featured projects section heading', 'text'],
+    ['featureText', '08 - Featured projects main paragraph', 'text'],
+    ['featureTextSecondary', '09 - Featured projects second paragraph', 'text'],
+    ['ctaHeading', '10 - Contact section heading', 'text'],
+    ['ctaButtonText', '11 - Contact link wording'],
     ['metaTitle', 'Google and browser tab title'],
     ['metaDescription', 'Google search description', 'text'],
   ],
@@ -114,7 +118,7 @@ const text: Record<string, Row[]> = {
 const styled: Record<string, string[]> = {
   home: ['title','subtitle','introHeading','introText','servicesHeading','featureHeading','closingHeading','philosophyHeading','philosophyText'],
   construction: ['introHeading','introText'], maintenance: ['introHeading','introText'], about: ['whoHeading','whoText'],
-  projects: ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText'],
+  projects: ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','featureEyebrow','featureHeading','featureText','featureTextSecondary','ctaHeading','ctaButtonText'],
   contact: [
     'heroEyebrow','heroHeading','heroDescription','sectionEyebrow','sectionHeading',
     'sectionDescription','emailPrefix','nameLabel','emailLabel','serviceLabel',
@@ -169,6 +173,16 @@ const pageFiles = entries.map(([name,label,path]) => {
         : isMultiline ? { hint: textHint } : {};
       fields.push(field(key,title,editorWidget,options));
       if (styled[name]?.includes(key)) fields.push(formatting(key,title));
+      if (name === 'projects' && key === 'featureTextSecondary') {
+        fields.push(field('featurePhoto','10 - Feature photograph (beside story)','object',{
+          collapsed:false,required:false,
+          hint:'One independent image beside your Projects story. This image and its alt text can be changed at any time; leave it empty to display the text without a picture.',
+          fields:[
+            field('src','Feature photograph','image',{required:false,choose_url:true}),
+            field('alt','Image description (alt text)','string',{required:false}),
+          ],
+        }));
+      }
       if (name === 'construction' && key === 'residentialText') {
         fields.push(field('residentialHighlights', 'Residential - extra bullet points (click Add)', 'list', {
           label_singular: 'Bullet point',

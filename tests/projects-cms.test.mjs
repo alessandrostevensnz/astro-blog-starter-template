@@ -6,8 +6,8 @@ import { typographyCss } from '../src/lib/typography.ts';
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const data = JSON.parse(read('../content/pages/projects.json'));
-const fields = ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText','metaTitle','metaDescription'];
-const styled = fields.slice(0,7);
+const fields = ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','featureEyebrow','featureHeading','featureText','featureTextSecondary','ctaHeading','ctaButtonText','metaTitle','metaDescription'];
+const styled = fields.slice(0,11);
 
 test('Projects editor exposes all visible page copy before the existing photo gallery', () => {
   const pages = cmsConfig.collections.find(c => c.name === 'pages');
@@ -68,7 +68,7 @@ test('Projects styles and live text preview work without impacting other pages',
   for (const name of ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText']) {
     assert(preview.includes("'"+name+"'"), 'Live preview key missing: '+name);
   }
-  assert(html.includes('preview.js?v=global-footer-projects-gallery-v5'));
+  assert(html.includes('preview.js?v=projects-feature-footer-size-v6'));
   assert(html.includes('/admin/oauth-popup.js?v=6'), 'Do not disturb working v6 OAuth login');
   assert(siteLayout.includes('projects: pageContent.projects'), 'Projects inline font styles not passed through');
   const css = typographyCss(undefined, { projects: {
@@ -123,5 +123,35 @@ test('All six pages share ONE editable footer with no Site Safe badge field', ()
   for(const page of cmsConfig.collections.find(c=>c.name==='pages').files)
     assert(!page.fields.some(f=>f.name==='footerImages'), 'Legacy footer editor remains on '+page.name);
   assert(!read('../src/lib/cms-config.ts').includes("photo('badge'"));
-  assert(layout.includes('height: 142px'), 'Keep the circular logo large enough to read');
+  assert(layout.includes('height: 96px'), 'Use the original, smaller desktop footer logo');
+  assert(layout.includes('height: 76px'), 'Use the original, smaller mobile footer logo');
+});
+
+// The Featured Projects section is owner-editable and independent of the gallery.
+test('New Projects feature section displays after showcase with separately editable photo and text', () => {
+  const html=read('../src/pages/projects.astro');
+  const cms=cmsConfig.collections.find(c=>c.name==='pages').files.find(f=>f.name==='projects');
+  const labels=cms.fields.map(f=>f.name);
+  const data=JSON.parse(read('../content/pages/projects.json'));
+  assert(html.indexOf('class="andro-projects-feature section-pad"') > html.indexOf('data-project-gallery'),
+    'Featured section should appear below moving gallery');
+  assert(html.indexOf('class="andro-projects-feature section-pad"') < html.indexOf('class="cta-section"'),
+    'Featured section must come before Contact CTA');
+  for(const name of ['featureEyebrow','featureHeading','featureText','featureTextSecondary']) {
+    assert(labels.includes(name), 'Missing editable field '+name);
+    assert(labels.includes(name+'Style'), 'Missing text size and colour controls '+name);
+    assert(typeof data[name] === 'string' && data[name].length > 0);
+    assert(html.includes('projectCopy.'+name), 'Missing live site binding '+name);
+    assert(html.includes('data-style-key="projects.'+name+'"'), 'Missing text style target '+name);
+  }
+  const photoField=cms.fields.find(f=>f.name==='featurePhoto');
+  assert(photoField && photoField.widget==='object');
+  assert(photoField.fields.some(f=>f.name==='src' && f.widget==='image' && f.required===false));
+  assert(photoField.fields.some(f=>f.name==='alt' && f.required===false));
+  assert(data.featurePhoto.src && data.featurePhoto.alt);
+  assert(html.includes('featuredPhoto.src') && html.includes('optimizedFeature?.large'));
+  assert(labels.indexOf('featurePhoto') < labels.indexOf('projects'),
+    'Picture field should appear before the lengthy photo gallery');
+  assert(html.includes('white-space: pre-line'), 'New paragraphs must preserve manual line breaks');
+  assert(!html.includes('footerImages.badge'), 'Site Safe member badge must not reappear');
 });
