@@ -18,7 +18,7 @@ const fixtures=[
  {path:'/',selectors:['[data-style-key="home.title"]','[data-style-key="home.introText"]','[data-style-key="home.constructionCardDescription"]']},
  {path:'/construction/',selectors:['[data-style-key="construction.description"]','[data-style-key="construction.residentialText"]','[data-style-key="construction.processText"]','.construction-photo-title[data-cms-text]']},
  {path:'/property-maintenance/',selectors:['[data-style-key="maintenance.description"]','[data-style-key="maintenance.preventativeText"]','[data-style-key="maintenance.improvementsText"]','.maintenance-service-copy p[data-cms-text]']},
- {path:'/projects/',selectors:['[data-style-key="projects.heroHeading"]','[data-style-key="projects.galleryNote"]','.andro-project-description[data-cms-text]']},
+ {path:'/projects/',selectors:['[data-style-key="projects.heroHeading"]','[data-style-key="projects.galleryNote"]','.andro-project-title[data-cms-text]']},
  {path:'/about/',selectors:['[data-style-key="about.heroIntro"]','[data-style-key="about.whoText"]','[data-style-key="about.craftText"]']},
  {path:'/contact/',selectors:['[data-style-key="contact.sectionDescription"]','[data-style-key="contact.sectionHeading"]','[data-style-key="contact.formNotice"]']}
 ];
