@@ -81,6 +81,58 @@ const homeHeroVideo = siteContent.home.heroVideo?.trim() || '';
   }
 
 
+  /* Home hero: size around text instead of clipping multi-paragraph CMS copy.
+     Flex end alignment preserves the original lower-left editorial composition
+     while allowing the section to grow whenever the headline or subtitle wraps. */
+  .hero {
+    display: flex;
+    align-items: flex-end;
+    height: auto;
+    min-height: clamp(700px, calc(100svh - 82px), 810px);
+    padding: 80px 10% clamp(90px, 7vw, 110px);
+  }
+  .hero-copy {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    max-width: 1300px;
+    transform: none;
+  }
+  /* The shared rise-in animation sets transform: translateY(0) and previously
+     cancelled the hero's vertical positioning. Fade only on this hero. */
+  .hero-copy.reveal { animation: home-hero-copy-fade .7s ease-out both; }
+  @keyframes home-hero-copy-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .hero h1 {
+    font-size: clamp(68px, 9.5vw, 140px);
+    margin-top: 26px;
+    margin-bottom: 28px;
+  }
+  .hero-bottom { max-width: 720px; }
+  .hero-subtitle { max-width: 560px; line-height: 1.7; }
+  @media (max-width: 900px) {
+    .hero { padding: 78px 7% 96px; }
+    .hero h1 { font-size: clamp(60px, 9vw, 110px); }
+  }
+  @media (max-width: 680px) {
+    .hero {
+      height: auto;
+      min-height: clamp(540px, calc(88svh - 70px), 720px);
+      padding: 78px 7% 90px;
+    }
+    .hero h1 {
+      margin: 22px 0 24px -4px;
+      font-size: clamp(49px, 12vw, 82px);
+      line-height: .96;
+    }
+    .hero-subtitle { max-width: 340px; font-size: 15px; line-height: 1.65; }
+  }
+  @media (max-width: 390px) {
+    .hero h1 { font-size: clamp(44px, 11.8vw, 62px); }
+  }
+
   /* Scaled, balanced homepage editorial blocks with centred left-column text. */
   .home-editorial-section { padding-top: clamp(74px, 7.2vw, 112px); padding-bottom: clamp(78px, 7.8vw, 118px); }
   .home-editorial-section .home-editorial-grid {
