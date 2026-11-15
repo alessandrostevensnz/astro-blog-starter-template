@@ -9,6 +9,13 @@
 		"directory": "./dist",
 		"binding": "ASSETS"
 	},
+	"d1_databases": [
+		{
+			"binding": "WIN_DB",
+			"database_name": "andro-win",
+			"database_id": "2b29bba4-6369-44a9-a204-69ae88b2ac0a"
+		}
+	],
 	"observability": {
 		"enabled": true
 	},
