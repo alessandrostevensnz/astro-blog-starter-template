@@ -1,0 +1,41 @@
+---
+export const prerender = false;
+import { winState, nzDate } from '../../../lib/win';
+const env = (Astro.locals as any).runtime?.env ?? {};
+const campaign = winState(env);
+let entries: any[] = [];
+let total = 0, marketing = 0, winner: any = null;
+let error = '';
+try {
+  if (env.WIN_DB?.prepare) {
+    const [rows, stat, chosen] = await Promise.all([
+      env.WIN_DB.prepare('SELECT id, created_at, full_name, email, phone, suburb, property_role, service_type, work_details, marketing_opt_in, status, selected_at FROM win_entries ORDER BY created_at DESC LIMIT 250').all(),
+      env.WIN_DB.prepare('SELECT count(*) as total, coalesce(sum(marketing_opt_in),0) as marketing FROM win_entries').first(),
+      env.WIN_DB.prepare("SELECT id, full_name, email, phone, suburb, service_type, work_details, selected_at FROM win_entries WHERE status = 'winner' LIMIT 1").first(),
+    ]);
+    entries = rows.results || [];
+    total = stat?.total || 0;
+    marketing = stat?.marketing || 0;
+    winner = chosen;
+  } else error = 'D1 database is not bound to this Worker.';
+} catch { error = 'Database not ready. Apply the giveaway migration.'; }
+const canDraw = campaign.phase === 'closed' && !!campaign.drawAt && Date.now() >= Date.parse(campaign.drawAt) && total > 0 && !winner;
+---
+<!doctype html>
+<html lang="en-NZ"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="robots" content="noindex,nofollow" /><title>ANDRO | Giveaway Entries</title>
+<style>*,*:before,*:after{box-sizing:border-box}body{margin:0;font:14px/1.6 Arial,sans-serif;background:#f6f4f0;color:#272823}header{background:#262923;color:#fff;padding:24px max(20px,calc((100vw - 1220px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}.brand{font-size:26px;letter-spacing:.28em}.strap{display:block;font-size:9px;letter-spacing:.15em;color:#c3a77b}main{max-width:1220px;margin:42px auto;padding:0 20px}h1{font-size:42px;font-weight:300;letter-spacing:-.055em;margin:0 0 10px}h2{font-size:21px;font-weight:400}.muted{color:#777168}.eyebrow{color:#94794e;font-size:11px;letter-spacing:.13em}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:30px 0}.stat,.panel{background:#fff;border:1px solid #e5ded2;padding:23px}.stat strong{display:block;font-size:35px;font-weight:300}.stat small{color:#766f66}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:16px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}button,.btn{display:inline-flex;justify-content:center;align-items:center;border:1px solid #cfc4b4;color:#282923;background:#fff;padding:11px 15px;min-height:42px;font:inherit;text-decoration:none;cursor:pointer}.primary{background:#262923;border-color:#262923;color:white}button:disabled{opacity:.5;cursor:not-allowed}.notice{background:#f5efe2;padding:15px;margin:20px 0;border-left:3px solid #ad8f5b}.winner{border-left:4px solid #a48b58;padding:18px;margin:20px 0;background:white}.record{border-top:1px solid #e8e2d9;padding:20px 0;display:grid;grid-template-columns:1fr 1fr;gap:15px 30px}.record h3{font-size:18px;margin:0 0 5px}.record p{margin:5px 0}.record .description{grid-column:1/-1;white-space:pre-wrap;overflow-wrap:anywhere}.record a{text-decoration:underline}.empty{padding:30px;color:#6f6961;text-align:center}.error{color:#a12b25}.search{padding:11px 14px;min-height:42px;border:1px solid #ccc7be;width:min(100%,310px);font-size:16px}@media(max-width:670px){h1{font-size:34px}.stats{grid-template-columns:1fr 1fr}.stats>.stat:last-child{grid-column:1/-1}.record{grid-template-columns:1fr}.record .description{grid-column:auto}header{padding:20px}main{margin-top:25px}.stat,.panel{padding:17px}}</style></head>
+<body><header><div><div class="brand">ANDRO</div><span class="strap">CONSTRUCTION + PROJECTS / PRIVATE GIVEAWAY DASHBOARD</span></div><form action="/api/win/admin/logout" method="POST"><button type="submit">Sign out</button></form></header>
+<main>
+  <p class="eyebrow">COMPETITION CONTROL CENTRE</p><h1>Giveaway entries.</h1><p class="muted">Review submissions, export entries and conduct the draw. This area is protected and is not visible to visitors.</p>
+  <div class="stats"><div class="stat"><small>Total entries</small><strong>{total}</strong></div><div class="stat"><small>Marketing opt-ins</small><strong>{marketing}</strong></div><div class="stat"><small>Competition status</small><strong style="font-size:24px;text-transform:capitalize">{campaign.phase}</strong></div></div>
+  {error && <div class="notice error" role="alert">{error}</div>}
+  {campaign.openAt && <p class="notice">Entries: {nzDate(campaign.openAt)} – {nzDate(campaign.closeAt)}. Scheduled draw: {nzDate(campaign.drawAt)}.</p>}
+  {winner ? <div class="winner"><p class="eyebrow">SELECTED WINNER</p><h2>{winner.full_name}</h2><p>{winner.email} · {winner.phone} · {winner.suburb}</p><p>{winner.service_type} — {winner.work_details}</p><p class="muted">Drawn: {winner.selected_at ? nzDate(winner.selected_at) : 'Date unavailable'}. Verify eligibility and obtain owner permission before confirming the prize.</p></div> : <div class="notice">{canDraw ? 'The draw is ready. Eligible entries are selected randomly.' : 'The winner draw unlocks after the scheduled draw time. One winner can be selected.'}</div>}
+  <div class="toolbar"><h2>Recent entries <small class="muted">(latest 250)</small></h2><div class="actions"><input id="search" class="search" aria-label="Search loaded entries" placeholder="Search entries…" /><a class="btn" href="/api/win/admin/export">Export all entries (CSV)</a>{canDraw && <form id="draw-form" method="POST" action="/api/win/admin/draw"><button class="primary" type="submit">Draw winner</button></form>}</div></div>
+  <div class="panel" id="entries">{entries.length === 0 ? <p class="empty">No entries yet.</p> : entries.map((entry) => <article class="record" data-search={(entry.full_name+' '+entry.email+' '+entry.suburb+' '+entry.service_type).toLowerCase()}><div><h3>{entry.full_name}</h3><p><a href={'mailto:'+entry.email}>{entry.email}</a></p><p><a href={'tel:'+entry.phone}>{entry.phone}</a></p><p class="muted">{entry.suburb} · {entry.property_role}</p></div><div><p><strong>{entry.service_type}</strong></p><p class="muted">{nzDate(entry.created_at)}</p><p>Marketing: {entry.marketing_opt_in ? 'Opted in' : 'Not opted in'}</p><p>Status: {entry.status}</p></div><p class="description">{entry.work_details}</p></article>)}</div>
+</main>
+<script>
+const search = document.querySelector<HTMLInputElement>('#search');
+search?.addEventListener('input', () => { const q = search.value.trim().toLowerCase(); document.querySelectorAll<HTMLElement>('[data-search]').forEach(node => { node.hidden = !node.dataset.search?.includes(q); }); });
+document.querySelector('#draw-form')?.addEventListener('submit', event => { if (!window.confirm('Draw one random winner now? This cannot be undone from this dashboard.')) event.preventDefault(); });
+</script></body></html>
