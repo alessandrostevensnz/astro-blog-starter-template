@@ -328,11 +328,11 @@ const giveawayFields: Field[] = [
   }),
   field('promoter', '06 - Promoter information', 'text'),
   field('eligibility', '07 - Who may enter', 'text', {
-    hint: 'Eligibility is an important competition term. Once entries are open, avoid changing it to disadvantage existing entrants.',
+    hint: 'Eligibility is an important competition term. Once entries open, do not alter eligibility for the running promotion.',
   }),
   field('howToEnter', '08 - How to enter', 'text'),
   field('prizeTerms', '09 - Full prize conditions', 'text', {
-    hint: 'What the winner receives, the eight-hour labour cap, excluded costs and scope. Review material changes carefully after launch.',
+    hint: 'What the winner receives, the eight-hour labour cap, excluded costs and scope. Do not change material prize terms after entries open.',
   }),
   field('workRestrictions', '10 - Work exclusions and safety', 'text'),
   field('winnerContact', '11 - Winner selection and notification', 'text', {
@@ -351,7 +351,7 @@ const giveawayFile = {
   label: 'Win a Day - prize and conditions',
   file: 'content/pages/win.json',
   preview_path: '/win/',
-  description: 'Edit every prize description and the written giveaway terms here. All text is escaped and retains paragraph breaks. Publishing creates a tracked GitHub change and updates the live website on deployment. BEFORE entries open, you may refine these terms. Once entrants have joined, do not reduce the prize or materially change the terms without appropriate review.',
+  description: 'Edit every prize description and the written giveaway terms here. All text is escaped and retains paragraph breaks. Publishing creates a tracked GitHub change and updates the live website on deployment. BEFORE entries open, you may refine these terms. Once entries open, do not change the promotion conditions for the running giveaway; prepare and approve revised conditions for a future promotion instead.',
   fields: giveawayFields,
 };
 
