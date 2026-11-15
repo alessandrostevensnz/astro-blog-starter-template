@@ -4,6 +4,10 @@ on:
     paths:
       - "src/lib/win.ts"
       - "src/pages/win.astro"
+      - "src/lib/cms-config.ts"
+      - "content/pages/win.json"
+      - "tests/win-editor.test.mjs"
+      - "public/admin/index.html"
       - "src/pages/win/**"
       - "src/pages/api/win/**"
       - "src/middleware.ts"
@@ -16,6 +20,10 @@ on:
     paths:
       - "src/lib/win.ts"
       - "src/pages/win.astro"
+      - "src/lib/cms-config.ts"
+      - "content/pages/win.json"
+      - "tests/win-editor.test.mjs"
+      - "public/admin/index.html"
       - "src/pages/win/**"
       - "src/pages/api/win/**"
       - "src/middleware.ts"
@@ -37,7 +45,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Test giveaway validation and security controls
-        run: node --experimental-strip-types --test tests/win-entry.test.mjs
+        run: node --experimental-strip-types --test tests/win-entry.test.mjs tests/win-editor.test.mjs
       - name: Build Astro application
         run: npm run build
       - name: Check TypeScript types
