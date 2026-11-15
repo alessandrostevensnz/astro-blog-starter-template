@@ -1,20 +1,15 @@
 # ANDRO /win giveaway — launch checklist
 
-This feature lives in the existing Astro/Cloudflare **Workers** site (not a separate Pages project).
+This feature lives in the existing Astro/Cloudflare **Workers** site (not a separate Pages project). The D1 binding was added on the feature branch; the remote D1 schema, Turnstile widget and campaign dates still require Cloudflare-side setup.
 Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existing /report password**, which must remain configured with `REPORT_PASSWORD` and `REPORT_SESSION_SECRET`, and existing `REPORT_LOGIN_IP_LIMITER` and `REPORT_LOGIN_GLOBAL_LIMITER`.
 
-## Required setup (not automated by this PR)
+## Remaining launch setup
 
 1. Confirm the promotion rules and the prize with the business owner, including the Auckland eligibility area, maximum **8 hours of one worker's labour**, exclusions and how a winner will be chosen. Review NZ Fair Trading Act / DIA sales-promotion guidance before launch. Do not advertise or open the draw until this is final.
-2. In Cloudflare D1 create a database called `andro-win` (free tier). Using Wrangler: `npx wrangler d1 create andro-win`. Copy the UUID returned. In the root `wrangler.json`, add alongside the existing keys:
-   ```json
-   "d1_databases": [{
-     "binding": "WIN_DB",
-     "database_name": "andro-win",
-     "database_id": "PASTE_THE_REAL_D1_DATABASE_UUID_HERE"
-   }]
-   ```
-   Do **not** add a fake UUID; it would break deployments. Commit the real binding only after the database exists. Apply the schema with `npx wrangler d1 migrations apply andro-win --remote` from the repo root, after the real binding has been added.
+2. **D1 database binding has been configured in this PR.** The submitted database UUID `2b29bba4-6369-44a9-a204-69ae88b2ac0a` is bound as `WIN_DB` with the configured database name `andro-win`. Confirm that this UUID belongs to the correct Cloudflare account and database. **The schema still needs to be applied to the remote database.** Choose one approach:
+   - **Cloudflare dashboard (no terminal):** Open **Storage & databases → D1 → andro-win → Console**. Copy the SQL from [migrations/0001_win_entries.sql](../migrations/0001_win_entries.sql), paste it in the Console and execute it. Check that the `win_entries` table appears. The SQL uses `CREATE IF NOT EXISTS` / `CREATE UNIQUE INDEX IF NOT EXISTS` so rerunning it does not drop entries.
+   - **Wrangler CLI (tracks applied migrations):** From the repository root, with Cloudflare authenticated, run `npx wrangler d1 migrations apply andro-win --remote`. Use this approach if you want Wrangler migration tracking. Do not run both approaches unnecessarily.
+
 3. In Cloudflare Turnstile create a **free** widget for `andro.co.nz` (also add allowed preview hostnames only if necessary). Set site key as Worker plain text environment variable `WIN_TURNSTILE_SITE_KEY` and the verification secret as a **secret** `WIN_TURNSTILE_SECRET_KEY`. The server verifies each response through Siteverify and checks the hostname and action.
 4. Set Worker variables with timezone offsets in valid ISO format (illustrative values only; **agree actual dates before entering**):
    - `WIN_OPEN_AT` = `2026-11-20T09:00:00+13:00`
