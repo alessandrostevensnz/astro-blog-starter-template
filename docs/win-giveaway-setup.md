@@ -1,6 +1,6 @@
 # ANDRO /win giveaway — launch checklist
 
-This feature lives in the existing Astro/Cloudflare **Workers** site (not a separate Pages project). The D1 binding and the public Turnstile site key are configured in the feature branch. Verify the D1 table, keep the Turnstile verification secret in Cloudflare, and choose the competition dates before opening entries.
+This feature lives in the existing Astro/Cloudflare **Workers** site (not a separate Pages project). The D1 binding and the public Turnstile site key are configured in the feature branch. Verify the D1 table and the private Turnstile verification secret in Cloudflare before opening entries. The approved closing and draw dates are configured on the feature branch.
 Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existing /report password**, which must remain configured with `REPORT_PASSWORD` and `REPORT_SESSION_SECRET`, and existing `REPORT_LOGIN_IP_LIMITER` and `REPORT_LOGIN_GLOBAL_LIMITER`.
 
 ## Remaining launch setup
@@ -11,11 +11,12 @@ Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existi
    - **Wrangler CLI (tracks applied migrations):** From the repository root, with Cloudflare authenticated, run `npx wrangler d1 migrations apply andro-win --remote`. Use this approach if you want Wrangler migration tracking. Do not run both approaches unnecessarily.
 
 3. **Turnstile widget has been created.** Its public site key `0x4AAAAAAGBnK_eVlihsb2dT` is now committed under `vars.WIN_TURNSTILE_SITE_KEY` in `wrangler.json`. Verify the widget permits hostname `andro.co.nz`. Confirm Cloudflare **Workers & Pages → astro-blog-starter-template → Settings → Variables and Secrets → Production** has `WIN_TURNSTILE_SECRET_KEY` saved as a **Secret** (not a plain text variable). If the previous Add variable dialog was still open, select **Add 1 variable and deploy** to finish saving it. Do **not** put the secret in GitHub or share it in chat. The server verifies each response through Siteverify and checks hostname and action.
-4. Set Worker variables with timezone offsets in valid ISO format (illustrative values only; **agree actual dates before entering**):
-   - `WIN_OPEN_AT` = `2026-11-20T09:00:00+13:00`
-   - `WIN_CLOSE_AT` = `2026-12-15T23:59:00+13:00`
-   - `WIN_DRAW_AT` = `2026-12-16T12:00:00+13:00`
-   This is a **manual draw** button available to the authenticated admin **on or after** the draw time. The code does not schedule or notify a winner automatically.
+4. **Competition dates have been approved and set in `wrangler.json` (Auckland time, UTC+13):**
+   - `WIN_OPEN_AT` = `launch` — entries can begin once the verified production version is published; no earlier opening date is advertised.
+   - `WIN_CLOSE_AT` = `2026-12-15T23:59:00+13:00` — Tuesday, 15 December 2026 at 11:59 p.m.
+   - `WIN_DRAW_AT` = `2026-12-16T12:00:00+13:00` — Wednesday, 16 December 2026 at 12:00 noon.
+   The `launch` start is an explicit code-supported setting and needs no further environment variable changes. This is a **manual draw** button available to the authenticated admin on or after the draw time. The code does not schedule or notify the winner automatically.
+
 5. Deploy; visit `/win`. It will show **Entries not yet open** when any dates, database or Turnstile keys are missing. Only advertise the promotion after you have tested a real entry and checked `/win/admin`.
 6. Review privacy disclosures and secure the Cloudflare account. Download a CSV backup from the private admin as needed. At the conclusion, remove entries when no longer needed (and preserve any marketing-consent records only under a lawful retention policy).
 
@@ -36,7 +37,7 @@ Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existi
 
 ## Important technical notes
 
-- The public page cannot accept entries until the D1 database, migration, dates and Turnstile secrets are in place.
+- The public page cannot accept entries until its code is deployed, the D1 database/migration has been verified, the scheduled dates are configured, and the Turnstile secret is available. **Once this branch is deployed and all bindings are present, the form opens immediately** (until its closing timestamp); do not merge/deploy until promotion terms, privacy notice and live checks have been approved.
 - `wrangler.json` is the deployment source of truth; database binding must be added there, not only in a dashboard binding.
 - Cloudflare's free quotas apply; high traffic can hit them. This feature does not deliver email confirmations or automatically contact the winner.
 - The admin uses the already configured /report password (do not expose it in client code); /win/admin endpoints check a signed, expiring cookie, with no-store responses.
