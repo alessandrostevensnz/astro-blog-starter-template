@@ -21,6 +21,13 @@ Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existi
 6. After the owner approves the proposed rules, test the live/deployed worker: verify public form remains closed with the switch OFF; confirm `/win/admin` requires the site-reports password and that its CSV export works; test Turnstile and database writing in a controlled, approved production or isolated test environment; check closed/open time boundaries, mobile view and duplicate-entry handling. To launch, publish the approved public opening time clearly and change `WIN_ENTRIES_ENABLED` to `"true"` only in the final authorised deployment. Do not publicly advertise until this end-to-end test succeeds.
 7. Review privacy disclosures and secure the Cloudflare account. Download a CSV backup from the private admin as needed. At the conclusion, remove entries when no longer needed (and preserve any marketing-consent records only under a lawful retention policy).
 
+## Editing the prize and terms later
+
+The draft now adds **Pages - photos and text → Win a Day - prize and conditions** to the existing `https://andro.co.nz/admin` editor. It edits `content/pages/win.json` (the hero/prize summary, promotional copy, eligibility, exclusions, full prize conditions, winner contact rules, redemption and privacy).
+Publish changes in Decap as usual; on successful GitHub and Cloudflare deployment, the live `/win` page reflects the edits. Technical keys, draw dates, database access and the entry switch stay in `wrangler.json` for safety.
+
+**Important NZ rule:** Treat the published terms as fixed once this promotion starts. Department of Internal Affairs guidance on sales promotions says conditions cannot be changed once the competition has started. Edit the draft before launch, and use the editable fields to prepare terms for a *future* giveaway rather than changing the current prize or rules after people have entered. See [DIA sales promotions guidance](https://www.dia.govt.nz/Gambling-Fact-Sheet-9---Sales-Promotions).
+
 ## Entry experience
 
 - Mobile-friendly landing page, prize details, eligibility, terms and privacy statement.
