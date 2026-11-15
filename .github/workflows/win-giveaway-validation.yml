@@ -7,6 +7,7 @@ on:
       - "src/pages/win/**"
       - "src/pages/api/win/**"
       - "src/middleware.ts"
+      - "wrangler.json"
       - "migrations/0001_win_entries.sql"
       - "tests/win-entry.test.mjs"
       - ".github/workflows/win-giveaway-validation.yml"
@@ -18,6 +19,7 @@ on:
       - "src/pages/win/**"
       - "src/pages/api/win/**"
       - "src/middleware.ts"
+      - "wrangler.json"
       - "migrations/0001_win_entries.sql"
       - "tests/win-entry.test.mjs"
 permissions:
