@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { configured, validSession, COOKIE } from './lib/report-auth';
+import { noStoreHeaders } from './lib/win';
 
 type RateLimiter = { limit: (options: { key: string }) => Promise<{ success: boolean }> };
 
@@ -14,6 +15,36 @@ function failClosed(message: string): Response {
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
+
+  // Protect the giveaway administration HTML and API, without changing public /win.
+  const winPrivate = path === '/win/admin' || path === '/win/admin/' || path.startsWith('/win/admin/') || path.startsWith('/api/win/admin/');
+  if (winPrivate) {
+    const env = (context.locals as any).runtime?.env ?? {};
+    if (!configured(env)) return new Response('Giveaway administration is not configured.', { status: 503, headers: noStoreHeaders() });
+    const login = path === '/win/admin/login' || path === '/win/admin/login/';
+    if (login && context.request.method === 'POST') {
+      const perIp = env.REPORT_LOGIN_IP_LIMITER as RateLimiter | undefined;
+      const global = env.REPORT_LOGIN_GLOBAL_LIMITER as RateLimiter | undefined;
+      if (typeof perIp?.limit !== 'function' || typeof global?.limit !== 'function') return new Response('Login protection unavailable.', { status: 503, headers: noStoreHeaders() });
+      const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown-client';
+      try {
+        const [ipResult, globalResult] = await Promise.all([
+          perIp.limit({ key: 'win-admin-login:' + ip }),
+          global.limit({ key: 'win-admin-login-all' }),
+        ]);
+        if (!ipResult.success || !globalResult.success) return new Response('Too many sign-in attempts. Please retry later.', { status: 429, headers: { ...noStoreHeaders(), 'Retry-After': '60' } });
+      } catch {
+        return new Response('Login protection unavailable.', { status: 503, headers: noStoreHeaders() });
+      }
+    }
+    if (!login && !(await validSession(context.cookies.get('andro_win_admin')?.value, env.REPORT_SESSION_SECRET))) {
+      if (path.startsWith('/api/')) return new Response('Sign in required.', { status: 401, headers: noStoreHeaders() });
+      return context.redirect('/win/admin/login', 303);
+    }
+    const response = await next();
+    Object.entries(noStoreHeaders()).forEach(([key, value]) => response.headers.set(key, value));
+    return response;
+  }
 
   // All unrelated routes, including /admin and the public site, are untouched.
   if (path !== '/report' && path !== '/report/' && !path.startsWith('/report/')) return next();

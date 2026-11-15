@@ -1,0 +1,53 @@
+# ANDRO /win giveaway — launch checklist
+
+This feature lives in the existing Astro/Cloudflare **Workers** site (not a separate Pages project). The D1 binding and the public Turnstile site key are configured in the feature branch. The site owner confirmed that the `win_entries` table is listed in Cloudflare D1 and that the Turnstile production secret was deployed. These have not yet been independently verified by live submission testing. The approved closing and draw dates are configured on the feature branch.
+Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existing /report password**, which must remain configured with `REPORT_PASSWORD` and `REPORT_SESSION_SECRET`, and existing `REPORT_LOGIN_IP_LIMITER` and `REPORT_LOGIN_GLOBAL_LIMITER`.
+
+## Remaining launch setup
+
+1. **Review and approve the full proposed terms in `src/pages/win.astro` before enabling entries.** They now cover Auckland eligibility, maximum **eight hours of one worker's labour**, materials exclusions, random draw, contact within three business days, seven-day response window, replacement-draw procedure, proposed 31 March 2027 redemption target, and privacy. Confirm each business promise is practical before removing the draft notice. Ensure all entry conditions and the prize are clear in advertising, including the start of the entry period. Relevant NZ guidance: [Commerce Commission — Running competitions](https://www.comcom.govt.nz/business/dealing-with-typical-situations/running-competitions-and-promotions/), [DIA — Sales promotions](https://www.dia.govt.nz/Gambling-Fact-Sheet-9---Sales-Promotions), and [Privacy Commissioner — Collecting](https://www.privacy.org.nz/responsibilities/collecting/). This is not legal advice.
+2. **D1 database binding has been configured in this PR.** The submitted database UUID `2b29bba4-6369-44a9-a204-69ae88b2ac0a` is bound as `WIN_DB` with the configured database name `andro-win`. Confirm that this UUID belongs to the correct Cloudflare account and database. **The site owner has confirmed that `win_entries` appears in the Cloudflare D1 Console.** The SQL migration was applied manually; do not re-run it just to proceed. If a fresh environment requires installation, choose one approach:
+   - **Cloudflare dashboard (no terminal):** Open **Storage & databases → D1 → andro-win → Console**. Copy the SQL from [migrations/0001_win_entries.sql](../migrations/0001_win_entries.sql), paste it in the Console and execute it. Check that the `win_entries` table appears. The SQL uses `CREATE IF NOT EXISTS` / `CREATE UNIQUE INDEX IF NOT EXISTS` so rerunning it does not drop entries.
+   - **Wrangler CLI (tracks applied migrations):** From the repository root, with Cloudflare authenticated, run `npx wrangler d1 migrations apply andro-win --remote`. Use this approach if you want Wrangler migration tracking. Do not run both approaches unnecessarily.
+
+3. **Turnstile widget has been created, and the site owner confirmed its production secret was deployed.** Its public site key `0x4AAAAAAGBnK_eVlihsb2dT` is now committed under `vars.WIN_TURNSTILE_SITE_KEY` in `wrangler.json`. Verify the widget permits hostname `andro.co.nz`. Confirm Cloudflare **Workers & Pages → astro-blog-starter-template → Settings → Variables and Secrets → Production** has `WIN_TURNSTILE_SECRET_KEY` saved as a **Secret** (not a plain text variable). If the previous Add variable dialog was still open, select **Add 1 variable and deploy** to finish saving it. Do **not** put the secret in GitHub or share it in chat. The server verifies each response through Siteverify and checks hostname and action.
+4. **Competition dates have been approved and set in `wrangler.json` (Auckland time, UTC+13):**
+   - `WIN_OPEN_AT` = `launch` — entries can begin once the verified production version is published; no earlier opening date is advertised.
+   - `WIN_CLOSE_AT` = `2026-12-15T23:59:00+13:00` — Tuesday, 15 December 2026 at 11:59 p.m.
+   - `WIN_DRAW_AT` = `2026-12-16T12:00:00+13:00` — Wednesday, 16 December 2026 at 12:00 noon.
+   The `launch` start is an explicit code-supported setting; confirm the actual public opening time and display it in the public conditions before enabling entries. This is a **manual draw** button available to the authenticated admin on or after the draw time. The code does not schedule or notify the winner automatically.
+
+5. **New launch safety switch:** `wrangler.json` now contains `WIN_ENTRIES_ENABLED = "false"`. The public page will display **Entries are not open yet** even after a deployment, so that the landing page and private dashboard can be inspected without accepting entries. No changes to this setting should be made without the business owner's explicit go-live approval.
+6. After the owner approves the proposed rules, test the live/deployed worker: verify public form remains closed with the switch OFF; confirm `/win/admin` requires the site-reports password and that its CSV export works; test Turnstile and database writing in a controlled, approved production or isolated test environment; check closed/open time boundaries, mobile view and duplicate-entry handling. To launch, publish the approved public opening time clearly and change `WIN_ENTRIES_ENABLED` to `"true"` only in the final authorised deployment. Do not publicly advertise until this end-to-end test succeeds.
+7. Review privacy disclosures and secure the Cloudflare account. Download a CSV backup from the private admin as needed. At the conclusion, remove entries when no longer needed (and preserve any marketing-consent records only under a lawful retention policy).
+
+## Editing the prize and terms later
+
+The draft now adds **Pages - photos and text → Win a Day - prize and conditions** to the existing `https://andro.co.nz/admin` editor. It edits `content/pages/win.json` (the hero/prize summary, promotional copy, eligibility, exclusions, full prize conditions, winner contact rules, redemption and privacy).
+Publish changes in Decap as usual; on successful GitHub and Cloudflare deployment, the live `/win` page reflects the edits. Technical keys, draw dates, database access and the entry switch stay in `wrangler.json` for safety.
+
+**Important NZ rule:** Treat the published terms as fixed once this promotion starts. Department of Internal Affairs guidance on sales promotions says conditions cannot be changed once the competition has started. Edit the draft before launch, and use the editable fields to prepare terms for a *future* giveaway rather than changing the current prize or rules after people have entered. See [DIA sales promotions guidance](https://www.dia.govt.nz/Gambling-Fact-Sheet-9---Sales-Promotions).
+
+## Entry experience
+
+- Mobile-friendly landing page, prize details, eligibility, terms and privacy statement.
+- Required name, email, phone, suburb, property role, task category and description.
+- Separate **unchecked** marketing opt-in; entering does not automatically subscribe a person.
+- Hidden honeypot, Cloudflare Turnstile (server verified), strict server-side validation, unique email address, no open submissions before/after the configured window. Admin password attempts reuse the existing report login rate-limit bindings; public entry submissions use Turnstile.
+- After submission it returns the same confirmation for duplicate email addresses to avoid disclosing who has entered.
+
+## Admin experience
+
+- Reuses password and strong signed cookie from /report but with its own `/win/admin` session cookie.
+- Current totals, recent entries, separate marketing-consent status, CSV export.
+- Cryptographically random draw after the configured draw time, with a database uniqueness constraint limiting to a single winner.
+- A replacement winner after an ineligibility or nonresponse must be selected using a documented process. **The current dashboard does not support replacement draws directly**; implement or review that process before opening entries. Do not change or delete original entry data without a recorded decision.
+
+## Important technical notes
+
+- The public page cannot accept entries until its code is deployed, the D1 database/migration and Turnstile secret have been verified, dates configured, and `WIN_ENTRIES_ENABLED` explicitly switched to `true`. Deploying this branch with `WIN_ENTRIES_ENABLED=false` will not open the form. The owner must approve the complete promotion terms, privacy notice and launch checks before the switch is enabled.
+- `wrangler.json` is the deployment source of truth; database binding must be added there, not only in a dashboard binding.
+- Cloudflare's free quotas apply; high traffic can hit them. This feature does not deliver email confirmations or automatically contact the winner.
+- The admin uses the already configured /report password (do not expose it in client code); /win/admin endpoints check a signed, expiring cookie, with no-store responses.
+- Never commit Turnstile secret key, report password or session secret.
+- Giveaway terms were authored as a starting point only, not legal advice; business owner must verify before opening the entries.
