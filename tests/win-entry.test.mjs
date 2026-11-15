@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { winState, validateWinEntry, sameOriginPost, randomOffset } from '../src/lib/win.ts';
 
 const env = {
@@ -76,4 +77,13 @@ test('winner draw samples within valid bounds', () => {
     else assert.ok(values.size > 1);
   }
   assert.throws(() => randomOffset(0));
+});
+
+test('Cloudflare config contains the intended ANDRO D1 binding', () => {
+  const config = JSON.parse(readFileSync(new URL('../wrangler.json', import.meta.url), 'utf8'));
+  const win = config.d1_databases?.find(item => item.binding === 'WIN_DB');
+  assert.ok(win, 'WIN_DB must be bound before deployment');
+  assert.equal(win.database_name, 'andro-win');
+  assert.match(win.database_id, /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i);
+  assert.ok(!Object.keys(config).some(key => /turnstile_secret|report_password/i.test(key)), 'secrets must not be committed to wrangler.json');
 });
