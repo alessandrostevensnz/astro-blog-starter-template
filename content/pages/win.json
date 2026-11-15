@@ -1,4 +1,18 @@
 {
+  "photos": {
+    "hero": {
+      "src": "/images/Sunlit%20Scandinavian%20Apartment%20Living%20Space.png",
+      "alt": "Light filled modern residential interior"
+    },
+    "work": {
+      "src": "/images/preston.png",
+      "alt": "ANDRO property maintenance work on a property"
+    },
+    "closing": {
+      "src": "/images/cladding.png",
+      "alt": "Exterior cladding and property maintenance detail"
+    }
+  },
   "heroLead": "A day's worth of labour to help tackle the jobs around your property. From general maintenance and handyman work to eligible minor building repairs, tell us what you need a hand with.",
   "prizeIntro": "We're giving one eligible Auckland entrant up to eight hours of one worker's labour towards agreed property maintenance, handyman or minor building work.",
   "prizeCardHeadline": "1 DAY",
