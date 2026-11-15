@@ -29,7 +29,7 @@ Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existi
 - Mobile-friendly landing page, prize details, eligibility, terms and privacy statement.
 - Required name, email, phone, suburb, property role, task category and description.
 - Separate **unchecked** marketing opt-in; entering does not automatically subscribe a person.
-- Hidden honeypot, Cloudflare Turnstile (server verified), existing per-IP and global rate-limiting bindings, strict server-side validation, unique email address, no open submissions before/after the configured window.
+- Hidden honeypot, Cloudflare Turnstile (server verified), strict server-side validation, unique email address, no open submissions before/after the configured window. Admin password attempts reuse the existing report login rate-limit bindings; public entry submissions use Turnstile.
 - After submission it returns the same confirmation for duplicate email addresses to avoid disclosing who has entered.
 
 ## Admin experience
