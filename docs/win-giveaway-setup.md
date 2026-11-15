@@ -1,6 +1,6 @@
 # ANDRO /win giveaway — launch checklist
 
-This feature lives in the existing Astro/Cloudflare **Workers** site (not a separate Pages project). The D1 binding was added on the feature branch; the remote D1 schema, Turnstile widget and campaign dates still require Cloudflare-side setup.
+This feature lives in the existing Astro/Cloudflare **Workers** site (not a separate Pages project). The D1 binding and the public Turnstile site key are configured in the feature branch. Verify the D1 table, keep the Turnstile verification secret in Cloudflare, and choose the competition dates before opening entries.
 Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existing /report password**, which must remain configured with `REPORT_PASSWORD` and `REPORT_SESSION_SECRET`, and existing `REPORT_LOGIN_IP_LIMITER` and `REPORT_LOGIN_GLOBAL_LIMITER`.
 
 ## Remaining launch setup
@@ -10,7 +10,7 @@ Public: `/win`. Private dashboard: `/win/admin`. Admin sign-in uses the **existi
    - **Cloudflare dashboard (no terminal):** Open **Storage & databases → D1 → andro-win → Console**. Copy the SQL from [migrations/0001_win_entries.sql](../migrations/0001_win_entries.sql), paste it in the Console and execute it. Check that the `win_entries` table appears. The SQL uses `CREATE IF NOT EXISTS` / `CREATE UNIQUE INDEX IF NOT EXISTS` so rerunning it does not drop entries.
    - **Wrangler CLI (tracks applied migrations):** From the repository root, with Cloudflare authenticated, run `npx wrangler d1 migrations apply andro-win --remote`. Use this approach if you want Wrangler migration tracking. Do not run both approaches unnecessarily.
 
-3. In Cloudflare Turnstile create a **free** widget for `andro.co.nz` (also add allowed preview hostnames only if necessary). Set site key as Worker plain text environment variable `WIN_TURNSTILE_SITE_KEY` and the verification secret as a **secret** `WIN_TURNSTILE_SECRET_KEY`. The server verifies each response through Siteverify and checks the hostname and action.
+3. **Turnstile widget has been created.** Its public site key `0x4AAAAAAGBnK_eVlihsb2dT` is now committed under `vars.WIN_TURNSTILE_SITE_KEY` in `wrangler.json`. Verify the widget permits hostname `andro.co.nz`. Confirm Cloudflare **Workers & Pages → astro-blog-starter-template → Settings → Variables and Secrets → Production** has `WIN_TURNSTILE_SECRET_KEY` saved as a **Secret** (not a plain text variable). If the previous Add variable dialog was still open, select **Add 1 variable and deploy** to finish saving it. Do **not** put the secret in GitHub or share it in chat. The server verifies each response through Siteverify and checks hostname and action.
 4. Set Worker variables with timezone offsets in valid ISO format (illustrative values only; **agree actual dates before entering**):
    - `WIN_OPEN_AT` = `2026-11-20T09:00:00+13:00`
    - `WIN_CLOSE_AT` = `2026-12-15T23:59:00+13:00`
