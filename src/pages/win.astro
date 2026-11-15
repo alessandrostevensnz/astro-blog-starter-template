@@ -1,0 +1,125 @@
+---
+export const prerender = false;
+import SiteLayout from '../components/SiteLayout.astro';
+import { winState, nzDate } from '../lib/win';
+const env = (Astro.locals as any).runtime?.env ?? {};
+const campaign = winState(env);
+const isOpen = campaign.phase === 'open';
+const hero = '/images/'; // Existing global page layout and branding are intentionally reused.
+---
+<SiteLayout title="Win a Day of Property Maintenance | ANDRO Construction + Projects" description="Enter ANDRO's free Auckland property maintenance and handyman labour giveaway. See eligibility and promotion terms.">
+<section class="win-hero">
+  <div class="shell">
+    <p class="win-kicker">ANDRO CONSTRUCTION + PROJECTS / AUCKLAND</p>
+    <p class="win-overline">A little help can make a big difference.</p>
+    <h1>WIN A DAY<br /><em>ON US.</em></h1>
+    <p class="win-lead">A day's worth of labour to help tackle the jobs around your property. From general maintenance and handyman work to eligible minor building repairs, tell us what you need a hand with.</p>
+    <a class="win-hero-cta" href="#enter">Enter the giveaway <span aria-hidden="true">↗</span></a>
+    <div class="win-ticker">PROPERTY MAINTENANCE <span>·</span> HANDYMAN SERVICES <span>·</span> MINOR BUILDING WORK</div>
+  </div>
+</section>
+<section class="win-main" id="enter">
+  <div class="shell win-columns">
+    <aside class="win-aside">
+      <p class="win-kicker">01 / THE OPPORTUNITY</p>
+      <h2>THE JOBS THAT<br />NEVER QUITE<br /><i>GET DONE.</i></h2>
+      <p>That small repair you've been putting off. A list of maintenance jobs that keeps getting longer. An improvement that would make your property feel better.</p>
+      <p>We're giving one eligible Auckland entrant up to <strong>eight hours of one worker's labour</strong> towards agreed property maintenance, handyman or minor building work.</p>
+      <div class="win-prize"><span>THE PRIZE</span><strong>1 DAY</strong><small>Up to 8 hours of one worker's labour.<br />Materials and additional costs excluded.</small></div>
+      <p class="win-note">Work must be within ANDRO's capabilities, safe, lawful and agreed after a site assessment. Restricted building work, specialist trades, hazardous work, permits and materials are not included.</p>
+    </aside>
+    <div class="win-panel">
+      <p class="win-kicker">02 / YOUR ENTRY</p>
+      <h2>Tell us about<br />your property.</h2>
+      {campaign.phase === 'setup' && <p class="win-alert" role="status">Entries are not open yet. We're finalising the competition details. Please check back soon.</p>}
+      {campaign.phase === 'upcoming' && <p class="win-alert" role="status">Entries open {nzDate(campaign.openAt)}.</p>}
+      {campaign.phase === 'closed' && <p class="win-alert" role="status">Entries have closed. The scheduled draw date is {nzDate(campaign.drawAt)}.</p>}
+      {isOpen && <>
+        <p class="win-panel-copy">Free to enter. One entry per person. Auckland properties only. Entries close {nzDate(campaign.closeAt)}.</p>
+        <form id="win-entry" class="win-form" autocomplete="on">
+          <div class="win-two">
+            <label>Full name <input name="full_name" autocomplete="name" minlength="2" maxlength="100" placeholder="Your full name" required /></label>
+            <label>Email address <input type="email" name="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required /></label>
+          </div>
+          <div class="win-two">
+            <label>Phone number <input type="tel" name="phone" autocomplete="tel" maxlength="30" placeholder="Your contact number" required /></label>
+            <label>Suburb <input name="suburb" maxlength="80" placeholder="Auckland suburb" required /></label>
+          </div>
+          <label>Your relationship to the property
+            <select name="property_role" required><option value="">Select one</option><option>Owner</option><option>Property manager</option><option>Tenant with owner permission</option></select>
+          </label>
+          <label>What type of work could we help with?
+            <select name="service_type" required><option value="">Select one</option><option>Property maintenance</option><option>Handyman work</option><option>Minor building repairs</option><option>Other eligible work</option></select>
+          </label>
+          <label>Tell us what needs doing
+            <textarea name="work_details" minlength="20" maxlength="1200" rows="5" placeholder="Describe the jobs around your property and what a day's help would mean..." required></textarea>
+          </label>
+          <label class="win-hidden" aria-hidden="true">Leave blank <input name="website" tabindex="-1" autocomplete="off" /></label>
+          <div class="win-check"><label><input type="checkbox" name="age" value="yes" required /><span>I am 18 years or older.</span></label></div>
+          <div class="win-check"><label><input type="checkbox" name="authority" value="yes" required /><span>I own or manage the property, or have the property owner's permission to arrange work.</span></label></div>
+          <div class="win-check"><label><input type="checkbox" name="terms" value="yes" required /><span>I have read and agree to the <a href="#win-terms">promotion terms and privacy notice</a>.</span></label></div>
+          <div class="win-check"><label><input type="checkbox" name="marketing" value="yes" /><span>Optional: I'd like to receive occasional news and offers from ANDRO. I can unsubscribe at any time.</span></label></div>
+          <div class="cf-turnstile" data-sitekey={campaign.turnstileSiteKey} data-action="andro-win-entry"></div>
+          <button id="win-submit" class="win-submit" type="submit">SUBMIT MY FREE ENTRY</button>
+          <p class="win-status" id="win-status" role="status" aria-live="polite"></p>
+        </form>
+        <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      </>}
+    </div>
+  </div>
+</section>
+<section class="win-terms" id="win-terms">
+  <div class="shell">
+    <p class="win-kicker">03 / THE IMPORTANT DETAILS</p>
+    <h2>Promotion terms<br />& privacy.</h2>
+    <p><strong>Promoter:</strong> Andro Construction Limited, trading as ANDRO Construction + Projects, Auckland, New Zealand.</p>
+    <p><strong>Prize:</strong> Up to eight hours of one worker's labour for suitable work at one eligible Auckland property. The prize is not cash, is non-transferable and does not cover building materials, equipment hire, disposal, travel outside the eligible service area, subcontractor costs or other third-party costs. Work scope is subject to ANDRO's approval and an assessment of suitability and safety.</p>
+    <p><strong>Eligibility:</strong> Free entry, age 18+, Auckland property with the owner's authorisation, one entry per person. No purchase necessary. ANDRO's employees and their immediate families are excluded. Work requiring an LBP or specialist certification, restricted building work, structural alterations, electrical or plumbing work and unsafe or unlawful tasks are excluded unless separately contracted through appropriately authorised persons outside the prize.</p>
+    {campaign.openAt && <p><strong>Entries:</strong> Open {nzDate(campaign.openAt)} and close {nzDate(campaign.closeAt)}. Scheduled random draw: {nzDate(campaign.drawAt)} or as soon as practicable thereafter. The promoter will contact the selected entrant using the supplied details. Eligibility and work scope must be verified before awarding the prize.</p>}
+    <p><strong>Privacy:</strong> We collect the name, contact details, suburb and description supplied in the form to administer this promotion, confirm eligibility, contact the winner and assess proposed work. We store this information in our Cloudflare-hosted database and restrict access to authorised ANDRO staff. We do not publish entry details. Optional marketing consent is separate from entering. You can ask to access, correct or request deletion of your information by contacting ANDRO through <a href="/contact/">our contact page</a>, subject to applicable retention obligations. We keep information only as long as reasonably necessary for the purposes collected.</p>
+    <p class="win-note"><strong>Important:</strong> These are draft promotion conditions. Entry is disabled until the promoter finalises and approves complete promotion rules, including winner notification timeframes, treatment of an ineligible winner, a prize redemption deadline, and any other material conditions.</p>
+  </div>
+</section>
+</SiteLayout>
+<script>
+const form = document.querySelector<HTMLFormElement>('#win-entry');
+const status = document.querySelector<HTMLElement>('#win-status');
+const submit = document.querySelector<HTMLButtonElement>('#win-submit');
+form?.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!form.reportValidity() || !status || !submit) return;
+  submit.disabled = true;
+  status.textContent = 'Submitting your entry…';
+  try {
+    const response = await fetch('/api/win/entry', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' },
+      credentials: 'same-origin',
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Please try again.');
+    form.reset();
+    status.textContent = 'Thanks for entering! Your submission has been received. Only the selected winner will be contacted.';
+    status.classList.add('win-success');
+    if (typeof (window as any).turnstile?.reset === 'function') (window as any).turnstile.reset();
+  } catch (error) {
+    status.textContent = error instanceof Error ? error.message : 'Unable to submit right now.';
+    if (typeof (window as any).turnstile?.reset === 'function') (window as any).turnstile.reset();
+  } finally { submit.disabled = false; }
+});
+</script>
+<style>
+:global(html){scroll-behavior:smooth}.shell{max-width:1350px;margin:auto;padding:0 max(24px,6vw)}
+.win-hero{background:#1e211f;color:#f7f4ec;min-height:650px;display:flex;align-items:center;position:relative;overflow:hidden}
+.win-hero:before{content:"";position:absolute;width:64vw;height:64vw;right:-26vw;top:-34vw;border:1px solid #a68e65;border-radius:50%;opacity:.3;box-shadow:0 0 0 80px #1e211f,0 0 0 81px #a68e652a,0 0 0 160px #1e211f,0 0 0 161px #a68e652a}
+.win-hero .shell{width:100%;padding-top:90px;padding-bottom:60px;z-index:1}.win-kicker{font-size:11px;letter-spacing:.22em;color:#b89e72;font-weight:600;margin:0 0 30px}.win-overline{font-size:20px;font-family:Georgia,serif;font-style:italic;color:#d7d1c4}
+.win-hero h1{font-family:Manrope,sans-serif;font-weight:300;font-size:clamp(76px,11vw,155px);letter-spacing:-.09em;line-height:.99;margin:18px 0 30px}.win-hero h1 em{font-family:Georgia,serif;font-size:.93em;font-weight:400;color:#bda67e;letter-spacing:-.065em}
+.win-lead{max-width:570px;line-height:1.8;font-size:16px;color:#d0cec8}.win-hero-cta{display:inline-flex;background:#bda67e;color:#1b1d1a;padding:17px 23px;gap:40px;font-size:12px;letter-spacing:.09em;font-weight:700;margin-top:20px}.win-ticker{border-top:1px solid #ffffff40;padding-top:28px;margin-top:80px;font-size:10px;letter-spacing:.18em;color:#aaa59b}.win-ticker span{color:#bda67e;margin:0 20px}
+.win-main{padding:105px 0;background:#faf9f6}.win-columns{display:grid;grid-template-columns:1fr 1.1fr;gap:12%;align-items:start}.win-aside h2{font-size:clamp(37px,4vw,63px);font-weight:300;line-height:1.07;letter-spacing:-.06em;margin:0 0 33px}.win-aside h2 i{font-family:Georgia,serif;font-weight:400;color:#a88b5e}.win-aside>p:not(.win-kicker){font-size:15px;line-height:1.85;color:#64605a;max-width:430px}.win-prize{padding:29px 0;margin:34px 0;border-top:1px solid #ccc4b8;border-bottom:1px solid #ccc4b8;display:flex;flex-direction:column}.win-prize span{font-size:10px;letter-spacing:.2em;color:#a88b5e}.win-prize strong{font-size:80px;font-weight:300;line-height:1.2;letter-spacing:-.08em}.win-prize small{line-height:1.7;color:#756f65}
+.win-panel{padding:44px;background:#fff;border:1px solid #e3ded5;box-shadow:0 14px 45px #40342108}.win-panel h2,.win-terms h2{font-size:clamp(40px,4vw,60px);font-weight:300;letter-spacing:-.06em;line-height:1.05;margin:0 0 23px}.win-panel-copy{font-size:14px;line-height:1.75;color:#6c675e;margin-bottom:30px}
+.win-form{display:grid;gap:21px}.win-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.win-form label{display:block;font-size:12px;font-weight:600;color:#49453e;line-height:1.6}.win-form input:not([type=checkbox]),.win-form textarea,.win-form select{width:100%;margin-top:8px;border:1px solid #d5d1c8;background:#fff;color:#24221d;min-height:49px;padding:12px 13px;outline-offset:2px;border-radius:0;font-size:16px}.win-form textarea{min-height:120px;resize:vertical}.win-check{margin-top:-4px}.win-check label{display:flex;gap:12px;font-weight:400;align-items:start;line-height:1.65}.win-check input{margin-top:5px;accent-color:#9c8054;min-width:17px;min-height:17px}.win-check a,.win-terms a{text-decoration:underline;text-underline-offset:3px}.win-submit{background:#242622;color:white;border:0;padding:18px;font-size:12px;font-weight:700;letter-spacing:.12em;cursor:pointer;min-height:55px}.win-submit:hover{background:#937647}.win-submit:disabled{opacity:.5;cursor:wait}.win-status{min-height:26px;color:#a13828;font-size:13px}.win-success{color:#225d40}.win-alert{border-left:3px solid #b89e72;padding:18px;background:#f7f3ec;line-height:1.7}.win-hidden{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;left:-10000px!important}
+.win-note{font-size:12px!important;color:#7a746a!important}.win-terms{padding:85px 0 110px;background:#eeece6}.win-terms .shell{max-width:1040px}.win-terms p:not(.win-kicker){font-size:13px;line-height:1.85;color:#56534b;margin-bottom:15px}.win-terms h2{margin-bottom:39px}
+@media(max-width:860px){.win-columns{grid-template-columns:1fr;gap:45px}.win-main{padding:65px 0}.win-panel{padding:28px}.win-hero{min-height:530px}.win-ticker{line-height:2.4}.win-terms{padding:65px 0}}
+@media(max-width:550px){.win-hero h1{font-size:clamp(67px,15vw,90px)}.win-two{grid-template-columns:1fr;gap:20px}.win-hero .shell{padding-top:70px}.win-panel{padding:25px 20px}.win-ticker span{margin:0 6px}.win-hero:before{display:none}}
+</style>
