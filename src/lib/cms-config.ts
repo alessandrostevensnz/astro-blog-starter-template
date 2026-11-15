@@ -308,6 +308,53 @@ const pageFiles = entries.map(([name,label,path]) => {
   return { name,label,file:'content/pages/'+name+'.json',preview_path:path,
     description:name === 'contact' ? 'Edit Contact content. The footer is now a single setting under Website-wide settings.' : 'Edit page content and photos. The shared footer is under Website-wide settings.',fields };
 });
+// Giveaway copy is intentionally separate from the technical competition dates,
+// security keys and entry switch. These fields are safe plain text: Astro escapes them.
+const giveawayFields: Field[] = [
+  field('heroLead', '01 - Main banner description', 'text', {
+    hint: 'This is the text under WIN A DAY ON US on /win. Make sure any promise here matches the full prize conditions.',
+  }),
+  field('prizeIntro', '02 - Prize introduction', 'text', {
+    hint: 'First explanation of the giveaway beside the signup form.',
+  }),
+  field('prizeCardHeadline', '03 - Large prize headline', 'string', {
+    hint: 'The large text in the prize card, for example 1 DAY.',
+  }),
+  field('prizeCardFootnote', '04 - Prize card detail', 'text', {
+    hint: 'Small print below the large prize headline. Return adds a line break.',
+  }),
+  field('prizeNote', '05 - Important note below prize card', 'text', {
+    hint: 'Keep this consistent with the detailed prize and work restriction conditions.',
+  }),
+  field('promoter', '06 - Promoter information', 'text'),
+  field('eligibility', '07 - Who may enter', 'text', {
+    hint: 'Eligibility is an important competition term. Once entries are open, avoid changing it to disadvantage existing entrants.',
+  }),
+  field('howToEnter', '08 - How to enter', 'text'),
+  field('prizeTerms', '09 - Full prize conditions', 'text', {
+    hint: 'What the winner receives, the eight-hour labour cap, excluded costs and scope. Review material changes carefully after launch.',
+  }),
+  field('workRestrictions', '10 - Work exclusions and safety', 'text'),
+  field('winnerContact', '11 - Winner selection and notification', 'text', {
+    hint: 'Random draw, contact timeframe, response period and what happens if the selected entrant cannot accept.',
+  }),
+  field('redemption', '12 - Redeeming the prize', 'text', {
+    hint: 'Work scheduling and prize completion date.',
+  }),
+  field('privacy', '13 - How entries and personal details are used', 'text', {
+    hint: 'Keep this notice accurate for the information collected and how it is stored.',
+  }),
+  field('socialMedia', '14 - Facebook / Instagram promotion disclaimer', 'text'),
+];
+const giveawayFile = {
+  name: 'win',
+  label: 'Win a Day - prize and conditions',
+  file: 'content/pages/win.json',
+  preview_path: '/win/',
+  description: 'Edit every prize description and the written giveaway terms here. All text is escaped and retains paragraph breaks. Publishing creates a tracked GitHub change and updates the live website on deployment. BEFORE entries open, you may refine these terms. Once entrants have joined, do not reduce the prize or materially change the terms without appropriate review.',
+  fields: giveawayFields,
+};
+
 const overrides = Object.entries(styled).flatMap(([page,keys])=>keys.map(key=>field(page+'__'+key,page+' - '+key,'object',{
   collapsed:true,required:false,fields:[field('size','Size (%)','number',{required:false,value_type:'int',min:60,max:180}),field('color','Colour','color',{required:false,allowInput:true})],
 })));
@@ -315,7 +362,7 @@ export const cmsConfig = {
   backend: { name:'github',repo:'alessandrostevensnz/astro-blog-starter-template',branch:'main',base_url:'https://andro.co.nz',auth_endpoint:'api/auth' },
   media_folder:'public/images',public_folder:'/images',
   collections:[
-    {name:'pages',label:'Pages - photos and text',label_singular:'Page',delete:false,files:pageFiles},
+    {name:'pages',label:'Pages - photos and text',label_singular:'Page',delete:false,files:[...pageFiles, giveawayFile]},
     {name:'settings',label:'Website-wide settings',delete:false,editor:{preview:false},files:[{
       name:'appearance',label:'Fonts and colours',file:'content/site-settings.json',fields:[field('typography','Website-wide fonts and colours','object',{
         collapsed:false,fields:[field('global','Default text appearance','object',{fields:[
