@@ -32,7 +32,9 @@ export function winState(env: Record<string, any>, at = Date.now()): WinState {
   const onLaunch = openAt === 'launch';
   const open = onLaunch ? Number.NEGATIVE_INFINITY : Date.parse(openAt);
   const close = Date.parse(closeAt), draw = Date.parse(drawAt);
-  const ready = (onLaunch || dateWithZone.test(openAt)) &&
+  // Fail closed until the promotion has been explicitly approved and enabled.
+  const ready = env.WIN_ENTRIES_ENABLED === 'true' &&
+    (onLaunch || dateWithZone.test(openAt)) &&
     [closeAt, drawAt].every(x => dateWithZone.test(x)) &&
     [close, draw].every(Number.isFinite) &&
     (onLaunch || (Number.isFinite(open) && open < close)) && close <= draw &&
