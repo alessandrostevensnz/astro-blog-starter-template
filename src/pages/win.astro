@@ -83,7 +83,7 @@ const isOpen = campaign.phase === 'open';
     <p><strong>Redeeming the prize:</strong> <span data-cms-text>{winCopy.redemption}</span></p>
     <p><strong>Privacy:</strong> <span data-cms-text>{winCopy.privacy}</span> <a href="/contact/">Contact ANDRO</a>.</p>
     <p><strong>Social media:</strong> <span data-cms-text>{winCopy.socialMedia}</span></p>
-    <p class="win-note"><strong>Launch review required:</strong> These proposed rules must be reviewed and approved by ANDRO before entries open. The promotion remains disabled in the production configuration until approval and final checks.</p>
+    {campaign.phase === 'setup' && <p class="win-note"><strong>Launch review required:</strong> These proposed rules must be reviewed and approved by ANDRO before entries open. The promotion remains disabled until the final launch checks.</p>}
   </div>
 </section>
 </SiteLayout>
