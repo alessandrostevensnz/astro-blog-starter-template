@@ -311,6 +311,15 @@ const pageFiles = entries.map(([name,label,path]) => {
 // Giveaway copy is intentionally separate from the technical competition dates,
 // security keys and entry switch. These fields are safe plain text: Astro escapes them.
 const giveawayFields: Field[] = [
+  field('photos', 'GIVEAWAY PHOTOS - change each image here', 'object', {
+    collapsed: false,
+    hint: 'All three photographs on /win appear here, in page order. Replace any picture independently, including the large banner. Select an image, Publish, then refresh the page preview after deployment.',
+    fields: [
+      photo('hero', '01 - Main banner behind WIN A DAY', 'Large photograph behind the dark landing-page headline.'),
+      photo('work', '02 - Property maintenance photograph', 'Image alongside the prize explanation and before the 1 DAY card.'),
+      photo('closing', '03 - Wide photograph above conditions', 'Full-width image between the signup section and the promotion conditions.'),
+    ],
+  }),
   field('heroLead', '01 - Main banner description', 'text', {
     hint: 'This is the text under WIN A DAY ON US on /win. Make sure any promise here matches the full prize conditions.',
   }),
@@ -351,7 +360,7 @@ const giveawayFile = {
   label: 'Win a Day - prize and conditions',
   file: 'content/pages/win.json',
   preview_path: '/win/',
-  description: 'Edit every prize description and the written giveaway terms here. All text is escaped and retains paragraph breaks. Publishing creates a tracked GitHub change and updates the live website on deployment. BEFORE entries open, you may refine these terms. Once entries open, do not change the promotion conditions for the running giveaway; prepare and approve revised conditions for a future promotion instead.',
+  description: 'Edit all three giveaway photographs plus every prize description and written promotion term from this single page. All text is escaped and retains paragraph breaks. Publishing creates a tracked GitHub change and updates the live website on deployment. BEFORE entries open, you may refine these terms. Once entries open, do not change the promotion conditions for the running giveaway; prepare and approve revised conditions for a future promotion instead.',
   fields: giveawayFields,
 };
 

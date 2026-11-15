@@ -68,7 +68,7 @@ test('Projects styles and live text preview work without impacting other pages',
   for (const name of ['heroEyebrow','heroHeading','heroDescription','galleryTip','galleryNote','ctaHeading','ctaButtonText']) {
     assert(preview.includes("'"+name+"'"), 'Live preview key missing: '+name);
   }
-  assert(html.includes('preview.js?v=projects-feature-editor-first-v7'));
+  assert(html.includes('preview.js?v=win-photos-preview-v2'));
   assert(html.includes('/admin/oauth-popup.js?v=6'), 'Do not disturb working v6 OAuth login');
   assert(siteLayout.includes('projects: pageContent.projects'), 'Projects inline font styles not passed through');
   const css = typographyCss(undefined, { projects: {
@@ -198,7 +198,7 @@ test('New Projects featured story editing fields appear first and together in /a
   for (const label of ['featured story — main heading','featured story — main paragraph','featured story — second paragraph','featured story — small label above heading'])
     assert(preview.includes(label), 'Live editor preview must recognize '+label);
   const admin = read('../public/admin/index.html');
-  assert(admin.includes('/admin/config.yml?v=andro-win-editor-v1'), 'Update cached editor config for new layout');
+  assert(admin.includes('/admin/config.yml?v=win-photos-preview-v2'), 'Update cached editor config for new layout');
   const data = JSON.parse(read('../content/pages/projects.json'));
   for (const name of ['featureHeading','featureText','featureTextSecondary','featureEyebrow'])
     assert(typeof data[name] === 'string' && data[name].length > 0, 'Feature copy must remain saved');

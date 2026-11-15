@@ -8,7 +8,8 @@
     maintenance: { path: '/property-maintenance/', label: 'Asset maintenance' },
     projects: { path: '/projects/', label: 'Projects' },
     about: { path: '/about/', label: 'About' },
-    contact: { path: '/contact/', label: 'Contact' }
+    contact: { path: '/contact/', label: 'Contact' },
+    win: { path: '/win/', label: 'Win a Day' }
   };
   var textKeys = {
     'main headline': 'title', 'hero description': 'subtitle',
@@ -75,6 +76,24 @@
     '14 - send button wording': 'submitLabel',
     '15 - note underneath the form': 'formNotice'
   };
+  // The giveaway has its own unambiguous field labels. Route them to the same
+  // real-page preview mechanism used by the existing ANDRO site pages.
+  var winTextKeys = {
+    '01 - main banner description': 'heroLead',
+    '02 - prize introduction': 'prizeIntro',
+    '03 - large prize headline': 'prizeCardHeadline',
+    '04 - prize card detail': 'prizeCardFootnote',
+    '05 - important note below prize card': 'prizeNote',
+    '06 - promoter information': 'promoter',
+    '07 - who may enter': 'eligibility',
+    '08 - how to enter': 'howToEnter',
+    '09 - full prize conditions': 'prizeTerms',
+    '10 - work exclusions and safety': 'workRestrictions',
+    '11 - winner selection and notification': 'winnerContact',
+    '12 - redeeming the prize': 'redemption',
+    '13 - how entries and personal details are used': 'privacy',
+    '14 - facebook / instagram promotion disclaimer': 'socialMedia'
+  };
   function currentPage() {
     var match = window.location.hash.match(/^#\/?collections\/pages\/entries\/([^/?]+)/);
     return match && Object.prototype.hasOwnProperty.call(pages, match[1]) ? match[1] : '';
@@ -131,6 +150,8 @@
         ? 'Commercial text editing is at the very TOP of the left form. Open COMMERCIAL SERVICES to change the text beside photos or add rows. Publish, then refresh the preview.'
         : page === 'projects'
         ? 'The NEW FEATURED STORY controls, including its heading, paragraphs and photograph, now appear FIRST in the left-hand form. Publish and refresh to update the feature image.'
+        : page === 'win'
+        ? 'This is the actual /win page. Change all three photos at the TOP of the left form. Text updates while typing; after publishing photos, refresh this preview.'
         : 'Press Return for a new line, or Return twice for a paragraph gap. Edited page text keeps the same spacing here and on the published site. Publish and refresh to update photos and gallery entries.';
       frame.title = pages[page].label + ' page preview';
       reloadPreview();
@@ -162,9 +183,10 @@
     var page = currentPage();
     if (!frame || !frame.contentWindow || !page) return;
     var fields = {};
-    Object.keys(textKeys).forEach(function (name) {
+    var activeKeys = page === 'win' ? winTextKeys : textKeys;
+    Object.keys(activeKeys).forEach(function (name) {
       var value = fieldValue(name);
-      if (value !== null) fields[page + '.' + textKeys[name]] = value;
+      if (value !== null) fields[page + '.' + activeKeys[name]] = value;
     });
     frame.contentWindow.postMessage({ type: 'andro-cms-preview', fields: fields }, window.location.origin);
   }
