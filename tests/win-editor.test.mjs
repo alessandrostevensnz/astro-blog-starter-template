@@ -33,11 +33,14 @@ test('giveaway switch stays disabled while terms are under review', () => {
   assert.match(page, /Launch review required/);
 });
 
-test('all three page photos are separately editable and appear in the actual giveaway page', () => {
+test('remaining giveaway photos are editable and the removed middle image stays absent', () => {
   const photoField = giveaway.fields.find(f => f.name === 'photos');
   assert.ok(photoField, 'Photo section must be visible in Decap');
   assert.equal(giveaway.fields[0].name, 'photos', 'Photo controls must be at the top of the editor');
-  assert.deepEqual(photoField.fields.map(f => f.name), ['hero', 'work', 'closing']);
+  assert.deepEqual(photoField.fields.map(f => f.name), ['hero', 'closing']);
+  assert.equal(contents.photos.work, undefined, 'Removed photo must not remain in the CMS data');
+  assert.ok(!page.includes('win-work-photo'), 'Removed photo markup and CSS must not remain');
+  assert.ok(!page.includes('winCopy.photos.work'), 'Removed photo must not be rendered');
   for (const imageField of photoField.fields) {
     const key = imageField.name;
     assert.equal(imageField.widget, 'object');
@@ -58,7 +61,7 @@ test('giveaway live preview displays the real /win layout and updates editable c
   assert.ok(preview.includes("win: { path: '/win/', label: 'Win a Day' }"), 'Giveaway route must open the site iframe');
   assert.ok(preview.includes("page === 'win' ? winTextKeys : textKeys"), 'Giveaway fields must be read from actual editor');
   assert.ok(admin.includes('/admin/preview.js?v=win-photos-preview-v2'), 'Admin must bypass stale preview script');
-  assert.ok(admin.includes('/admin/config.yml?v=win-photos-preview-v2'), 'Admin must bypass cached field schema');
+  assert.ok(admin.includes('/admin/config.yml?v=win-photo-removal-v3'), 'Admin must bypass cached field schema');
   assert.ok(layout.includes("event.data.type !== 'andro-cms-preview'"), 'Iframe must listen for editable text changes');
   for(const field of giveaway.fields.filter(f => f.name !== 'photos')) {
     assert.ok(preview.includes("'" + field.name + "'"), 'Preview mapping missing: ' + field.name);

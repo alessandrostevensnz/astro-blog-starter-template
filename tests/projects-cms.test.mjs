@@ -198,7 +198,7 @@ test('New Projects featured story editing fields appear first and together in /a
   for (const label of ['featured story — main heading','featured story — main paragraph','featured story — second paragraph','featured story — small label above heading'])
     assert(preview.includes(label), 'Live editor preview must recognize '+label);
   const admin = read('../public/admin/index.html');
-  assert(admin.includes('/admin/config.yml?v=win-photos-preview-v2'), 'Update cached editor config for new layout');
+  assert(admin.includes('/admin/config.yml?v=win-photo-removal-v3'), 'Update cached editor config for new layout');
   const data = JSON.parse(read('../content/pages/projects.json'));
   for (const name of ['featureHeading','featureText','featureTextSecondary','featureEyebrow'])
     assert(typeof data[name] === 'string' && data[name].length > 0, 'Feature copy must remain saved');
