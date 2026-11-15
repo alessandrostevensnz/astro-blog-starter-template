@@ -43,6 +43,16 @@ test('competition respects New Zealand offset and UTC date bounds', () => {
   assert.equal(winState(env, Date.parse(env.WIN_OPEN_AT)).phase, 'open');
   assert.equal(winState(env, Date.parse(env.WIN_CLOSE_AT)).phase, 'closed');
 });
+test('launch-based opening uses deployment time rather than a fictitious scheduled opening', () => {
+  const launch = { ...env, WIN_OPEN_AT: 'launch' };
+  assert.equal(winState(launch, Date.parse('2026-11-15T19:00:00+13:00')).phase, 'open');
+  assert.equal(winState(launch, Date.parse('2026-12-15T23:58:00+13:00')).phase, 'open');
+  assert.equal(winState(launch, Date.parse('2026-12-15T23:59:00+13:00')).phase, 'closed');
+  assert.equal(winState(launch, Date.parse('2026-12-16T12:00:00+13:00')).phase, 'closed');
+  assert.equal(winState(launch).openAt, undefined);
+  assert.equal(winState({ ...launch, WIN_OPEN_AT: 'auto' }).phase, 'setup');
+});
+
 test('valid input normalizes email and does not assume marketing permission', () => {
   const result = validateWinEntry(entry());
   assert.equal(result.error, undefined);
@@ -86,6 +96,9 @@ test('Cloudflare config contains the intended ANDRO D1 binding', () => {
   assert.equal(win.database_name, 'andro-win');
   assert.match(win.database_id, /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i);
   assert.equal(config.vars?.WIN_TURNSTILE_SITE_KEY, '0x4AAAAAAGBnK_eVlihsb2dT');
+  assert.equal(config.vars?.WIN_OPEN_AT, 'launch');
+  assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-15T23:59:00+13:00');
+  assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-16T12:00:00+13:00');
   assert.ok(!Object.keys(config.vars ?? {}).some(key => /turnstile_secret|report_password/i.test(key)), 'private secrets must not be committed to wrangler vars');
   assert.ok(!Object.keys(config).some(key => /turnstile_secret|report_password/i.test(key)), 'secrets must not be committed to wrangler.json');
 });
