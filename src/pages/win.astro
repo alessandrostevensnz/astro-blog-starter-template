@@ -2,6 +2,7 @@
 export const prerender = false;
 import SiteLayout from '../components/SiteLayout.astro';
 import { winState, nzDate } from '../lib/win';
+import winCopy from '../../content/pages/win.json';
 const env = (Astro.locals as any).runtime?.env ?? {};
 const campaign = winState(env);
 const isOpen = campaign.phase === 'open';
@@ -12,7 +13,7 @@ const isOpen = campaign.phase === 'open';
     <p class="win-kicker">ANDRO CONSTRUCTION + PROJECTS / AUCKLAND</p>
     <p class="win-overline">A little help can make a big difference.</p>
     <h1>WIN A DAY<br /><em>ON US.</em></h1>
-    <p class="win-lead">A day's worth of labour to help tackle the jobs around your property. From general maintenance and handyman work to eligible minor building repairs, tell us what you need a hand with.</p>
+    <p class="win-lead" data-cms-text>{winCopy.heroLead}</p>
     <a class="win-hero-cta" href="#enter">Enter the giveaway</a>
     <div class="win-ticker">PROPERTY MAINTENANCE <span>·</span> HANDYMAN SERVICES <span>·</span> MINOR BUILDING WORK</div>
   </div>
@@ -23,9 +24,9 @@ const isOpen = campaign.phase === 'open';
       <p class="win-kicker">01 / THE OPPORTUNITY</p>
       <h2>THE JOBS THAT<br />NEVER QUITE<br /><i>GET DONE.</i></h2>
       <p>That small repair you've been putting off. A list of maintenance jobs that keeps getting longer. An improvement that would make your property feel better.</p>
-      <p>We're giving one eligible Auckland entrant up to <strong>eight hours of one worker's labour</strong> towards agreed property maintenance, handyman or minor building work.</p>
-      <div class="win-prize"><span>THE PRIZE</span><strong>1 DAY</strong><small>Up to 8 hours of one worker's labour.<br />Materials and additional costs excluded.</small></div>
-      <p class="win-note">Work must be within ANDRO's capabilities, safe, lawful and agreed after a site assessment. Restricted building work, specialist trades, hazardous work, permits and materials are not included.</p>
+      <p data-cms-text>{winCopy.prizeIntro}</p>
+      <div class="win-prize"><span>THE PRIZE</span><strong>{winCopy.prizeCardHeadline}</strong><small data-cms-text>{winCopy.prizeCardFootnote}</small></div>
+      <p class="win-note" data-cms-text>{winCopy.prizeNote}</p>
     </aside>
     <div class="win-panel">
       <p class="win-kicker">02 / YOUR ENTRY</p>
@@ -72,16 +73,16 @@ const isOpen = campaign.phase === 'open';
     <p class="win-kicker">03 / THE IMPORTANT DETAILS</p>
     <h2>Promotion terms<br />& privacy.</h2>
 
-    <p><strong>Promoter:</strong> Andro Construction Limited, trading as ANDRO Construction + Projects, Auckland, New Zealand. Contact the promoter using the <a href="/contact/">ANDRO contact page</a>.</p>
-    <p><strong>Who may enter:</strong> A person aged 18 or older with an eligible property in ANDRO's usual Auckland service area. The entrant must own the property, manage it with authority, or have the owner's permission to arrange the work. The winner must provide owner approval before any work begins. ANDRO employees and their immediate families are excluded. One entry per person; duplicate, automated or fraudulent entries may be disqualified.</p>
-    <p><strong>How to enter:</strong> Complete the free online entry form with accurate contact details, Auckland suburb, property relationship, type of work and a brief description of the jobs. No purchase, booking, social-media follow or marketing subscription is required. Descriptions help us understand the work; the winning entry is chosen by chance, not by the description.</p>
+    <p><strong>Promoter:</strong> <span data-cms-text>{winCopy.promoter}</span> <a href="/contact/">Contact ANDRO</a>.</p>
+    <p><strong>Who may enter:</strong> <span data-cms-text>{winCopy.eligibility}</span></p>
+    <p><strong>How to enter:</strong> <span data-cms-text>{winCopy.howToEnter}</span></p>
     {campaign.closeAt && <p><strong>Entry period:</strong> Entries begin when the approved giveaway opens on this website and close {nzDate(campaign.closeAt)} (Auckland time). A random draw will take place on {nzDate(campaign.drawAt)} or as soon as reasonably practicable thereafter. Entries received after the closing time are not included.</p>}
-    <p><strong>The prize:</strong> One winner will receive up to eight hours of on-site labour by one ANDRO worker, on one agreed day at one approved property within the Auckland service area, for suitable property maintenance, handyman jobs or minor non-restricted building repairs. This is a labour-only prize. Materials and consumables, specialist trades or subcontractors, equipment hire, consent and permit costs, rubbish removal and any work beyond the eight-hour allowance are not included. The winner is under no obligation to purchase extra services or materials. Any additional cost must be agreed separately and in advance. The prize cannot be redeemed for cash or transferred to another property or person.</p>
-    <p><strong>Work restrictions:</strong> ANDRO will review the proposed work with the winner before confirming a booking. All work must be safe, practical, lawful and within ANDRO's capabilities. Restricted building work, structural alterations, licensed electrical or plumbing work, specialist certification, asbestos or other hazardous materials, work requiring building consent or unsafe access are excluded from the prize. If the winner's original request is unsuitable, they may propose alternative eligible tasks within the same labour allowance. ANDRO will not carry out prohibited or unsafe work.</p>
-    <p><strong>Choosing and contacting the winner:</strong> One entry will be selected at random from the eligible submissions using the administration system after entries close. ANDRO will attempt to contact the selected entrant by email or phone within three business days of the draw. The person selected must respond within seven calendar days after the first contact attempt and confirm eligibility and property-owner authorisation. If they cannot be contacted or are ineligible, ANDRO may conduct a documented replacement random draw from the remaining eligible entries. A selected entrant is not confirmed as the winner until eligibility and practical work scope have been verified.</p>
-    <p><strong>Redeeming the prize:</strong> The winner and ANDRO will agree a practical work date, subject to availability, weather, site access and safety conditions. The prize should be booked and completed by 31 March 2027 where reasonably practicable; a mutually agreed extension may be needed for weather or other circumstances beyond either party's reasonable control. Work will be discussed and agreed before it starts. Normal applicable consumer rights are not excluded.</p>
-    <p><strong>Privacy:</strong> ANDRO collects the name, contact details, Auckland suburb, property relationship, work description and consent choices provided with entries to run the giveaway, screen eligibility, contact the selected entrant and arrange the work. Required details are needed to process an entry. Entry information is stored in a Cloudflare-hosted database and may be processed outside New Zealand by our service provider. Only authorised ANDRO personnel may access it for these purposes. We do not sell entry information or publish personal details without appropriate permission. We retain information only as long as needed for the competition and any legal obligations. Marketing emails are separate and sent only where the optional marketing box is selected, with an unsubscribe option. You can request access to or correction of your details, or ask about deletion, using the <a href="/contact/">ANDRO contact page</a>.</p>
-    <p><strong>Social media:</strong> This promotion is not sponsored, endorsed, administered by or associated with Facebook or Instagram.</p>
+    <p><strong>The prize:</strong> <span data-cms-text>{winCopy.prizeTerms}</span></p>
+    <p><strong>Work restrictions:</strong> <span data-cms-text>{winCopy.workRestrictions}</span></p>
+    <p><strong>Choosing and contacting the winner:</strong> <span data-cms-text>{winCopy.winnerContact}</span></p>
+    <p><strong>Redeeming the prize:</strong> <span data-cms-text>{winCopy.redemption}</span></p>
+    <p><strong>Privacy:</strong> <span data-cms-text>{winCopy.privacy}</span> <a href="/contact/">Contact ANDRO</a>.</p>
+    <p><strong>Social media:</strong> <span data-cms-text>{winCopy.socialMedia}</span></p>
     <p class="win-note"><strong>Launch review required:</strong> These proposed rules must be reviewed and approved by ANDRO before entries open. The promotion remains disabled in the production configuration until approval and final checks.</p>
   </div>
 </section>
