@@ -61,7 +61,7 @@ test('giveaway live preview displays the real /win layout and updates editable c
   assert.ok(preview.includes("win: { path: '/win/', label: 'Win a Day' }"), 'Giveaway route must open the site iframe');
   assert.ok(preview.includes("page === 'win' ? winTextKeys : textKeys"), 'Giveaway fields must be read from actual editor');
   assert.ok(admin.includes('/admin/preview.js?v=win-photos-preview-v2'), 'Admin must bypass stale preview script');
-  assert.ok(admin.includes('/admin/config.yml?v=win-photos-preview-v2'), 'Admin must bypass cached field schema');
+  assert.ok(admin.includes('/admin/config.yml?v=win-photo-removal-v3'), 'Admin must bypass cached field schema');
   assert.ok(layout.includes("event.data.type !== 'andro-cms-preview'"), 'Iframe must listen for editable text changes');
   for(const field of giveaway.fields.filter(f => f.name !== 'photos')) {
     assert.ok(preview.includes("'" + field.name + "'"), 'Preview mapping missing: ' + field.name);
