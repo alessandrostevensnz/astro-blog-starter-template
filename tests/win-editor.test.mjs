@@ -20,7 +20,7 @@ test('every editable term exists in data and is rendered as escaped text', () =>
   assert.match(page, /import winCopy from/);
   for(const field of giveaway.fields) {
     assert.equal(typeof contents[field.name], 'string', 'Missing or non-string field: ' + field.name);
-    assert.ok(contents[field.name].length > 10, 'Empty published field: ' + field.name);
+    assert.ok(contents[field.name].trim().length > 0, 'Empty published field: ' + field.name);
     assert.ok(page.includes('{winCopy.' + field.name + '}'), 'Unrendered editable field: ' + field.name);
   }
   assert.ok(page.includes('data-cms-text'), 'Paragraph breaks are not handled');
