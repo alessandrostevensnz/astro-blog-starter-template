@@ -57,5 +57,8 @@
 				"period": 60
 			}
 		}
-	]
+	],
+	"vars": {
+		"WIN_TURNSTILE_SITE_KEY": "0x4AAAAAAGBnK_eVlihsb2dT"
+	}
 }
