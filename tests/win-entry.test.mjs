@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { winState, validateWinEntry, sameOriginPost, randomOffset } from '../src/lib/win.ts';
 
 const env = {
+  WIN_ENTRIES_ENABLED: 'true',
   WIN_OPEN_AT: '2026-11-20T09:00:00+13:00',
   WIN_CLOSE_AT: '2026-12-15T23:59:00+13:00',
   WIN_DRAW_AT: '2026-12-16T12:00:00+13:00',
@@ -33,6 +34,8 @@ function entry(overrides={}) {
 
 test('competition remains closed when unconfigured', () => {
   assert.equal(winState({}, Date.now()).phase, 'setup');
+  assert.equal(winState({ ...env, WIN_ENTRIES_ENABLED: 'false' }).phase, 'setup');
+  assert.equal(winState({ ...env, WIN_ENTRIES_ENABLED: undefined }).phase, 'setup');
   assert.equal(winState({ ...env, WIN_TURNSTILE_SECRET_KEY: '' }).phase, 'setup');
   assert.equal(winState({ ...env, WIN_DB: undefined }).phase, 'setup');
   assert.equal(winState({ ...env, WIN_OPEN_AT:'2026-11-20T09:00:00' }).phase, 'setup');
@@ -96,6 +99,7 @@ test('Cloudflare config contains the intended ANDRO D1 binding', () => {
   assert.equal(win.database_name, 'andro-win');
   assert.match(win.database_id, /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i);
   assert.equal(config.vars?.WIN_TURNSTILE_SITE_KEY, '0x4AAAAAAGBnK_eVlihsb2dT');
+  assert.equal(config.vars?.WIN_ENTRIES_ENABLED, 'false', 'giveaway must remain disabled before approval');
   assert.equal(config.vars?.WIN_OPEN_AT, 'launch');
   assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-15T23:59:00+13:00');
   assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-16T12:00:00+13:00');
