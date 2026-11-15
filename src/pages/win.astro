@@ -5,7 +5,6 @@ import { winState, nzDate } from '../lib/win';
 const env = (Astro.locals as any).runtime?.env ?? {};
 const campaign = winState(env);
 const isOpen = campaign.phase === 'open';
-const hero = '/images/'; // Existing global page layout and branding are intentionally reused.
 ---
 <SiteLayout title="Win a Day of Property Maintenance | ANDRO Construction + Projects" description="Enter ANDRO's free Auckland property maintenance and handyman labour giveaway. See eligibility and promotion terms.">
 <section class="win-hero">
