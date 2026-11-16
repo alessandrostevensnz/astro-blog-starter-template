@@ -1,15 +1,16 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
 import { site, siteContent } from '../data/site';
+import { responsivePhoto } from '../lib/optimized-images';
 const photos = siteContent.home.photos;
 const homeHeroVideo = siteContent.home.heroVideo?.trim() || '';
 ---
 <SiteLayout title="ANDRO Construction + Projects | Construction and Property Maintenance Auckland" description={siteContent.home.introText}>
   <section class="hero" aria-labelledby="hero-title">
-    <img class:list={['hero-image', { 'home-hero-photo-motion': !homeHeroVideo }]} src={photos.hero.src} alt={photos.hero.alt} fetchpriority="high" />
+    <img class:list={['hero-image', { 'home-hero-photo-motion': !homeHeroVideo }]} {...responsivePhoto(photos.hero.src, '100vw', 'hero')} alt={photos.hero.alt} fetchpriority="high" />
     {homeHeroVideo && (
       <video class="home-hero-video" data-background-video autoplay muted loop playsinline webkit-playsinline preload="auto"
-        poster={photos.hero.src} aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback>
+        poster={responsivePhoto(photos.hero.src, '100vw', 'hero').src} aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback>
         <source src={homeHeroVideo} type="video/mp4" />
       </video>
     )}
@@ -35,13 +36,13 @@ const homeHeroVideo = siteContent.home.heroVideo?.trim() || '';
   <section class="service-strip section-pad" aria-labelledby="services-title">
     <div class="section-heading"><div><p class="eyebrow">WHAT WE DO</p><h2 id="services-title"><span data-style-key="home.servicesHeading">{siteContent.home.servicesHeading}</span></h2></div><a class="text-link" href="/construction/">Explore construction </a></div>
     <div class="editorial-grid">
-      <a class="editorial-card" href="/construction/"><div class="editorial-image"><img src={photos.constructionCard.src} alt={photos.constructionCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3 data-style-key="home.constructionCardTitle">{siteContent.home.constructionCardTitle}</h3><p data-style-key="home.constructionCardDescription">{siteContent.home.constructionCardDescription}</p></div></div></a>
-      <a class="editorial-card" href="/property-maintenance/"><div class="editorial-image"><img src={photos.maintenanceCard.src} alt={photos.maintenanceCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3 data-style-key="home.maintenanceCardTitle">{siteContent.home.maintenanceCardTitle}</h3><p data-style-key="home.maintenanceCardDescription">{siteContent.home.maintenanceCardDescription}</p></div></div></a>
+      <a class="editorial-card" href="/construction/"><div class="editorial-image"><img {...responsivePhoto(photos.constructionCard.src, '(max-width: 680px) 100vw, 45vw', 'large')} alt={photos.constructionCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3 data-style-key="home.constructionCardTitle">{siteContent.home.constructionCardTitle}</h3><p data-style-key="home.constructionCardDescription">{siteContent.home.constructionCardDescription}</p></div></div></a>
+      <a class="editorial-card" href="/property-maintenance/"><div class="editorial-image"><img {...responsivePhoto(photos.maintenanceCard.src, '(max-width: 680px) 100vw, 45vw', 'large')} alt={photos.maintenanceCard.alt} loading="lazy" /></div><div class="card-meta"><div><h3 data-style-key="home.maintenanceCardTitle">{siteContent.home.maintenanceCardTitle}</h3><p data-style-key="home.maintenanceCardDescription">{siteContent.home.maintenanceCardDescription}</p></div></div></a>
     </div>
   </section>
 
   <section class="image-band" aria-label="ANDRO craftsmanship and approach">
-    <img src={photos.feature.src} alt={photos.feature.alt} loading="lazy" />
+    <img {...responsivePhoto(photos.feature.src, '100vw', 'hero')} alt={photos.feature.alt} loading="lazy" />
     <div class="image-band-copy"><p class="eyebrow inverse">THE ANDRO APPROACH</p><h2><span data-style-key="home.featureHeading">{siteContent.home.featureHeading}</span></h2><a class="text-link" href="/about/">How we work </a></div>
   </section>
 
