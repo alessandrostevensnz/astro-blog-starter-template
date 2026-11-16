@@ -176,7 +176,7 @@ test('New Projects feature section displays after showcase with separately edita
   assert(photoField.fields.some(f=>f.name==='src' && f.widget==='image' && f.required===false));
   assert(photoField.fields.some(f=>f.name==='alt' && f.required===false));
   assert(data.featurePhoto.src && data.featurePhoto.alt);
-  assert(html.includes('featuredPhoto.src') && html.includes('optimizedFeature?.large'));
+  assert(html.includes('responsivePhoto(featuredPhoto.src') && html.includes("'process'"), 'Featured project photo must use a high-quality responsive variant');
   assert(labels.indexOf('featurePhoto') < labels.indexOf('projects'),
     'Picture field should appear before the lengthy photo gallery');
   assert(html.includes('white-space: pre-line'), 'New paragraphs must preserve manual line breaks');
