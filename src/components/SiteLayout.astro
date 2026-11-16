@@ -1,5 +1,6 @@
 ---
 import BaseHead from './BaseHead.astro';
+import { responsivePhoto } from '../lib/optimized-images';
 import { navigation, siteContent, pageContent, siteFooter } from '../data/site';
 import { typographyCss } from '../lib/typography';
 interface Props { title?: string; description?: string; }
@@ -27,7 +28,7 @@ const currentPath = Astro.url.pathname;
   <main><slot /></main>
   <footer class="site-footer">
     <div class="footer-credentials" aria-label="ANDRO Construction logo">
-      <img src={siteFooter.logo.src} alt={siteFooter.logo.alt} loading="lazy" />
+      <img {...responsivePhoto(siteFooter.logo.src, '130px', 'small')} alt={siteFooter.logo.alt} loading="lazy" />
     </div>
     <p class="footer-company">{siteFooter.companyName}</p>
     <a class="footer-domain" href={siteFooter.domainUrl}>{siteFooter.domainText}</a>

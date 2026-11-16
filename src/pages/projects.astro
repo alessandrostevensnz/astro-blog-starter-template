@@ -1,24 +1,19 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
 import { siteContent, pageContent } from '../data/site';
-import optimizedGallery from '../data/project-gallery-optimized.generated.json';
-const galleryImages = optimizedGallery as Record<string, { small: string; large: string; hero?: string }>;
+import { responsivePhoto } from '../lib/optimized-images';
 const projectCopy = pageContent.projects;
 const projectsHero = projectCopy.photos.hero;
-const optimizedHero = galleryImages[projectsHero.src];
 const projectsHeroVideo = pageContent.projects.heroVideo?.trim() || '';
 // Use the first frame of the actual video while it buffers (same visual as Asset Maintenance).
-const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || (optimizedHero?.hero ?? projectsHero.src);
+const projectsHeroPoster = pageContent.projects.heroVideoPoster?.trim() || projectsHero.src;
 const featuredPhoto = projectCopy.featurePhoto;
-const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] : undefined;
 ---
 <SiteLayout title={projectCopy.metaTitle} description={projectCopy.metaDescription}>
   <section class="page-hero projects-photo-hero" aria-labelledby="projects-hero-title">
     <img
       class:list={['projects-hero-image', { 'projects-hero-video-poster': !!projectsHeroVideo }]}
-      src={projectsHeroVideo ? projectsHeroPoster : (optimizedHero?.hero ?? projectsHero.src)}
-      srcset={!projectsHeroVideo && optimizedHero?.hero && optimizedHero?.large ? `${optimizedHero.large} 960w, ${optimizedHero.hero} 1800w` : undefined}
-      sizes="100vw"
+      {...responsivePhoto(projectsHeroVideo ? projectsHeroPoster : projectsHero.src, '100vw', 'hero')}
       alt={projectsHero.alt}
       fetchpriority="high"
       decoding="async"
@@ -32,7 +27,7 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
         playsinline
         webkit-playsinline
         preload="auto"
-        poster={projectsHeroPoster}
+        poster={responsivePhoto(projectsHeroPoster, '100vw', 'hero').src}
         aria-hidden="true"
         tabindex="-1"
         disablepictureinpicture
@@ -72,9 +67,7 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
       {siteContent.projects.map((entry) => (
         <figure class="andro-project-tile" data-project-tile>
           <img
-            src={galleryImages[entry.image]?.large ?? entry.image}
-            srcset={galleryImages[entry.image] ? `${galleryImages[entry.image].small} 480w, ${galleryImages[entry.image].large} 960w` : undefined}
-            sizes={galleryImages[entry.image] ? '(max-width: 760px) 44vw, 18vw' : undefined}
+            {...responsivePhoto(entry.image, '(max-width: 760px) 44vw, 18vw', 'large')}
             alt={entry.alt}
             loading="lazy"
             decoding="async"
@@ -96,9 +89,7 @@ const optimizedFeature = featuredPhoto?.src ? galleryImages[featuredPhoto.src] :
       {featuredPhoto?.src && (
         <figure class="andro-projects-feature-photo">
           <img
-            src={optimizedFeature?.large ?? featuredPhoto.src}
-            srcset={optimizedFeature ? `${optimizedFeature.small} 480w, ${optimizedFeature.large} 960w` : undefined}
-            sizes="(max-width: 800px) 92vw, 48vw"
+            {...responsivePhoto(featuredPhoto.src, '(max-width: 800px) 92vw, 48vw', 'process')}
             alt={featuredPhoto.alt || 'Photograph of work on an ANDRO project'}
             loading="lazy"
             decoding="async"
