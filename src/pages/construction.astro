@@ -1,21 +1,10 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
 import { siteContent } from '../data/site';
-import optimizedGallery from '../data/project-gallery-optimized.generated.json';
+import { responsivePhoto } from '../lib/optimized-images';
 
 const photos = siteContent.construction.photos;
 const constructionHeroVideo = siteContent.construction.heroVideo?.trim() || '';
-const galleryThumbs = optimizedGallery as Record<string, { small: string; large: string; hero?: string; process?: string }>;
-const heroOptimized = galleryThumbs[photos.hero.src];
-const residentialOptimized = galleryThumbs[photos.residential.src];
-const commercialOptimized = galleryThumbs[photos.commercial.src];
-const processLeftOptimized = galleryThumbs[photos.processLeft.src];
-const processRightOptimized = galleryThumbs[photos.processRight.src];
-const heroSrcSet = heroOptimized?.hero ? `${heroOptimized.small} 480w, ${heroOptimized.large} 960w, ${heroOptimized.hero} 1800w` : undefined;
-const residentialSrcSet = residentialOptimized?.hero ? `${residentialOptimized.small} 480w, ${residentialOptimized.large} 960w, ${residentialOptimized.hero} 1800w` : undefined;
-const commercialSrcSet = commercialOptimized?.hero ? `${commercialOptimized.small} 480w, ${commercialOptimized.large} 960w, ${commercialOptimized.hero} 1800w` : undefined;
-const processLeftSrcSet = processLeftOptimized?.process ? `${processLeftOptimized.small} 480w, ${processLeftOptimized.large} 960w, ${processLeftOptimized.process} 1440w` : undefined;
-const processRightSrcSet = processRightOptimized?.process ? `${processRightOptimized.small} 480w, ${processRightOptimized.large} 960w, ${processRightOptimized.process} 1440w` : undefined;
 // The Construction showcase uses the SAME ordered photos as /projects/ and /admin.
 const projects = siteContent.projects.filter((project) => typeof project.image === 'string' && project.image.length > 0);
 const slideshowDuration = Math.max(50, projects.length * 3.6);
@@ -36,10 +25,10 @@ const commercialHighlights = (siteContent.construction.commercialHighlights ?? [
 ---
 <SiteLayout title="Construction, Carpentry & Renovations Auckland | ANDRO" description={siteContent.construction.description}>
   <section class="construction-hero" aria-labelledby="construction-title">
-    <img class="construction-hero-image" src={heroOptimized?.hero ?? photos.hero.src} srcset={heroSrcSet} sizes="100vw" alt={photos.hero.alt} fetchpriority="high" />
+    <img class="construction-hero-image" {...responsivePhoto(photos.hero.src, '100vw', 'hero')} alt={photos.hero.alt} fetchpriority="high" />
     {constructionHeroVideo && (
       <video class="construction-hero-video" data-background-video autoplay muted loop playsinline webkit-playsinline preload="auto"
-        poster={heroOptimized?.hero ?? photos.hero.src} aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback>
+        poster={responsivePhoto(photos.hero.src, '100vw', 'hero').src} aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback>
         <source src={constructionHeroVideo} type="video/mp4" />
       </video>
     )}
@@ -54,7 +43,7 @@ const commercialHighlights = (siteContent.construction.commercialHighlights ?? [
   <section class="page-body section-pad"><div class="two-col"><div><p class="eyebrow">CONSTRUCTION + RENOVATIONS</p><h2><span data-style-key="construction.introHeading">{siteContent.construction.introHeading}</span></h2></div><div><p class="body-copy"><span data-style-key="construction.introText">{siteContent.construction.introText}</span></p><p class="body-copy">Preparation matters because details that are missed early can affect access, sequencing, material choices and the finished result. We aim to discuss those practicalities before work gets underway.</p><a class="text-link" href="/contact/">Discuss your project </a></div></div></section>
 
   <section class="construction-hero construction-section-hero construction-residential-hero" aria-labelledby="residential-construction-title">
-    <img class="construction-hero-image" src={residentialOptimized?.hero ?? photos.residential.src} srcset={residentialSrcSet} sizes="100vw" alt={photos.residential.alt} loading="lazy" decoding="async" />
+    <img class="construction-hero-image" {...responsivePhoto(photos.residential.src, '100vw', 'hero')} alt={photos.residential.alt} loading="lazy" decoding="async" />
     <div class="construction-hero-shade" aria-hidden="true"></div>
     <div class="construction-hero-copy">
       <p class="eyebrow inverse">RESIDENTIAL CONSTRUCTION</p>
@@ -90,7 +79,7 @@ const commercialHighlights = (siteContent.construction.commercialHighlights ?? [
             </div>
             {image && (
               <img class="construction-service-photo"
-                src={galleryThumbs[image]?.small ?? image}
+                {...responsivePhoto(image, '(max-width: 680px) 23vw, 205px', 'small')}
                 alt={service.imageAlt || service.title}
                 loading="lazy" decoding="async" />
             )}
@@ -101,7 +90,7 @@ const commercialHighlights = (siteContent.construction.commercialHighlights ?? [
   </section>
 
   <section class="construction-hero construction-section-hero construction-commercial-hero" aria-labelledby="commercial-construction-title">
-    <img class="construction-hero-image" src={commercialOptimized?.hero ?? photos.commercial.src} srcset={commercialSrcSet} sizes="100vw" alt={photos.commercial.alt} loading="lazy" decoding="async" />
+    <img class="construction-hero-image" {...responsivePhoto(photos.commercial.src, '100vw', 'hero')} alt={photos.commercial.alt} loading="lazy" decoding="async" />
     <div class="construction-hero-shade" aria-hidden="true"></div>
     <div class="construction-hero-copy">
       <p class="eyebrow inverse">COMMERCIAL CONSTRUCTION</p>
@@ -137,7 +126,7 @@ const commercialHighlights = (siteContent.construction.commercialHighlights ?? [
             </div>
             {image && (
               <img class="construction-service-photo"
-                src={galleryThumbs[image]?.small ?? image}
+                {...responsivePhoto(image, '(max-width: 680px) 23vw, 205px', 'small')}
                 alt={service.imageAlt || service.title}
                 loading="lazy" decoding="async" />
             )}
@@ -147,7 +136,7 @@ const commercialHighlights = (siteContent.construction.commercialHighlights ?? [
     </div>
   </section>
 
-  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2 data-style-key="construction.processHeading">{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy" data-style-key="construction.processText">{siteContent.construction.processText}</p><div class="editorial-grid construction-process-photos"><div class="editorial-image"><img src={processLeftOptimized?.process ?? photos.processLeft.src} srcset={processLeftSrcSet} sizes="(max-width: 680px) 100vw, (max-width: 1200px) 45vw, 570px" alt={photos.processLeft.alt} loading="lazy" decoding="async" /></div><div class="editorial-image"><img src={processRightOptimized?.process ?? photos.processRight.src} srcset={processRightSrcSet} sizes="(max-width: 680px) 100vw, (max-width: 1200px) 45vw, 570px" alt={photos.processRight.alt} loading="lazy" decoding="async" /></div></div></section>
+  <section class="content-block"><p class="eyebrow">A CONSIDERED PROCESS</p><h2 data-style-key="construction.processHeading">{siteContent.construction.processHeading}</h2><p class="body-copy construction-copy" data-style-key="construction.processText">{siteContent.construction.processText}</p><div class="editorial-grid construction-process-photos"><div class="editorial-image"><img {...responsivePhoto(photos.processLeft.src, '(max-width: 680px) 100vw, (max-width: 1200px) 45vw, 570px', 'process')} alt={photos.processLeft.alt} loading="lazy" decoding="async" /></div><div class="editorial-image"><img {...responsivePhoto(photos.processRight.src, '(max-width: 680px) 100vw, (max-width: 1200px) 45vw, 570px', 'process')} alt={photos.processRight.alt} loading="lazy" decoding="async" /></div></div></section>
 
   <section class="construction-showcase" aria-labelledby="construction-showcase-title">
     <div class="construction-showcase-top">
@@ -168,9 +157,7 @@ const commercialHighlights = (siteContent.construction.commercialHighlights ?? [
               {projects.map((project, index) => (
                 <figure class="construction-photo-item">
                   <img
-                    src={galleryThumbs[project.image]?.large ?? project.image}
-                    srcset={galleryThumbs[project.image] ? `${galleryThumbs[project.image].small} 480w, ${galleryThumbs[project.image].large} 960w` : undefined}
-                    sizes="(max-width: 680px) 78vw, (max-width: 900px) 42vw, 345px"
+                    {...responsivePhoto(project.image, '(max-width: 680px) 78vw, (max-width: 900px) 42vw, 345px', 'large')}
                     alt={copy === 0 ? (project.alt || project.title) : ''}
                     loading={copy === 0 && index < 4 ? 'eager' : 'lazy'}
                     decoding="async"
