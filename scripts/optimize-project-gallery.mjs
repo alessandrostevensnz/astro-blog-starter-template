@@ -32,8 +32,7 @@ function collectPhotoUrls(value, urls) {
 }
 
 const widths = [480, 960];
-const quality = 90; // Keep fine photographic detail.
-const constructionQuality = 90; // Same high quality for construction and other pages.
+const quality = 90; // Visually high-fidelity WebP (originals remain untouched).
 const constructionHeroKeys = ['hero', 'residential', 'commercial'];
 const constructionProcessKeys = ['processLeft', 'processRight'];
 
@@ -47,16 +46,6 @@ export async function optimizeProjectGallery() {
   const footer = JSON.parse(await readFile(footerFile, 'utf8'));
   const data = pages.projects;
   const construction = pages.construction;
-  const projectsBackground = data.photos?.hero?.src;
-  const serviceKeys = [
-    'serviceCarpentry', 'serviceDecks', 'serviceRenovations',
-    'serviceCommercialCarpentry', 'serviceCommercialFitouts', 'serviceCommercialRefurbishment',
-  ];
-  const constructionServicePhotos = [
-    ...serviceKeys.map((key) => construction.photos?.[key]?.src),
-    ...(Array.isArray(construction.residentialServices) ? construction.residentialServices : []).map((service) => service.image),
-    ...(Array.isArray(construction.commercialServices) ? construction.commercialServices : []).map((service) => service.image),
-  ];
   const constructionHeroPhotos = constructionHeroKeys.map((key) => construction.photos?.[key]?.src);
   const constructionProcessPhotos = constructionProcessKeys.map((key) => construction.photos?.[key]?.src);
   const heroSources = new Set([
@@ -79,10 +68,9 @@ export async function optimizeProjectGallery() {
   Object.values(pages).forEach((page) => collectPhotoUrls(page, photoUrlSet));
   collectPhotoUrls(footer, photoUrlSet);
   const photoUrls = [...photoUrlSet];
-  const highQualitySources = new Set(photoUrls);
   const manifest = {};
 
-  // Keep only responsive photos used by Projects, its header, or Construction services.
+  // Build only the variants used by current CMS pages and the shared footer.
   await rm(outputDir, { force: true, recursive: true });
   await mkdir(outputDir, { recursive: true });
 
@@ -135,8 +123,9 @@ export async function optimizeProjectGallery() {
           .rotate()
           .resize({ width: outputWidth, withoutEnlargement: true })
           .webp({
-            quality: highQualitySources.has(sourceUrl) ? constructionQuality : quality,
-            lossless: sourceUrl === footerLogo || Boolean(metadata.hasAlpha),
+            quality,
+            lossless: sourceUrl === footerLogo, // Keep logo lettering/edges exactly intact.
+            alphaQuality: 100, // Preserve transparency in other images.
             smartSubsample: true,
             effort: 5,
           })
@@ -152,15 +141,14 @@ export async function optimizeProjectGallery() {
       converted += 1;
       sourceBytes += original.length;
     } catch (error) {
-      // A bad/unsupported photo must not take down the entire ANDRO website.
-      // The Projects page will simply display its original image instead.
+      // A failed conversion is reported; public pages retain original image fallback.
       console.warn(`[projects-gallery] Unable to optimise ${sourceUrl}:`, error?.message ?? error);
     }
   }
 
   await writeFile(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
   console.log(
-    `[projects-gallery] Optimised ${converted}/${photoUrls.length} images; ` +
+    `[site-photos] Optimised ${converted}/${photoUrls.length} images; ` +
     `${(sourceBytes / 1048576).toFixed(1)} MiB original -> ` +
     `${(outputBytes / 1048576).toFixed(1)} MiB across responsive WebP sizes.`,
   );
