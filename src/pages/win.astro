@@ -1,6 +1,7 @@
 ---
 export const prerender = false;
 import SiteLayout from '../components/SiteLayout.astro';
+import { responsivePhoto } from '../lib/optimized-images';
 import { winState, nzDate } from '../lib/win';
 import winCopy from '../../content/pages/win.json';
 const env = (Astro.locals as any).runtime?.env ?? {};
@@ -9,7 +10,7 @@ const isOpen = campaign.phase === 'open';
 ---
 <SiteLayout title="Win a Day of Property Maintenance | ANDRO Construction + Projects" description="Enter ANDRO's free Auckland property maintenance and handyman labour giveaway. See eligibility and promotion terms.">
 <section class="win-hero">
-  <img class="win-hero-photo" data-cms-image="win.photos.hero" src={winCopy.photos.hero.src} alt={winCopy.photos.hero.alt} fetchpriority="high" />
+  <img class="win-hero-photo" data-cms-image="win.photos.hero" {...responsivePhoto(winCopy.photos.hero.src, '100vw', 'hero')} alt={winCopy.photos.hero.alt} fetchpriority="high" />
   <div class="shell">
     <p class="win-kicker">ANDRO CONSTRUCTION + PROJECTS / AUCKLAND</p>
     <p class="win-overline">A little help can make a big difference.</p>
@@ -69,7 +70,7 @@ const isOpen = campaign.phase === 'open';
     </div>
   </div>
 </section>
-<div class="win-closing-photo"><img data-cms-image="win.photos.closing" src={winCopy.photos.closing.src} alt={winCopy.photos.closing.alt} loading="lazy" decoding="async" /></div>
+<div class="win-closing-photo"><img data-cms-image="win.photos.closing" {...responsivePhoto(winCopy.photos.closing.src, '100vw', 'hero')} alt={winCopy.photos.closing.alt} loading="lazy" decoding="async" /></div>
 <section class="win-terms" id="win-terms">
   <div class="shell">
     <p class="win-kicker">03 / THE IMPORTANT DETAILS</p>
