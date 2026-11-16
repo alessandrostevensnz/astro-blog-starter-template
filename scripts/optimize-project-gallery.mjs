@@ -20,6 +20,9 @@ const constructionFile = path.join(projectRoot, 'content', 'pages', 'constructio
 
 const widths = [480, 960];
 const quality = 78;
+const constructionQuality = 87; // High-detail banners and process photographs.
+const constructionHeroKeys = ['hero', 'residential', 'commercial'];
+const constructionProcessKeys = ['processLeft', 'processRight'];
 
 export async function optimizeProjectGallery() {
   // A missing/generated manifest must never break the build or hide a source image.
@@ -31,10 +34,25 @@ export async function optimizeProjectGallery() {
     'serviceCarpentry', 'serviceDecks', 'serviceRenovations',
     'serviceCommercialCarpentry', 'serviceCommercialFitouts', 'serviceCommercialRefurbishment',
   ];
-  const constructionServicePhotos = serviceKeys.map((key) => construction.photos?.[key]?.src);
+  const constructionServicePhotos = [
+    ...serviceKeys.map((key) => construction.photos?.[key]?.src),
+    ...(Array.isArray(construction.residentialServices) ? construction.residentialServices : []).map((service) => service.image),
+    ...(Array.isArray(construction.commercialServices) ? construction.commercialServices : []).map((service) => service.image),
+  ];
+  const constructionHeroPhotos = constructionHeroKeys.map((key) => construction.photos?.[key]?.src);
+  const constructionProcessPhotos = constructionProcessKeys.map((key) => construction.photos?.[key]?.src);
+  const heroSources = new Set(constructionHeroPhotos.filter(Boolean));
+  const processSources = new Set(constructionProcessPhotos.filter(Boolean));
+  const highQualitySources = new Set([
+    ...constructionServicePhotos,
+    ...constructionHeroPhotos,
+    ...constructionProcessPhotos,
+  ].filter(Boolean));
   const photoUrls = [...new Set([
     ...(data.projects ?? []).map((project) => project.image),
     ...constructionServicePhotos,
+    ...constructionHeroPhotos,
+    ...constructionProcessPhotos,
     projectsBackground,
   ].filter(Boolean))];
   const manifest = {};
@@ -68,18 +86,20 @@ export async function optimizeProjectGallery() {
         .slice(0, 40) || 'project';
       const variants = {};
 
-      // The Projects hero uses an extra, sharper desktop size without touching gallery images.
-      // Gallery 480w/960w variants keep their existing names for compatibility.
-      const requestedWidths = sourceUrl === projectsBackground ? [...widths, 1800] : widths;
+      // Retain the existing gallery widths, adding detail where larger photos display.
+      // Originals and CMS URLs stay untouched; responsive files exist only at build time.
+      const requestedWidths = sourceUrl === projectsBackground || heroSources.has(sourceUrl)
+        ? [...widths, 1800]
+        : processSources.has(sourceUrl) ? [...widths, 1440] : widths;
       for (const width of requestedWidths) {
         const optimizedName = `${stem}-${digest}-${width}.webp`;
         const destination = path.join(outputDir, optimizedName);
         const info = await sharp(original)
           .rotate()
           .resize({ width, withoutEnlargement: true })
-          .webp({ quality, effort: 4 })
+          .webp({ quality: highQualitySources.has(sourceUrl) ? constructionQuality : quality, effort: 5 })
           .toFile(destination);
-        variants[width === 480 ? 'small' : width === 960 ? 'large' : 'hero'] = `/images/project-thumbnails/${optimizedName}`;
+        variants[width === 480 ? 'small' : width === 960 ? 'large' : width === 1440 ? 'process' : 'hero'] = `/images/project-thumbnails/${optimizedName}`;
         outputBytes += info.size;
       }
 
