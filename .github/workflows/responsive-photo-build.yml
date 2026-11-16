@@ -1,0 +1,34 @@
+name: ANDRO responsive-photo build and integrity
+on:
+  pull_request:
+    paths:
+      - 'src/pages/**'
+      - 'src/components/SiteLayout.astro'
+      - 'src/lib/optimized-images.ts'
+      - 'scripts/optimize-project-gallery.mjs'
+      - 'scripts/verify-responsive-images.mjs'
+      - 'content/pages/**'
+      - 'content/site-footer.json'
+      - '.github/workflows/responsive-photo-build.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/optimize-project-gallery.mjs'
+      - 'scripts/verify-responsive-images.mjs'
+      - 'src/lib/optimized-images.ts'
+      - '.github/workflows/responsive-photo-build.yml'
+permissions:
+  contents: read
+jobs:
+  build-and-check-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/verify-responsive-images.mjs
