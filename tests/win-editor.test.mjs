@@ -49,7 +49,7 @@ test('remaining giveaway photos are editable and the removed middle image stays 
     assert.equal(typeof contents.photos[key].src, 'string');
     assert.ok(contents.photos[key].src.startsWith('/images/'), key + ' must start with an actual site image');
     assert.ok(contents.photos[key].alt);
-    assert.ok(page.includes('src={winCopy.photos.' + key + '.src}'), key + ' must render the CMS image');
+    assert.ok(page.includes('responsivePhoto(winCopy.photos.' + key + '.src'), key + ' must render the CMS image with responsive optimisation');
     assert.ok(page.includes('alt={winCopy.photos.' + key + '.alt}'), key + ' must render accessible alt text');
     assert.ok(page.includes('data-cms-image="win.photos.' + key + '"'), key + ' must be identifiable in preview');
   }
