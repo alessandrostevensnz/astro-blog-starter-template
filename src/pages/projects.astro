@@ -166,7 +166,6 @@ const featuredPhoto = projectCopy.featurePhoto;
     let lastTime = 0;
     let pauseUntil = performance.now() + 750;
     let touching = false;
-    let hasFocus = false;
     let announcedColumn = -1;
     const number = (value: number) => String(value).padStart(2, '0');
     const measure = (preserve = false) => {
@@ -190,10 +189,10 @@ const featuredPhoto = projectCopy.featurePhoto;
       }
     };
 
-    const pause = () => { pauseUntil = performance.now() + 8000; };
     const move = (direction: number) => {
       if (columnWidth <= 0 || loopWidth <= 0) return;
-      pause();
+      // Briefly let a manual arrow slide finish, then keep the reel moving.
+      pauseUntil = performance.now() + (reducedMotion.matches ? 0 : 600);
       const offset = columnsPerClick() * columnWidth;
       let start = viewport.scrollLeft;
       const maximum = viewport.scrollWidth - viewport.clientWidth;
@@ -212,14 +211,14 @@ const featuredPhoto = projectCopy.featurePhoto;
     prev.addEventListener('click', () => move(-1));
     next.addEventListener('click', () => move(1));
 
-    // Keep autoplay running on hover; temporarily pause for active touch, keyboard and manual navigation.
+    // Clicking or focusing a photo must never pause the showcase.
+    // Temporarily let touch/pen drag gestures take over, then resume immediately.
     viewport.addEventListener('pointerleave', () => { touching = false; });
-    viewport.addEventListener('pointerdown', () => { touching = true; pause(); });
-    viewport.addEventListener('pointerup', () => { touching = false; pause(); });
+    viewport.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'touch' || event.pointerType === 'pen') touching = true;
+    });
+    viewport.addEventListener('pointerup', () => { touching = false; });
     viewport.addEventListener('pointercancel', () => { touching = false; });
-    viewport.addEventListener('focusin', () => { hasFocus = true; });
-    viewport.addEventListener('focusout', () => { hasFocus = viewport.contains(document.activeElement); });
-    viewport.addEventListener('wheel', pause, { passive: true });
     viewport.addEventListener('keydown', event => {
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.preventDefault();
@@ -234,7 +233,7 @@ const featuredPhoto = projectCopy.featurePhoto;
       const elapsed = lastTime ? Math.min(0.08, (time - lastTime) / 1000) : 0;
       lastTime = time;
       if (loopWidth > 0 && !reducedMotion.matches && document.visibilityState === 'visible'
-          && !touching && !hasFocus && time >= pauseUntil) {
+          && !touching && time >= pauseUntil) {
         // Approximately half the Construction photo-reel speed.
         const pixelsPerSecond = smallScreen.matches ? 25 : 42;
         viewport.scrollLeft += pixelsPerSecond * elapsed;
