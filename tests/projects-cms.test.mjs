@@ -97,8 +97,14 @@ test('Projects auto-scrolls slowly with readable captions and 3x5 manual navigat
   assert(source.includes('secondCopy.forEach(tile => gallery.appendChild(tile))'), 'Loop must be seamless');
   assert(!source.includes("viewport.addEventListener('pointerenter'"), 'Hover must not pause the Projects gallery');
   assert(!source.includes('!pointerOver'), 'Projects animation must keep moving under the cursor');
+  assert(!source.includes('!hasFocus') && !source.includes("viewport.addEventListener('focusin'"), 'Click-to-focus must not stop auto-scrolling');
+  assert(!source.includes('performance.now() + 8000'), 'Click must never cause an 8-second pause');
+  assert(!source.includes("viewport.addEventListener('wheel', pause"), 'Mouse scrolling over gallery must not pause it');
+  assert(source.includes("event.pointerType === 'touch'"), 'Touch dragging can temporarily take control');
+  assert(source.includes('&& !touching && time >= pauseUntil'), 'Gallery should resume immediately after touch');
   const construction = read('../src/pages/construction.astro');
   assert(!construction.includes('.construction-photo-reel:hover .construction-photo-track'), 'Hover must not pause the Construction gallery');
+  assert(!construction.includes('animation-play-state: paused'), 'Construction showcase must never pause on click or hover');
   assert(source.includes('!reducedMotion.matches'), 'Respect reduced motion preferences');
   assert(source.includes('aria-hidden'), 'Duplicate looping photos must be hidden from screen readers');
   assert(source.includes('opacity: 1; transform: none;'), 'Descriptions must be visible at all times');
