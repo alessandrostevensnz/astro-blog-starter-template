@@ -95,7 +95,10 @@ test('Projects auto-scrolls slowly with readable captions and 3x5 manual navigat
   assert(source.includes('const pixelsPerSecond = smallScreen.matches ? 25 : 42'), 'Keep the automatic reel roughly half Construction speed');
   assert(source.includes('viewport.scrollLeft += pixelsPerSecond * elapsed'), 'Auto-scroll must advance smoothly');
   assert(source.includes('secondCopy.forEach(tile => gallery.appendChild(tile))'), 'Loop must be seamless');
-  assert(source.includes("viewport.addEventListener('pointerenter'"), 'Hover should pause to allow reading');
+  assert(!source.includes("viewport.addEventListener('pointerenter'"), 'Hover must not pause the Projects gallery');
+  assert(!source.includes('!pointerOver'), 'Projects animation must keep moving under the cursor');
+  const construction = read('../src/pages/construction.astro');
+  assert(!construction.includes('.construction-photo-reel:hover .construction-photo-track'), 'Hover must not pause the Construction gallery');
   assert(source.includes('!reducedMotion.matches'), 'Respect reduced motion preferences');
   assert(source.includes('aria-hidden'), 'Duplicate looping photos must be hidden from screen readers');
   assert(source.includes('opacity: 1; transform: none;'), 'Descriptions must be visible at all times');
