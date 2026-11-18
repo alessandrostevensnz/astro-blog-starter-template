@@ -165,7 +165,6 @@ const featuredPhoto = projectCopy.featurePhoto;
     let loopWidth = 0;
     let lastTime = 0;
     let pauseUntil = performance.now() + 750;
-    let pointerOver = false;
     let touching = false;
     let hasFocus = false;
     let announcedColumn = -1;
@@ -213,9 +212,8 @@ const featuredPhoto = projectCopy.featurePhoto;
     prev.addEventListener('click', () => move(-1));
     next.addEventListener('click', () => move(1));
 
-    // Visitors can pause simply by hovering, touching, focusing or swiping.
-    viewport.addEventListener('pointerenter', () => { pointerOver = true; });
-    viewport.addEventListener('pointerleave', () => { pointerOver = false; touching = false; });
+    // Keep autoplay running on hover; temporarily pause for active touch, keyboard and manual navigation.
+    viewport.addEventListener('pointerleave', () => { touching = false; });
     viewport.addEventListener('pointerdown', () => { touching = true; pause(); });
     viewport.addEventListener('pointerup', () => { touching = false; pause(); });
     viewport.addEventListener('pointercancel', () => { touching = false; });
@@ -236,7 +234,7 @@ const featuredPhoto = projectCopy.featurePhoto;
       const elapsed = lastTime ? Math.min(0.08, (time - lastTime) / 1000) : 0;
       lastTime = time;
       if (loopWidth > 0 && !reducedMotion.matches && document.visibilityState === 'visible'
-          && !pointerOver && !touching && !hasFocus && time >= pauseUntil) {
+          && !touching && !hasFocus && time >= pauseUntil) {
         // Approximately half the Construction photo-reel speed.
         const pixelsPerSecond = smallScreen.matches ? 25 : 42;
         viewport.scrollLeft += pixelsPerSecond * elapsed;
