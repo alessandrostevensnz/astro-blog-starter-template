@@ -2,7 +2,7 @@
  * Deliberately fail-closed: every field/affirmative consent is required for an entry.
  * The official Facebook form must be configured to match docs/win-facebook-instant-form.md.
  */
-import { validateWinEntry, winState } from './win';
+import { validateWinEntry, winState } from './win.ts';
 
 type MetaField = { name?: unknown; values?: unknown };
 type MetaCheck = { checkbox_key?: unknown; is_checked?: unknown };
