@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { sheetsImportConfigured, mapSheetsWinLead, sheetsPayloadIsRecent } from '../src/lib/win-meta-sheets.ts';
+import { sheetsImportConfigured, sheetsConnectionConfigured, isSheetsConnectionProbe, mapSheetsWinLead, sheetsPayloadIsRecent } from '../src/lib/win-meta-sheets.ts';
 
 const env = {
   WIN_ENTRIES_ENABLED: 'true',
@@ -40,6 +40,7 @@ test('Google Sheets import is disabled in the real Worker by two independent swi
   assert.equal(config.vars.WIN_META_IMPORT_ENABLED, 'false');
   assert.equal(config.vars.WIN_META_SHEETS_SYNC_ENABLED, 'false');
   assert.ok(!('WIN_META_SHEETS_SYNC_SECRET' in config.vars));
+  assert.match(config.vars.WIN_META_FORM_ID, /^\d{5,25}$/);
   assert.equal(sheetsImportConfigured(env), true);
   assert.equal(sheetsImportConfigured({...env,WIN_META_IMPORT_ENABLED:'false'}), false);
   assert.equal(sheetsImportConfigured({...env,WIN_META_SHEETS_SYNC_ENABLED:'false'}), false);
@@ -151,4 +152,46 @@ test('Apps Script strips the Meta p: prefix and checks the signed endpoint witho
   assert.throws(() => ctx.androCheckConnection(), /explicitly false/);
   assert.ok(script.includes("leadId === testLeadId"));
   assert.ok(script.includes("phone_number: androPhone_(get('phone_number'))"));
+});
+
+test('Real signed no-contact probe works with live imports OFF, and cannot write any entry', async () => {
+  const { POST } = await import('../src/pages/api/win/meta/sheets.ts');
+  const { createHmac } = await import('node:crypto');
+  let reads = 0;
+  const safeEnv = {...env, WIN_META_IMPORT_ENABLED: 'false', WIN_META_SHEETS_SYNC_ENABLED: 'false',
+    WIN_DB: {
+      prepare(sql) {
+        assert.match(sql, /^SELECT (id|entry_id|lead_id) FROM (win_entries|win_entry_exclusions|win_draw_events|win_meta_leads) LIMIT 0$/);
+        return {async all() { reads++; return {results:[]}; }};
+      },
+      batch() { assert.fail('No write or batch permitted during a disabled import probe'); }
+    }
+  };
+  const dry = {source:'meta_google_sheets', sent_at:new Date().toISOString(),
+    lead:{id:'1234567890123456',form_id:env.WIN_META_FORM_ID,
+      created_time:'2026-11-24T02:53:56-05:00',terms_accepted:false}};
+  const send = (payload, runtime = safeEnv, sign = true, secret = env.WIN_META_SHEETS_SYNC_SECRET) => {
+    const body = JSON.stringify(payload);
+    const headers = {'Content-Type':'application/json'};
+    if (sign) headers['X-ANDRO-Sheets-Signature'] = 'sha256='+createHmac('sha256',secret).update(body).digest('hex');
+    return POST({request:new Request('https://andro.co.nz/api/win/meta/sheets',{method:'POST',headers,body}),
+      locals:{runtime:{env:runtime}}});
+  };
+  assert.equal(sheetsConnectionConfigured(safeEnv),true);
+  assert.equal(sheetsImportConfigured(safeEnv),false);
+  assert.equal(isSheetsConnectionProbe(dry),true);
+  assert.equal(isSheetsConnectionProbe({...dry,lead:{...dry.lead,email:'x@example.test'}}),false);
+  assert.equal((await send(dry,safeEnv,false)).status,503);
+  assert.equal((await send(dry,safeEnv,true,'wrong secret')).status,403);
+  assert.equal((await send({...lead(),sent_at:dry.sent_at})).status,503);
+  assert.equal(reads,0);
+  const response = await send(dry);
+  assert.equal(response.status,422);
+  assert.deepEqual(await response.json(),{error:'terms_acknowledgement_not_captured'});
+  assert.equal(reads,4);
+  const wrongForm = await send({...dry,lead:{...dry.lead,form_id:'999999999'}});
+  assert.equal(wrongForm.status,422);
+  assert.deepEqual(await wrongForm.json(),{error:'invalid_lead_metadata'});
+  assert.equal((await send(dry,{...safeEnv,WIN_META_FORM_ID:''})).status,503);
+  assert.equal((await send(dry,{...safeEnv,WIN_META_SHEETS_SYNC_SECRET:''})).status,503);
 });
