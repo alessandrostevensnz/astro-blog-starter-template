@@ -35,10 +35,11 @@ const lead = (changes={}) => ({
   }
 });
 
-test('Google Sheets import is disabled in the real Worker by two independent switches', () => {
+test('Production Sheets rollout uses both independent switches and still requires a secret', () => {
   const config = JSON.parse(readFileSync(new URL('../wrangler.json', import.meta.url), 'utf8'));
-  assert.equal(config.vars.WIN_META_IMPORT_ENABLED, 'false');
-  assert.equal(config.vars.WIN_META_SHEETS_SYNC_ENABLED, 'false');
+  assert.equal(config.vars.WIN_META_IMPORT_ENABLED, 'true');
+  assert.equal(config.vars.WIN_META_SHEETS_SYNC_ENABLED, 'true');
+  assert.equal(sheetsImportConfigured(config.vars), false);
   assert.ok(!('WIN_META_SHEETS_SYNC_SECRET' in config.vars));
   assert.match(config.vars.WIN_META_FORM_ID, /^\d{5,25}$/);
   assert.equal(sheetsImportConfigured(env), true);
@@ -194,4 +195,84 @@ test('Real signed no-contact probe works with live imports OFF, and cannot write
   assert.deepEqual(await wrongForm.json(),{error:'invalid_lead_metadata'});
   assert.equal((await send(dry,{...safeEnv,WIN_META_FORM_ID:''})).status,503);
   assert.equal((await send(dry,{...safeEnv,WIN_META_SHEETS_SYNC_SECRET:''})).status,503);
+});
+
+test('Signed production-shaped Sheets import accepts one valid entry and dedupes in an isolated SQLite database', async () => {
+  const { POST } = await import('../src/pages/api/win/meta/sheets.ts');
+  const { createHmac } = await import('node:crypto');
+  const { DatabaseSync } = await import('node:sqlite');
+  const sqlite = new DatabaseSync(':memory:');
+  try {
+    sqlite.exec('PRAGMA foreign_keys=ON');
+    for (const name of ['0001_win_entries.sql','0002_win_draw_audit.sql','0003_win_meta_leads.sql']) {
+      sqlite.exec(readFileSync(new URL('../migrations/'+name,import.meta.url),'utf8'));
+    }
+    const db = {
+      prepare(sql) {
+        let args = [];
+        const stmt = sqlite.prepare(sql);
+        return {
+          bind(...values) { args = values; return this; },
+          async first() { return stmt.get(...args) ?? null; },
+          async all() { return { success:true, results:stmt.all(...args) }; },
+          async run() {
+            const r = stmt.run(...args);
+            return {success:true,meta:{changes:Number(r.changes)}};
+          },
+        };
+      },
+      async batch(statements) {
+        sqlite.exec('BEGIN');
+        try {
+          const results = [];
+          for (const statement of statements) results.push(await statement.run());
+          sqlite.exec('COMMIT');
+          return results;
+        } catch (err) {
+          sqlite.exec('ROLLBACK');
+          throw err;
+        }
+      },
+    };
+    const config = JSON.parse(readFileSync(new URL('../wrangler.json',import.meta.url),'utf8'));
+    const runtime = {...env, WIN_META_FORM_ID:config.vars.WIN_META_FORM_ID,
+      WIN_META_IMPORT_ENABLED:config.vars.WIN_META_IMPORT_ENABLED,
+      WIN_META_SHEETS_SYNC_ENABLED:config.vars.WIN_META_SHEETS_SYNC_ENABLED, WIN_DB:db};
+    const send = async (changes={}, flags={}) => {
+      const payload = lead({form_id:'f:'+runtime.WIN_META_FORM_ID, ...changes});
+      payload.sent_at = new Date().toISOString();
+      const body = JSON.stringify(payload);
+      const signature = createHmac('sha256',runtime.WIN_META_SHEETS_SYNC_SECRET).update(body).digest('hex');
+      return POST({request:new Request('https://andro.co.nz/api/win/meta/sheets',{
+        method:'POST',headers:{'Content-Type':'application/json','X-ANDRO-Sheets-Signature':'sha256='+signature},body}),
+        locals:{runtime:{env:{...runtime,...flags}}}});
+    };
+    const count = () => Number(sqlite.prepare('SELECT COUNT(*) AS n FROM win_entries').get().n);
+    assert.equal(count(),0);
+    const disabled = await send({}, {WIN_META_SHEETS_SYNC_ENABLED:'false'});
+    assert.equal(disabled.status,503);
+    const noConsent = await send({terms_accepted:false});
+    assert.equal(noConsent.status,422);
+    const wrongForm = await send({form_id:'f:9999999999'});
+    assert.equal(wrongForm.status,422);
+    assert.equal(count(),0);
+    const accepted = await send();
+    assert.equal(accepted.status,200);
+    assert.deepEqual(await accepted.json(),{status:'accepted'});
+    assert.equal(count(),1);
+    const saved = sqlite.prepare('SELECT email,phone,marketing_opt_in,suburb FROM win_entries').get();
+    assert.equal(saved.email,'resident@example.nz');
+    assert.equal(saved.phone,'021 123 4567');
+    assert.equal(saved.marketing_opt_in,0);
+    assert.equal(saved.suburb,'');
+    const again = await send();
+    assert.equal(again.status,200);
+    assert.deepEqual(await again.json(),{status:'already_seen'});
+    const duplicate = await send({id:'l:9876543210123456'});
+    assert.equal(duplicate.status,200);
+    assert.deepEqual(await duplicate.json(),{status:'duplicate'});
+    assert.equal(count(),1);
+    const ledger = sqlite.prepare('SELECT status FROM win_meta_leads ORDER BY status').all().map(r=>r.status);
+    assert.deepEqual(ledger,['accepted','duplicate']);
+  } finally { sqlite.close(); }
 });
