@@ -63,6 +63,7 @@
 		"WIN_OPEN_AT": "pending",
 		"WIN_CLOSE_AT": "2026-12-24T23:59:59+13:00",
 		"WIN_DRAW_AT": "2026-12-25T12:00:00+13:00",
-		"WIN_ENTRIES_ENABLED": "false"
+		"WIN_ENTRIES_ENABLED": "false",
+		"WIN_BUSINESS_POSTAL_ADDRESS": "pending"
 	}
 }
