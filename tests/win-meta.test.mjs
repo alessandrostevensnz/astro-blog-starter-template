@@ -31,11 +31,6 @@ const valid = (overrides = {}) => ({
     { name: 'full_name', values: ['Test Homeowner'] },
     { name: 'email', values: ['Homeowner@Example.nz'] },
     { name: 'phone_number', values: ['021 123 4567'] },
-    { name: 'Auckland suburb', values: ['Takapuna'] },
-    { name: 'Relationship to property', values: ['Owner'] },
-    { name: 'Type of work', values: ['Handyman work'] },
-    { name: 'Are you 18 or older', values: ['Yes'] },
-    { name: 'Do you have permission to arrange work at this property', values: ['Yes'] },
   ],
   custom_disclaimer_responses: [
     { checkbox_key: 'mandatory_1', is_checked: '1' },
@@ -64,9 +59,11 @@ test('a consented, in-period Meta lead maps to same ANDRO entry schema', () => {
   assert.equal(lead.formId, env.WIN_META_FORM_ID);
   assert.equal(lead.entry.email, 'homeowner@example.nz');
   assert.equal(lead.entry.phone, '021 123 4567');
-  assert.equal(lead.entry.suburb, 'Takapuna');
-  assert.equal(lead.entry.property_role, 'Owner');
-  assert.equal(lead.entry.service_type, 'Handyman work');
+  // Extra property details are NOT fabricated when the form collects only
+  // name, phone, and email; verify the winner before awarding the prize.
+  assert.equal(lead.entry.suburb, '');
+  assert.equal(lead.entry.property_role, '');
+  assert.equal(lead.entry.service_type, '');
   assert.equal(lead.entry.work_details, '');
   assert.equal(lead.entry.marketing_opt_in, 0);
 });
@@ -81,17 +78,35 @@ test('marketing permission is NEVER inferred from entry acceptance', () => {
   assert.equal(mapMetaWinLead(valid(), { ...env, WIN_META_MARKETING_KEY: 'mandatory_1' }).entry.marketing_opt_in, 0);
 });
 
-test('reject missing mandatory consent, age, authority, or required fields', () => {
+test('the only requested contact questions are name, email, phone plus required terms agreement', () => {
+  const fields = valid().field_data.map(x => x.name);
+  assert.deepEqual(fields, ['full_name', 'email', 'phone_number']);
+  assert.equal(mapMetaWinLead(valid(), env).error, undefined);
   const cases = [
     valid({ custom_disclaimer_responses: [] }),
     valid({ custom_disclaimer_responses: [{ checkbox_key: 'mandatory_1', is_checked: '' }] }),
-    valid({ field_data: valid().field_data.filter(x => x.name !== 'Auckland suburb') }),
-    valid({ field_data: valid().field_data.filter(x => x.name !== 'Are you 18 or older') }),
-    valid({ field_data: valid().field_data.map(x => x.name === 'Are you 18 or older' ? {...x, values:['No']} : x) }),
-    valid({ field_data: valid().field_data.filter(x => x.name !== 'Do you have permission to arrange work at this property') }),
+    valid({ field_data: valid().field_data.filter(x => x.name !== 'full_name') }),
+    valid({ field_data: valid().field_data.filter(x => x.name !== 'email') }),
     valid({ field_data: valid().field_data.filter(x => x.name !== 'phone_number') }),
+    valid({ field_data: valid().field_data.map(x => x.name === 'email' ? {...x, values: ['bad@']} : x) }),
+    valid({ field_data: valid().field_data.map(x => x.name === 'phone_number' ? {...x, values: ['invalid phone']} : x) }),
   ];
   for (const lead of cases) assert.equal(mapMetaWinLead(lead, env).entry, undefined);
+  assert.equal(mapMetaWinLead(valid({custom_disclaimer_responses:[]}), env).error, 'missing_terms_and_eligibility_agreement');
+});
+
+test('Meta importer leaves uncollected property fields blank and never invents age verification', () => {
+  const mapped = mapMetaWinLead(valid(), env);
+  assert.equal(mapped.entry.suburb, '');
+  assert.equal(mapped.entry.property_role, '');
+  assert.equal(mapped.entry.service_type, '');
+  assert.equal(mapped.entry.work_details, '');
+  const source = readFileSync(new URL('../src/lib/win-meta.ts', import.meta.url), 'utf8');
+  assert.ok(!source.includes("read('are_you_18_or_older')"), 'Do not ask a separate age question');
+  assert.ok(source.includes('NOT independent proof of age'));
+  const admin = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
+  assert.ok(admin.includes('Auckland eligibility to verify'));
+  assert.ok(admin.includes('Property authority to verify'));
 });
 
 test('reject a different form ID and a lead submitted outside the published entry period', () => {
