@@ -14,6 +14,8 @@ on:
       - "src/middleware.ts"
       - "wrangler.json"
       - "migrations/0001_win_entries.sql"
+      - "migrations/0002_win_draw_audit.sql"
+      - "docs/win-giveaway-setup.md"
       - "tests/win-entry.test.mjs"
       - ".github/workflows/win-giveaway-validation.yml"
   push:
@@ -31,6 +33,8 @@ on:
       - "src/middleware.ts"
       - "wrangler.json"
       - "migrations/0001_win_entries.sql"
+      - "migrations/0002_win_draw_audit.sql"
+      - "docs/win-giveaway-setup.md"
       - "tests/win-entry.test.mjs"
 permissions:
   contents: read
