@@ -6,8 +6,8 @@ import { winState, validateWinEntry, sameOriginPost, randomOffset } from '../src
 const env = {
   WIN_ENTRIES_ENABLED: 'true',
   WIN_OPEN_AT: '2026-11-20T09:00:00+13:00',
-  WIN_CLOSE_AT: '2026-12-15T23:59:00+13:00',
-  WIN_DRAW_AT: '2026-12-16T12:00:00+13:00',
+  WIN_CLOSE_AT: '2026-12-24T23:59:59+13:00',
+  WIN_DRAW_AT: '2026-12-25T12:00:00+13:00',
   WIN_TURNSTILE_SITE_KEY: 'example-test-site-key',
   WIN_TURNSTILE_SECRET_KEY: 'example-test-secret-key',
   WIN_DB: { prepare() {} },
@@ -49,9 +49,11 @@ test('competition respects New Zealand offset and UTC date bounds', () => {
 test('launch-based opening uses deployment time rather than a fictitious scheduled opening', () => {
   const launch = { ...env, WIN_OPEN_AT: 'launch' };
   assert.equal(winState(launch, Date.parse('2026-11-15T19:00:00+13:00')).phase, 'open');
-  assert.equal(winState(launch, Date.parse('2026-12-15T23:58:00+13:00')).phase, 'open');
-  assert.equal(winState(launch, Date.parse('2026-12-15T23:59:00+13:00')).phase, 'closed');
-  assert.equal(winState(launch, Date.parse('2026-12-16T12:00:00+13:00')).phase, 'closed');
+  assert.equal(winState(launch, Date.parse('2026-12-24T23:59:58+13:00')).phase, 'open');
+  assert.equal(winState(launch, Date.parse('2026-12-24T23:59:59+13:00')).phase, 'closed');
+  assert.equal(winState(launch, Date.parse('2026-12-25T00:00:00+13:00')).phase, 'closed');
+  assert.equal(winState(launch, Date.parse('2026-12-25T12:00:00+13:00')).phase, 'closed');
+  assert.equal(winState(launch).drawAt, '2026-12-25T12:00:00+13:00');
   assert.equal(winState(launch).openAt, undefined);
   assert.equal(winState({ ...launch, WIN_OPEN_AT: 'auto' }).phase, 'setup');
 });
@@ -101,8 +103,8 @@ test('Cloudflare config contains the intended ANDRO D1 binding', () => {
   assert.equal(config.vars?.WIN_TURNSTILE_SITE_KEY, '0x4AAAAAAGBnK_eVlihsb2dT');
   assert.equal(config.vars?.WIN_ENTRIES_ENABLED, 'false', 'giveaway must remain disabled before approval');
   assert.equal(config.vars?.WIN_OPEN_AT, 'launch');
-  assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-15T23:59:00+13:00');
-  assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-16T12:00:00+13:00');
+  assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-24T23:59:59+13:00');
+  assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-25T12:00:00+13:00');
   assert.ok(!Object.keys(config.vars ?? {}).some(key => /turnstile_secret|report_password/i.test(key)), 'private secrets must not be committed to wrangler vars');
   assert.ok(!Object.keys(config).some(key => /turnstile_secret|report_password/i.test(key)), 'secrets must not be committed to wrangler.json');
 });
