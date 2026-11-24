@@ -30,7 +30,7 @@ test('every editable term exists in data and is rendered as escaped text', () =>
 test('giveaway activation is time-gated and D1 audit-gated', () => {
   const config = JSON.parse(readFileSync(new URL('../wrangler.json', import.meta.url), 'utf8'));
   assert.equal(config.vars.WIN_ENTRIES_ENABLED, 'true');
-  assert.equal(config.vars.WIN_OPEN_AT, '2026-11-24T20:00:00+13:00');
+  assert.equal(config.vars.WIN_OPEN_AT, '2026-11-24T17:50:00+13:00');
   assert.ok(page.includes('await winAuditReady(env)'));
   assert.ok(page.includes("phase: 'setup'"));
 });

@@ -6,7 +6,7 @@ import { winState, winAuditReady, validateWinEntry, sameOriginPost, randomOffset
 const env = {
   WIN_ENTRIES_ENABLED: 'true',
   WIN_BUSINESS_POSTAL_ADDRESS: 'Unit 3, 123 Example Road, Auckland, New Zealand',
-  WIN_OPEN_AT: '2026-11-24T20:00:00+13:00',
+  WIN_OPEN_AT: '2026-11-24T17:50:00+13:00',
   WIN_CLOSE_AT: '2026-12-25T00:00:00+13:00',
   WIN_DRAW_AT: '2026-12-25T12:00:00+13:00',
   WIN_TURNSTILE_SITE_KEY: 'example-test-site-key',
@@ -106,9 +106,9 @@ test('legal terms and random selection are independently reviewable before launc
   assert.match(dashboard, /PROVISIONALLY SELECTED ENTRANT/);
 });
 
-test('the scheduled opening is 8 pm Auckland time and the end-of-Christmas-Eve cutoff is exclusive', () => {
-  assert.equal(winState(env, Date.parse('2026-11-24T19:59:59+13:00')).phase, 'upcoming');
-  assert.equal(winState(env, Date.parse('2026-11-24T20:00:00+13:00')).phase, 'open');
+test('the advanced opening is 5:50 pm Auckland time and the end-of-Christmas-Eve cutoff is exclusive', () => {
+  assert.equal(winState(env, Date.parse('2026-11-24T17:49:59+13:00')).phase, 'upcoming');
+  assert.equal(winState(env, Date.parse('2026-11-24T17:50:00+13:00')).phase, 'open');
   assert.equal(winState(env, Date.parse('2026-12-24T23:59:59+13:00')).phase, 'open');
   assert.equal(winState(env, Date.parse('2026-12-25T00:00:00+13:00')).phase, 'closed');
 });
@@ -190,7 +190,7 @@ test('Cloudflare config contains the intended ANDRO D1 binding', () => {
   assert.match(win.database_id, /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i);
   assert.equal(config.vars?.WIN_TURNSTILE_SITE_KEY, '0x4AAAAAAGBnK_eVlihsb2dT');
   assert.equal(config.vars?.WIN_ENTRIES_ENABLED, 'true', 'approved opening still gated by the clock and D1 audit tables');
-  assert.equal(config.vars?.WIN_OPEN_AT, '2026-11-24T20:00:00+13:00');
+  assert.equal(config.vars?.WIN_OPEN_AT, '2026-11-24T17:50:00+13:00');
   assert.equal(config.vars?.WIN_BUSINESS_POSTAL_ADDRESS, '23 Hampton Drive, St Heliers, Auckland, New Zealand');
   assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-25T00:00:00+13:00');
   assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-25T12:00:00+13:00');
