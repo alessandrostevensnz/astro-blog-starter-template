@@ -162,6 +162,26 @@ test('valid input normalizes email and does not assume marketing permission', ()
   assert.equal(result.entry.marketing_opt_in, 0);
   assert.equal(validateWinEntry(entry({ marketing:'yes' })).entry.marketing_opt_in, 1);
 });
+test('phone number is optional for entrants but checked when supplied', () => {
+  const withoutPhone = entry({ phone: '' });
+  const absentPhone = entry();
+  absentPhone.delete('phone');
+  const blank = validateWinEntry(withoutPhone);
+  const missing = validateWinEntry(absentPhone);
+  assert.equal(blank.error, undefined);
+  assert.equal(missing.error, undefined);
+  assert.equal(blank.entry.phone, '', 'Use an empty string because the D1 phone column is NOT NULL');
+  assert.equal(missing.entry.phone, '', 'Missing phone field is also allowed');
+  assert.equal(validateWinEntry(entry({ phone: '021 123 4567' })).error, undefined);
+  assert.match(validateWinEntry(entry({ phone: 'invalid' })).error || '', /phone number/);
+  const page = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
+  assert.ok(page.includes('Phone number (optional)'));
+  assert.ok(page.includes('name="phone"'));
+  assert.ok(!/name="phone"[^>]*required/.test(page), 'Phone input must not have the required attribute');
+  const legal = JSON.parse(readFileSync(new URL('../content/pages/win.json', import.meta.url), 'utf8'));
+  assert.match(legal.privacy, /phone number is optional/);
+});
+
 test('rejects missing consent, invalid data, and unapproved property role', () => {
   for (const fields of [
     { terms: 'no' }, { age: '' }, { authority: 'no' },
