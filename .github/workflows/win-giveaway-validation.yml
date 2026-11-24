@@ -4,6 +4,10 @@ on:
     paths:
       - "src/lib/win.ts"
       - "src/lib/win-meta.ts"
+      - "src/lib/win-meta-sheets.ts"
+      - "scripts/ANDRO_Facebook_Lead_Sync.gs"
+      - "tests/win-meta-sheets.test.mjs"
+      - "docs/win-google-sheets-sync.md"
       - "migrations/0003_win_meta_leads.sql"
       - "tests/win-meta.test.mjs"
       - "docs/win-facebook-instant-form.md"
@@ -27,6 +31,10 @@ on:
     paths:
       - "src/lib/win.ts"
       - "src/lib/win-meta.ts"
+      - "src/lib/win-meta-sheets.ts"
+      - "scripts/ANDRO_Facebook_Lead_Sync.gs"
+      - "tests/win-meta-sheets.test.mjs"
+      - "docs/win-google-sheets-sync.md"
       - "migrations/0003_win_meta_leads.sql"
       - "tests/win-meta.test.mjs"
       - "docs/win-facebook-instant-form.md"
@@ -59,7 +67,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Test giveaway validation and security controls
-        run: node --experimental-strip-types --test tests/win-entry.test.mjs tests/win-editor.test.mjs tests/win-meta.test.mjs
+        run: node --experimental-strip-types --test tests/win-entry.test.mjs tests/win-editor.test.mjs tests/win-meta.test.mjs tests/win-meta-sheets.test.mjs
       - name: Build Astro application
         run: npm run build
       - name: Check TypeScript types
