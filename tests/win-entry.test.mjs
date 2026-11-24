@@ -46,16 +46,16 @@ test('competition respects New Zealand offset and UTC date bounds', () => {
   assert.equal(winState(env, Date.parse(env.WIN_OPEN_AT)).phase, 'open');
   assert.equal(winState(env, Date.parse(env.WIN_CLOSE_AT)).phase, 'closed');
 });
-test('launch-based opening uses deployment time rather than a fictitious scheduled opening', () => {
-  const launch = { ...env, WIN_OPEN_AT: 'launch' };
-  assert.equal(winState(launch, Date.parse('2026-11-15T19:00:00+13:00')).phase, 'open');
-  assert.equal(winState(launch, Date.parse('2026-12-24T23:59:58+13:00')).phase, 'open');
-  assert.equal(winState(launch, Date.parse('2026-12-24T23:59:59+13:00')).phase, 'closed');
-  assert.equal(winState(launch, Date.parse('2026-12-25T00:00:00+13:00')).phase, 'closed');
-  assert.equal(winState(launch, Date.parse('2026-12-25T12:00:00+13:00')).phase, 'closed');
-  assert.equal(winState(launch).drawAt, '2026-12-25T12:00:00+13:00');
-  assert.equal(winState(launch).openAt, undefined);
-  assert.equal(winState({ ...launch, WIN_OPEN_AT: 'auto' }).phase, 'setup');
+test('free-entry giveaway requires a precise published opening and fails closed for launch or pending', () => {
+  assert.equal(winState({ ...env, WIN_OPEN_AT: 'pending' }).phase, 'setup');
+  assert.equal(winState({ ...env, WIN_OPEN_AT: 'launch' }).phase, 'setup');
+  assert.equal(winState({ ...env, WIN_OPEN_AT: '2026-11-27T09:00:00+13:00' },
+    Date.parse('2026-11-27T08:59:59+13:00')).phase, 'upcoming');
+  assert.equal(winState({ ...env, WIN_OPEN_AT: '2026-11-27T09:00:00+13:00' },
+    Date.parse('2026-11-27T09:00:00+13:00')).phase, 'open');
+  assert.equal(winState(env, Date.parse('2026-12-24T23:59:58+13:00')).phase, 'open');
+  assert.equal(winState(env, Date.parse('2026-12-24T23:59:59+13:00')).phase, 'closed');
+  assert.equal(winState(env, Date.parse('2026-12-25T12:00:00+13:00')).phase, 'closed');
 });
 
 test('Christmas dates are advertised even before launch and the draw stays manual', () => {
@@ -63,12 +63,40 @@ test('Christmas dates are advertised even before launch and the draw stays manua
   const adminPage = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
   assert.ok(publicPage.includes('Entries close on Christmas Eve:'));
   assert.ok(publicPage.includes('Christmas Day winner draw:'));
+  assert.ok(publicPage.includes('campaign.openAt ?? configuredDate(env.WIN_OPEN_AT)'));
   assert.ok(publicPage.includes('campaign.closeAt ?? configuredDate(env.WIN_CLOSE_AT)'));
   assert.ok(publicPage.includes('campaign.drawAt ?? configuredDate(env.WIN_DRAW_AT)'));
   assert.ok(adminPage.includes('Christmas Day winner draw:'));
   assert.ok(adminPage.includes('This is a manual draw'));
   assert.ok(adminPage.includes('canDraw = campaign.phase === \'closed\''));
   assert.ok(adminPage.includes('Draw winner'));
+});
+
+test('legal terms and random selection are independently reviewable before launch', () => {
+  const legal = JSON.parse(readFileSync(new URL('../content/pages/win.json', import.meta.url), 'utf8'));
+  const entryHandler = readFileSync(new URL('../src/pages/api/win/entry.ts', import.meta.url), 'utf8');
+  const draw = readFileSync(new URL('../src/pages/api/win/admin/draw.ts', import.meta.url), 'utf8');
+  const exclude = readFileSync(new URL('../src/pages/api/win/admin/exclude.ts', import.meta.url), 'utf8');
+  const schema = readFileSync(new URL('../migrations/0002_win_draw_audit.sql', import.meta.url), 'utf8');
+  const dashboard = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
+
+  assert.match(legal.eligibility, /mainland Auckland Council region/);
+  assert.match(legal.prizeTerms, /up to eight hours of on-site labour/);
+  assert.match(legal.prizeTerms, /Materials and consumables/);
+  assert.match(legal.howToEnter, /NOT required/);
+  assert.match(legal.socialMedia, /release Facebook and Instagram/);
+  assert.match(legal.privacy, /30 June 2027/);
+  assert.match(legal.privacy, /business correspondence address before entries open/);
+  assert.match(entryHandler, /Re-check immediately before writing/);
+  assert.match(schema, /CREATE TABLE IF NOT EXISTS win_entry_exclusions/);
+  assert.match(schema, /CREATE TABLE IF NOT EXISTS win_draw_events/);
+  assert.match(draw, /win_entry_exclusions/);
+  assert.match(draw, /win_draw_events/);
+  assert.match(draw, /db\.batch\(/);
+  assert.match(exclude, /allowedReasons/);
+  assert.match(exclude, /db\.batch\(/);
+  assert.match(dashboard, /migration 0002/);
+  assert.match(dashboard, /PROVISIONALLY SELECTED ENTRANT/);
 });
 
 test('valid input normalizes email and does not assume marketing permission', () => {
@@ -115,7 +143,7 @@ test('Cloudflare config contains the intended ANDRO D1 binding', () => {
   assert.match(win.database_id, /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i);
   assert.equal(config.vars?.WIN_TURNSTILE_SITE_KEY, '0x4AAAAAAGBnK_eVlihsb2dT');
   assert.equal(config.vars?.WIN_ENTRIES_ENABLED, 'false', 'giveaway must remain disabled before approval');
-  assert.equal(config.vars?.WIN_OPEN_AT, 'launch');
+  assert.equal(config.vars?.WIN_OPEN_AT, 'pending');
   assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-24T23:59:59+13:00');
   assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-25T12:00:00+13:00');
   assert.ok(!Object.keys(config.vars ?? {}).some(key => /turnstile_secret|report_password/i.test(key)), 'private secrets must not be committed to wrangler vars');
