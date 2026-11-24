@@ -68,7 +68,7 @@ test('Christmas dates are advertised even before launch and the draw stays manua
   assert.ok(publicPage.includes('campaign.drawAt ?? configuredDate(env.WIN_DRAW_AT)'));
   assert.ok(adminPage.includes('Christmas Day winner draw:'));
   assert.ok(adminPage.includes('This is a manual draw'));
-  assert.ok(adminPage.includes('canDraw = campaign.phase === \'closed\''));
+  assert.ok(adminPage.includes("const canReview = campaign.phase === 'closed'"));
   assert.ok(adminPage.includes('Draw winner'));
 });
 
