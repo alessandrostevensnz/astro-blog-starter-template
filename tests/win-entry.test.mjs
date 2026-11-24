@@ -74,7 +74,7 @@ test('Christmas dates are advertised even before launch and the draw stays manua
   assert.ok(publicPage.includes('campaign.closeAt ?? configuredDate(env.WIN_CLOSE_AT)'));
   assert.ok(publicPage.includes('campaign.drawAt ?? configuredDate(env.WIN_DRAW_AT)'));
   assert.ok(adminPage.includes('Christmas Day winner draw:'));
-  assert.ok(adminPage.includes('This is a manual draw'));
+  assert.ok(adminPage.includes('The draw is manual'));
   assert.ok(adminPage.includes("const canReview = campaign.phase === 'closed'"));
   assert.ok(adminPage.includes('Draw winner'));
 });
@@ -93,7 +93,7 @@ test('legal terms and random selection are independently reviewable before launc
   assert.match(legal.howToEnter, /NOT required/);
   assert.match(legal.socialMedia, /release Facebook and Instagram/);
   assert.match(legal.privacy, /30 June 2027/);
-  assert.match(legal.privacy, /business correspondence address before entries open/);
+  assert.match(legal.privacy, /business correspondence address is provided in the promoter details/);
   assert.match(entryHandler, /Re-check immediately before writing/);
   assert.match(schema, /CREATE TABLE IF NOT EXISTS win_entry_exclusions/);
   assert.match(schema, /CREATE TABLE IF NOT EXISTS win_draw_events/);
