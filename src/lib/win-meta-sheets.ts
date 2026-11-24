@@ -26,14 +26,34 @@ const leadId = (value: unknown): string => {
   return /^\d{5,25}$/.test(cleaned) ? cleaned : '';
 };
 
-export function sheetsImportConfigured(env: Record<string, any>): boolean {
-  return env.WIN_META_IMPORT_ENABLED === 'true' &&
-    env.WIN_META_SHEETS_SYNC_ENABLED === 'true' &&
-    typeof env.WIN_META_SHEETS_SYNC_SECRET === 'string' &&
+export function sheetsConnectionConfigured(env: Record<string, any>): boolean {
+  return typeof env.WIN_META_SHEETS_SYNC_SECRET === 'string' &&
     env.WIN_META_SHEETS_SYNC_SECRET.length >= 32 &&
     /^\d{5,25}$/.test(String(env.WIN_META_FORM_ID || '')) &&
     typeof env.WIN_DB?.prepare === 'function' &&
     typeof env.WIN_DB?.batch === 'function';
+}
+
+/** Actual entry writes always require both independent production switches. */
+export function sheetsImportConfigured(env: Record<string, any>): boolean {
+  return env.WIN_META_IMPORT_ENABLED === 'true' &&
+    env.WIN_META_SHEETS_SYNC_ENABLED === 'true' &&
+    sheetsConnectionConfigured(env);
+}
+
+/** The already-installed Apps Script connection check sends only these fields.
+ * Permit this exact no-consent, no-contact payload for authenticated dry runs. */
+export function isSheetsConnectionProbe(payload: unknown): boolean {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return false;
+  const p = payload as MetaSheetsPayload;
+  const rootKeys = Object.keys(p);
+  const lead = p.lead;
+  if (rootKeys.length !== 3 || !rootKeys.every(k => ['source','sent_at','lead'].includes(k)) ||
+      p.source !== 'meta_google_sheets' || !lead || typeof lead !== 'object' ||
+      Array.isArray(lead) || lead.terms_accepted !== false) return false;
+  const keys = Object.keys(lead);
+  return keys.length === 4 && keys.every(k => ['id','form_id','created_time','terms_accepted'].includes(k)) &&
+    typeof lead.id === 'string' && typeof lead.form_id === 'string' && typeof lead.created_time === 'string';
 }
 
 export function mapSheetsWinLead(payload: MetaSheetsPayload, env: Record<string, any>, now = Date.now()): MetaMapped {
