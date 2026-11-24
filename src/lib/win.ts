@@ -31,7 +31,9 @@ export function winState(env: Record<string, any>, at = Date.now()): WinState {
   // "launch" and other ambiguous values must fail closed.
   const open = Date.parse(openAt);
   const close = Date.parse(closeAt), draw = Date.parse(drawAt);
+  const contactAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' ? env.WIN_BUSINESS_POSTAL_ADDRESS.trim() : '';
   const ready = env.WIN_ENTRIES_ENABLED === 'true' &&
+    contactAddress.length >= 8 && contactAddress.toLowerCase() !== 'pending' &&
     [openAt, closeAt, drawAt].every(x => dateWithZone.test(x)) &&
     [open, close, draw].every(Number.isFinite) &&
     open < close && close <= draw &&
