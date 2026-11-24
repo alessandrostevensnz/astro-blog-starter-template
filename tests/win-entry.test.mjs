@@ -58,6 +58,19 @@ test('launch-based opening uses deployment time rather than a fictitious schedul
   assert.equal(winState({ ...launch, WIN_OPEN_AT: 'auto' }).phase, 'setup');
 });
 
+test('Christmas dates are advertised even before launch and the draw stays manual', () => {
+  const publicPage = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
+  const adminPage = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
+  assert.ok(publicPage.includes('Entries close on Christmas Eve:'));
+  assert.ok(publicPage.includes('Christmas Day winner draw:'));
+  assert.ok(publicPage.includes('campaign.closeAt ?? configuredDate(env.WIN_CLOSE_AT)'));
+  assert.ok(publicPage.includes('campaign.drawAt ?? configuredDate(env.WIN_DRAW_AT)'));
+  assert.ok(adminPage.includes('Christmas Day winner draw:'));
+  assert.ok(adminPage.includes('This is a manual draw'));
+  assert.ok(adminPage.includes('canDraw = campaign.phase === \'closed\''));
+  assert.ok(adminPage.includes('Draw winner'));
+});
+
 test('valid input normalizes email and does not assume marketing permission', () => {
   const result = validateWinEntry(entry());
   assert.equal(result.error, undefined);
