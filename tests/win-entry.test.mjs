@@ -33,6 +33,12 @@ function entry(overrides={}) {
   return form;
 }
 
+test('successful entry message confirms receipt without suggesting only the winner is contacted', () => {
+  const page = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
+  assert.ok(page.includes("Thanks for entering! Your submission has been received."));
+  assert.ok(!page.includes('Only the selected winner will be contacted.'));
+});
+
 test('giveaway form has no repeated prize and Christmas Eve summary above the fields', () => {
   const page = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
   assert.ok(page.includes('class="win-key-conditions"'), 'Keep the prize-conditions notice');
