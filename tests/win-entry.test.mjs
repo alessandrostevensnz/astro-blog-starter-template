@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { winState, winAuditReady, validateWinEntry, sameOriginPost, randomOffset } from '../src/lib/win.ts';
+import { winState, winAuditReady, winEntryWasCreated, validateWinEntry, sameOriginPost, randomOffset } from '../src/lib/win.ts';
 
 const env = {
   WIN_ENTRIES_ENABLED: 'true',
@@ -159,6 +159,29 @@ test('admin can prepare D1 audit tables without user-controlled SQL or deleting 
   assert.ok(dashboard.includes('action="/api/win/admin/setup"'));
   assert.ok(dashboard.includes('Prepare draw database'));
   assert.ok(dashboard.includes("!auditReady && typeof env.WIN_DB?.prepare === 'function'"));
+});
+
+test('confirmation is shown only for a newly saved D1 giveaway entry', () => {
+  assert.equal(winEntryWasCreated({ success: true, meta: { changes: 1 } }), true);
+  assert.equal(winEntryWasCreated({ success: true, meta: { changes: 0 } }), false, 'Ignored duplicate must not claim new receipt');
+  assert.equal(winEntryWasCreated({ success: false, meta: { changes: 1 } }), false);
+  assert.equal(winEntryWasCreated({ success: true }), false, 'Missing write acknowledgement is not a successful save');
+  assert.equal(winEntryWasCreated(undefined), false);
+  const endpoint = readFileSync(new URL('../src/pages/api/win/entry.ts', import.meta.url), 'utf8');
+  assert.ok(endpoint.includes('if (winEntryWasCreated(inserted)) return json({ success: true });'));
+  assert.ok(endpoint.includes('inserted?.meta?.changes === 0'));
+  assert.ok(endpoint.includes(' }, 409);'), 'Ignored inserts must return a non-success response');
+  assert.ok(endpoint.includes(' }, 503);'), 'Unconfirmed inserts must fail closed');
+  assert.ok(!endpoint.includes('    await env.WIN_DB.prepare(\n      \'INSERT OR IGNORE'), 'Do not ignore D1 insert metadata');
+});
+
+test('promoter test entries can be excluded with a recorded reason after entries close', () => {
+  const endpoint = readFileSync(new URL('../src/pages/api/win/admin/exclude.ts', import.meta.url), 'utf8');
+  const dashboard = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
+  assert.ok(endpoint.includes("'ANDRO promoter, employee or immediate family'"));
+  assert.equal(dashboard.split('<option>ANDRO promoter, employee or immediate family</option>').length - 1, 2);
+  assert.ok(endpoint.includes("winState(env)"), 'The exclusion must remain restricted to the post-close period');
+  assert.ok(endpoint.includes("win_draw_events"), 'Keep an auditable exclusion history');
 });
 
 test('valid input normalizes email and does not assume marketing permission', () => {

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { sameOriginPost, validateWinEntry, winState, winAuditReady } from '../../../lib/win';
+import { sameOriginPost, validateWinEntry, winState, winAuditReady, winEntryWasCreated } from '../../../lib/win';
 export const prerender = false;
 
 const json = (value: object, status = 200) => new Response(JSON.stringify(value), {
@@ -46,11 +46,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (winState(env).phase !== 'open') return json({ error: 'Entry period has ended. Late entries cannot be accepted.' }, 403);
   const entry = parsed.entry;
   try {
-    await env.WIN_DB.prepare(
+    const inserted = await env.WIN_DB.prepare(
       'INSERT OR IGNORE INTO win_entries (id, created_at, full_name, email, phone, suburb, property_role, service_type, work_details, marketing_opt_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     ).bind(crypto.randomUUID(), new Date().toISOString(), entry.full_name, entry.email, entry.phone, entry.suburb,
       entry.property_role, entry.service_type, entry.work_details, entry.marketing_opt_in).run();
-    return json({ success: true });
+    if (winEntryWasCreated(inserted)) return json({ success: true });
+    // INSERT OR IGNORE can succeed without saving anything, for example when
+    // an email was already entered. Never show a false receipt confirmation.
+    if (inserted?.success === true && inserted?.meta?.changes === 0) {
+      return json({ error: 'No new entry was added. If you have entered before, your original entry is still recorded. You can enter only once.' }, 409);
+    }
+    return json({ error: 'We could not confirm your entry was saved. Please contact ANDRO before trying again.' }, 503);
   } catch {
     return json({ error: 'Entries are temporarily unavailable. Please try again later.' }, 503);
   }
