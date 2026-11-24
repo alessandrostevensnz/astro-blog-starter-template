@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { winState, validateWinEntry, sameOriginPost, randomOffset } from '../src/lib/win.ts';
+import { winState, winAuditReady, validateWinEntry, sameOriginPost, randomOffset } from '../src/lib/win.ts';
 
 const env = {
   WIN_ENTRIES_ENABLED: 'true',
   WIN_BUSINESS_POSTAL_ADDRESS: 'Unit 3, 123 Example Road, Auckland, New Zealand',
-  WIN_OPEN_AT: '2026-11-20T09:00:00+13:00',
-  WIN_CLOSE_AT: '2026-12-24T23:59:59+13:00',
+  WIN_OPEN_AT: '2026-11-24T20:00:00+13:00',
+  WIN_CLOSE_AT: '2026-12-25T00:00:00+13:00',
   WIN_DRAW_AT: '2026-12-25T12:00:00+13:00',
   WIN_TURNSTILE_SITE_KEY: 'example-test-site-key',
   WIN_TURNSTILE_SECRET_KEY: 'example-test-secret-key',
@@ -57,7 +57,7 @@ test('free-entry giveaway requires a precise published opening and fails closed 
   assert.equal(winState({ ...env, WIN_OPEN_AT: '2026-11-27T09:00:00+13:00' },
     Date.parse('2026-11-27T09:00:00+13:00')).phase, 'open');
   assert.equal(winState(env, Date.parse('2026-12-24T23:59:58+13:00')).phase, 'open');
-  assert.equal(winState(env, Date.parse('2026-12-24T23:59:59+13:00')).phase, 'closed');
+  assert.equal(winState(env, Date.parse('2026-12-24T23:59:59+13:00')).phase, 'open');
   assert.equal(winState(env, Date.parse('2026-12-25T12:00:00+13:00')).phase, 'closed');
 });
 
@@ -65,6 +65,8 @@ test('Christmas dates are advertised even before launch and the draw stays manua
   const publicPage = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
   const adminPage = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
   assert.ok(publicPage.includes('Entries close on Christmas Eve:'));
+  assert.ok(publicPage.includes('midnight at the end of Christmas Eve'));
+  assert.ok(publicPage.includes('closeLabel'));
   assert.ok(publicPage.includes('promoterAddress'));
   assert.ok(publicPage.includes('correspondence address'));
   assert.ok(publicPage.includes('Christmas Day winner draw:'));
@@ -102,6 +104,32 @@ test('legal terms and random selection are independently reviewable before launc
   assert.match(exclude, /db\.batch\(/);
   assert.match(dashboard, /migration 0002/);
   assert.match(dashboard, /PROVISIONALLY SELECTED ENTRANT/);
+});
+
+test('the scheduled opening is 8 pm Auckland time and the end-of-Christmas-Eve cutoff is exclusive', () => {
+  assert.equal(winState(env, Date.parse('2026-11-24T19:59:59+13:00')).phase, 'upcoming');
+  assert.equal(winState(env, Date.parse('2026-11-24T20:00:00+13:00')).phase, 'open');
+  assert.equal(winState(env, Date.parse('2026-12-24T23:59:59+13:00')).phase, 'open');
+  assert.equal(winState(env, Date.parse('2026-12-25T00:00:00+13:00')).phase, 'closed');
+});
+
+test('draw-audit schema readiness prevents collecting entries into an unprepared database', async () => {
+  const queried: string[] = [];
+  const prepared = { WIN_DB: { prepare(statement: string) {
+    queried.push(statement);
+    return { all: async () => ({results: []}) };
+  } } };
+  assert.equal(await winAuditReady(prepared), true);
+  assert.equal(queried.length, 3);
+  assert.ok(queried.some(sql => sql.includes('win_entries')));
+  assert.ok(queried.some(sql => sql.includes('win_draw_events')));
+  assert.ok(queried.some(sql => sql.includes('win_entry_exclusions')));
+  assert.equal(await winAuditReady({ WIN_DB: { prepare() { throw Error('no such table'); } } }), false);
+  assert.equal(await winAuditReady({ WIN_DB: undefined }), false);
+  const page = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
+  const endpoint = readFileSync(new URL('../src/pages/api/win/entry.ts', import.meta.url), 'utf8');
+  assert.ok(page.includes('await winAuditReady(env)'), 'the public form must stay hidden until migration 0002 is installed');
+  assert.ok(endpoint.includes('await winAuditReady(env)'), 'the server must refuse writes without migration 0002');
 });
 
 test('valid input normalizes email and does not assume marketing permission', () => {
@@ -147,10 +175,10 @@ test('Cloudflare config contains the intended ANDRO D1 binding', () => {
   assert.equal(win.database_name, 'andro-win');
   assert.match(win.database_id, /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i);
   assert.equal(config.vars?.WIN_TURNSTILE_SITE_KEY, '0x4AAAAAAGBnK_eVlihsb2dT');
-  assert.equal(config.vars?.WIN_ENTRIES_ENABLED, 'false', 'giveaway must remain disabled before approval');
-  assert.equal(config.vars?.WIN_OPEN_AT, 'pending');
-  assert.equal(config.vars?.WIN_BUSINESS_POSTAL_ADDRESS, 'pending');
-  assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-24T23:59:59+13:00');
+  assert.equal(config.vars?.WIN_ENTRIES_ENABLED, 'true', 'approved opening still gated by the clock and D1 audit tables');
+  assert.equal(config.vars?.WIN_OPEN_AT, '2026-11-24T20:00:00+13:00');
+  assert.equal(config.vars?.WIN_BUSINESS_POSTAL_ADDRESS, '23 Hampton Drive, St Heliers, Auckland, New Zealand');
+  assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-25T00:00:00+13:00');
   assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-25T12:00:00+13:00');
   assert.ok(!Object.keys(config.vars ?? {}).some(key => /turnstile_secret|report_password/i.test(key)), 'private secrets must not be committed to wrangler vars');
   assert.ok(!Object.keys(config).some(key => /turnstile_secret|report_password/i.test(key)), 'secrets must not be committed to wrangler.json');
