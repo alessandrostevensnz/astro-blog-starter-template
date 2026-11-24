@@ -3,6 +3,8 @@ export const prerender = false;
 import { winState, nzDate } from '../../../lib/win';
 const env = (Astro.locals as any).runtime?.env ?? {};
 const campaign = winState(env);
+const closeTime = typeof env.WIN_CLOSE_AT === 'string' && Number.isFinite(Date.parse(env.WIN_CLOSE_AT)) ? env.WIN_CLOSE_AT : undefined;
+const drawTime = typeof env.WIN_DRAW_AT === 'string' && Number.isFinite(Date.parse(env.WIN_DRAW_AT)) ? env.WIN_DRAW_AT : undefined;
 let entries: any[] = [];
 let total = 0, marketing = 0, winner: any = null;
 let error = '';
@@ -29,7 +31,7 @@ const canDraw = campaign.phase === 'closed' && !!campaign.drawAt && Date.now() >
   <p class="eyebrow">COMPETITION CONTROL CENTRE</p><h1>Giveaway entries.</h1><p class="muted">Review submissions, export entries and conduct the draw. This area is protected and is not visible to visitors.</p>
   <div class="stats"><div class="stat"><small>Total entries</small><strong>{total}</strong></div><div class="stat"><small>Marketing opt-ins</small><strong>{marketing}</strong></div><div class="stat"><small>Competition status</small><strong style="font-size:24px;text-transform:capitalize">{campaign.phase}</strong></div></div>
   {error && <div class="notice error" role="alert">{error}</div>}
-  {campaign.openAt && <p class="notice">Entries: {nzDate(campaign.openAt)} – {nzDate(campaign.closeAt)}. Scheduled draw: {nzDate(campaign.drawAt)}.</p>}
+  {closeTime && drawTime && <p class="notice">Entries close: {nzDate(closeTime)}. Christmas Day winner draw: {nzDate(drawTime)}. This is a manual draw; the Draw winner button becomes available after the scheduled time when entries have closed and the giveaway is enabled.</p>}
   {winner ? <div class="winner"><p class="eyebrow">SELECTED WINNER</p><h2>{winner.full_name}</h2><p>{winner.email} · {winner.phone} · {winner.suburb}</p><p>{winner.service_type} — {winner.work_details}</p><p class="muted">Drawn: {winner.selected_at ? nzDate(winner.selected_at) : 'Date unavailable'}. Verify eligibility and obtain owner permission before confirming the prize.</p></div> : <div class="notice">{canDraw ? 'The draw is ready. Eligible entries are selected randomly.' : 'The winner draw unlocks after the scheduled draw time. One winner can be selected.'}</div>}
   <div class="toolbar"><h2>Recent entries <small class="muted">(latest 250)</small></h2><div class="actions"><input id="search" class="search" aria-label="Search loaded entries" placeholder="Search entries…" /><a class="btn" href="/api/win/admin/export">Export all entries (CSV)</a>{canDraw && <form id="draw-form" method="POST" action="/api/win/admin/draw"><button class="primary" type="submit">Draw winner</button></form>}</div></div>
   <div class="panel" id="entries">{entries.length === 0 ? <p class="empty">No entries yet.</p> : entries.map((entry) => <article class="record" data-search={(entry.full_name+' '+entry.email+' '+entry.suburb+' '+entry.service_type).toLowerCase()}><div><h3>{entry.full_name}</h3><p><a href={'mailto:'+entry.email}>{entry.email}</a></p><p><a href={'tel:'+entry.phone}>{entry.phone}</a></p><p class="muted">{entry.suburb} · {entry.property_role}</p></div><div><p><strong>{entry.service_type}</strong></p><p class="muted">{nzDate(entry.created_at)}</p><p>Marketing: {entry.marketing_opt_in ? 'Opted in' : 'Not opted in'}</p><p>Status: {entry.status}</p></div><p class="description">{entry.work_details}</p></article>)}</div>
