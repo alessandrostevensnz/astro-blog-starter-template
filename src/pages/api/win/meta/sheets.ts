@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { noStoreHeaders, winAuditReady } from '../../../../lib/win';
 import { verifyMetaSignature, storeMetaLead } from '../../../../lib/win-meta';
 import { mapSheetsWinLead, sheetsImportConfigured, sheetsPayloadIsRecent } from '../../../../lib/win-meta-sheets';
+import type { MetaSheetsPayload } from '../../../../lib/win-meta-sheets';
 
 export const prerender = false;
 const json = (value: object, status = 200) => new Response(JSON.stringify(value), {
@@ -33,10 +34,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   let payload: unknown;
   try { payload = JSON.parse(new TextDecoder().decode(body)); }
   catch { return json({ error: 'Invalid JSON.' }, 400); }
-  if (!payload || typeof payload !== 'object' || !sheetsPayloadIsRecent(payload)) {
+  if (!payload || typeof payload !== 'object' || !sheetsPayloadIsRecent(payload as MetaSheetsPayload)) {
     return json({ error: 'Unknown source or expired import request.' }, 403);
   }
-  const lead = mapSheetsWinLead(payload, env);
+  const lead = mapSheetsWinLead(payload as MetaSheetsPayload, env);
   if (!lead.entry) return json({ error: lead.error || 'Not a verifiable competition entry.' }, 422);
   try {
     const winner = await env.WIN_DB.prepare("SELECT id FROM win_entries WHERE status='winner' LIMIT 1").first();
