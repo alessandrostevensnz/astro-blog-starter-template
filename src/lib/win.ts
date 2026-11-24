@@ -49,6 +49,26 @@ export function winState(env: Record<string, any>, at = Date.now()): WinState {
   return { phase: 'open', ...shared };
 }
 
+/** Prevent opening entries if the existing entries table or new draw/exclusion audit
+ * tables have not been installed in the same production Cloudflare D1 database.
+ * A schema-only read works with an empty database without exposing entrant data. */
+export async function winAuditReady(env: Record<string, any>): Promise<boolean> {
+  const db = env?.WIN_DB;
+  if (typeof db?.prepare !== 'function') return false;
+  try {
+    for (const statement of [
+      'SELECT id FROM win_entries LIMIT 0',
+      'SELECT entry_id FROM win_entry_exclusions LIMIT 0',
+      'SELECT id FROM win_draw_events LIMIT 0',
+    ]) {
+      await db.prepare(statement).all();
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function nzDate(iso: string | undefined): string {
   if (!iso) return '';
   return new Intl.DateTimeFormat('en-NZ', {
