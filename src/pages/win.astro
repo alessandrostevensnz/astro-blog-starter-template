@@ -2,10 +2,14 @@
 export const prerender = false;
 import SiteLayout from '../components/SiteLayout.astro';
 import { responsivePhoto } from '../lib/optimized-images';
-import { winState, nzDate } from '../lib/win';
+import { winState, nzDate, winAuditReady, type WinState } from '../lib/win';
 import winCopy from '../../content/pages/win.json';
 const env = (Astro.locals as any).runtime?.env ?? {};
-const campaign = winState(env);
+const configuredCampaign = winState(env);
+// Even with the scheduled activation switch on, never offer a form unless
+// the production D1 tables needed to document the draw are all available.
+const auditReady = configuredCampaign.phase === 'setup' ? false : await winAuditReady(env);
+const campaign: WinState = auditReady ? configuredCampaign : { phase: 'setup' };
 const isOpen = campaign.phase === 'open';
 // Display the approved Christmas dates even while entries remain disabled.
 // The entry form and draw still depend only on winState's fail-closed checks.
@@ -14,6 +18,9 @@ const configuredDate = (value: unknown) =>
 const openTime = campaign.openAt ?? configuredDate(env.WIN_OPEN_AT);
 const closeTime = campaign.closeAt ?? configuredDate(env.WIN_CLOSE_AT);
 const drawTime = campaign.drawAt ?? configuredDate(env.WIN_DRAW_AT);
+const closeLabel = closeTime === '2026-12-25T00:00:00+13:00'
+  ? 'midnight at the end of Christmas Eve, Thursday 24 December 2026 (00:00 on 25 December)'
+  : nzDate(closeTime);
 const promoterAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' && env.WIN_BUSINESS_POSTAL_ADDRESS.trim().length >= 8 && env.WIN_BUSINESS_POSTAL_ADDRESS.trim().toLowerCase() !== 'pending'
   ? env.WIN_BUSINESS_POSTAL_ADDRESS.trim() : undefined;
 ---
@@ -43,12 +50,12 @@ const promoterAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' && e
       <p class="win-kicker">02 / YOUR ENTRY</p>
       <h2>Tell us about<br />your property.</h2>
       <p class="win-key-conditions">One free entry per eligible adult. One prize: up to 8 hours of one worker's on-site labour at an eligible mainland Auckland property. Materials and consumables excluded. No purchase or marketing sign-up required. <a href="#win-terms">Read all conditions.</a></p>
-      {closeTime && drawTime && <p class="win-holiday-schedule"><strong>Entries close on Christmas Eve:</strong> {nzDate(closeTime)}. <strong>Christmas Day winner draw:</strong> {nzDate(drawTime)}.</p>}
+      {closeTime && drawTime && <p class="win-holiday-schedule"><strong>Entries close on Christmas Eve:</strong> {closeLabel}. <strong>Christmas Day winner draw:</strong> {nzDate(drawTime)}.</p>}
       {campaign.phase === 'setup' && <p class="win-alert" role="status">Entries are not open yet. We're finalising the competition details. Please check back soon.</p>}
       {campaign.phase === 'upcoming' && <p class="win-alert" role="status">Entries open {nzDate(campaign.openAt)}.</p>}
       {campaign.phase === 'closed' && <p class="win-alert" role="status">Entries have closed. The scheduled draw date is {nzDate(campaign.drawAt)}.</p>}
       {isOpen && <>
-        <p class="win-panel-copy">Free to enter. One entry per person. Auckland properties only. Entries close {nzDate(campaign.closeAt)}.</p>
+        <p class="win-panel-copy">Free to enter. One entry per person. Mainland Auckland properties only. Entries close {closeLabel}.</p>
         <form id="win-entry" class="win-form" autocomplete="on">
           <div class="win-two">
             <label>Full name <input name="full_name" autocomplete="name" minlength="2" maxlength="100" placeholder="Your full name" required /></label>
@@ -94,8 +101,8 @@ const promoterAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' && e
     <p><strong>Who may enter:</strong> <span data-cms-text data-style-key="win.eligibility">{winCopy.eligibility}</span></p>
     <p><strong>How to enter:</strong> <span data-cms-text data-style-key="win.howToEnter">{winCopy.howToEnter}</span></p>
     {openTime && closeTime && drawTime
-      ? <p><strong>Entry period:</strong> Opens {nzDate(openTime)}, closes {nzDate(closeTime)} (Auckland time). One random winner will be provisionally selected on Christmas Day, {nzDate(drawTime)}, or as soon as reasonably practicable thereafter. Late entries are not accepted. Only valid entries received during this period are eligible.</p>
-      : <p><strong>Entry period:</strong> The precise opening time has not yet been announced and entries are not being accepted. Entries are scheduled to close on Christmas Eve, {nzDate(closeTime)} (Auckland time), with a manual draw from noon on Christmas Day, {nzDate(drawTime)}. The opening time will be published before the competition opens.</p>}
+      ? <p><strong>Entry period:</strong> Opens {nzDate(openTime)} and closes at {closeLabel} (Auckland time). One random winner will be provisionally selected on Christmas Day, {nzDate(drawTime)}, or as soon as reasonably practicable thereafter. Late entries are not accepted. Only valid entries received during this period are eligible.</p>
+      : <p><strong>Entry period:</strong> The precise opening time has not yet been announced and entries are not being accepted. Entries are scheduled to close at {closeLabel} (Auckland time), with a manual draw from noon on Christmas Day, {nzDate(drawTime)}. The opening time will be published before the competition opens.</p>}
     <p><strong>The prize:</strong> <span data-cms-text data-style-key="win.prizeTerms">{winCopy.prizeTerms}</span></p>
     <p><strong>Work restrictions:</strong> <span data-cms-text data-style-key="win.workRestrictions">{winCopy.workRestrictions}</span></p>
     <p><strong>Choosing and contacting the winner:</strong> <span data-cms-text data-style-key="win.winnerContact">{winCopy.winnerContact}</span></p>
