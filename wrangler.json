@@ -65,6 +65,7 @@
 		"WIN_DRAW_AT": "2026-12-25T12:00:00+13:00",
 		"WIN_ENTRIES_ENABLED": "true",
 		"WIN_BUSINESS_POSTAL_ADDRESS": "23 Hampton Drive, St Heliers, Auckland, New Zealand",
-		"WIN_META_IMPORT_ENABLED": "false"
+		"WIN_META_IMPORT_ENABLED": "false",
+		"WIN_META_SHEETS_SYNC_ENABLED": "false"
 	}
 }
