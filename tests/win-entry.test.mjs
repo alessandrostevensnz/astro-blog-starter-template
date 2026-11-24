@@ -162,31 +162,34 @@ test('valid input normalizes email and does not assume marketing permission', ()
   assert.equal(result.entry.marketing_opt_in, 0);
   assert.equal(validateWinEntry(entry({ marketing:'yes' })).entry.marketing_opt_in, 1);
 });
-test('phone number is optional for entrants but checked when supplied', () => {
-  const withoutPhone = entry({ phone: '' });
-  const absentPhone = entry();
-  absentPhone.delete('phone');
-  const blank = validateWinEntry(withoutPhone);
-  const missing = validateWinEntry(absentPhone);
-  assert.equal(blank.error, undefined);
+test('work description box remains visible but is optional, while phone remains required', () => {
+  const empty = validateWinEntry(entry({ work_details: '' }));
+  const missingForm = entry();
+  missingForm.delete('work_details');
+  const missing = validateWinEntry(missingForm);
+  assert.equal(empty.error, undefined);
+  assert.equal(empty.entry.work_details, '', 'Store an empty string for the existing NOT NULL D1 column');
   assert.equal(missing.error, undefined);
-  assert.equal(blank.entry.phone, '', 'Use an empty string because the D1 phone column is NOT NULL');
-  assert.equal(missing.entry.phone, '', 'Missing phone field is also allowed');
-  assert.equal(validateWinEntry(entry({ phone: '021 123 4567' })).error, undefined);
-  assert.match(validateWinEntry(entry({ phone: 'invalid' })).error || '', /phone number/);
+  assert.equal(missing.entry.work_details, '');
+  assert.equal(validateWinEntry(entry({ work_details: 'a' })).error, undefined);
+  assert.ok(validateWinEntry(entry({ work_details: 'x'.repeat(1201) })).error);
+  assert.ok(validateWinEntry(entry({ phone: '' })).error, 'Phone remains required as before');
+  assert.ok(validateWinEntry(entry({ phone: 'invalid' })).error);
   const page = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
-  assert.ok(page.includes('Phone number (optional)'));
-  assert.ok(page.includes('name="phone"'));
-  assert.ok(!/name="phone"[^>]*required/.test(page), 'Phone input must not have the required attribute');
+  assert.ok(page.includes('Tell us what needs doing (optional)'), 'Description box must remain visible');
+  assert.ok(page.includes('name="work_details"'), 'Description box must not be removed');
+  assert.ok(!/name="work_details"[^>]*required/.test(page), 'Description must not be required');
+  assert.ok(/name="phone"[^>]*required/.test(page), 'Phone must remain required');
   const legal = JSON.parse(readFileSync(new URL('../content/pages/win.json', import.meta.url), 'utf8'));
-  assert.match(legal.privacy, /phone number is optional/);
+  assert.match(legal.privacy, /work description is not required/);
+  assert.match(legal.howToEnter, /entirely optional/);
 });
 
 test('rejects missing consent, invalid data, and unapproved property role', () => {
   for (const fields of [
     { terms: 'no' }, { age: '' }, { authority: 'no' },
     { phone:'not a phone' }, { email:'bad@' },
-    { work_details: 'short' }, { property_role: 'Tenant' }
+    { work_details: 'x'.repeat(1201) }, { property_role: 'Tenant' }
   ]) assert.ok(validateWinEntry(entry(fields)).error, JSON.stringify(fields));
 });
 test('cross-origin writes fail origin guard', () => {

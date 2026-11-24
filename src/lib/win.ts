@@ -97,11 +97,11 @@ export function validateWinEntry(form: FormData): { error?: string; entry?: {
 
   if (full_name.length < 2 || full_name.length > 100) return { error: 'Please enter your full name.' };
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: 'Please enter a valid email address.' };
-  if (phone && (phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone))) return { error: 'Please enter a valid phone number, or leave it blank.' };
+  if (phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone)) return { error: 'Please enter a valid phone number.' };
   if (suburb.length < 2 || suburb.length > 80) return { error: 'Please enter your Auckland suburb.' };
   if (!['Owner', 'Property manager', 'Tenant with owner permission'].includes(property_role)) return { error: 'Please choose your relationship to the property.' };
   if (!['Property maintenance', 'Handyman work', 'Minor building repairs', 'Other eligible work'].includes(service_type)) return { error: 'Please choose the work category.' };
-  if (work_details.length < 20 || work_details.length > 1200) return { error: 'Please describe the work in 20 to 1,200 characters.' };
+  if (work_details.length > 1200) return { error: 'Please keep any work description under 1,200 characters.' };
   if (get('authority') !== 'yes') return { error: 'You must have permission for work at this property.' };
   if (get('terms') !== 'yes') return { error: 'Please accept the giveaway terms.' };
   if (get('age') !== 'yes') return { error: 'You must be 18 or older to enter.' };

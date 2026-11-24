@@ -61,7 +61,7 @@ const promoterAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' && e
             <label>Email address <input type="email" name="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required /></label>
           </div>
           <div class="win-two">
-            <label>Phone number (optional) <input type="tel" name="phone" autocomplete="tel" maxlength="30" placeholder="Your contact number (optional)" /></label>
+            <label>Phone number <input type="tel" name="phone" autocomplete="tel" maxlength="30" placeholder="Your contact number" required /></label>
             <label>Suburb <input name="suburb" maxlength="80" placeholder="Auckland suburb" required /></label>
           </div>
           <label>Your relationship to the property
@@ -70,8 +70,8 @@ const promoterAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' && e
           <label>What type of work could we help with?
             <select name="service_type" required><option value="">Select one</option><option>Property maintenance</option><option>Handyman work</option><option>Minor building repairs</option><option>Other eligible work</option></select>
           </label>
-          <label>Tell us what needs doing
-            <textarea name="work_details" minlength="20" maxlength="1200" rows="5" placeholder="Describe the jobs around your property and what a day's help would mean..." required></textarea>
+          <label>Tell us what needs doing (optional)
+            <textarea name="work_details" maxlength="1200" rows="5" placeholder="Optional: Tell us about any jobs you have in mind"></textarea>
           </label>
           <label class="win-hidden" aria-hidden="true">Leave blank <input name="website" tabindex="-1" autocomplete="off" /></label>
           <div class="win-check"><label><input type="checkbox" name="age" value="yes" required /><span>I am 18 years or older.</span></label></div>
