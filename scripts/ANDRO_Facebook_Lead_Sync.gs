@@ -1,7 +1,7 @@
 /**
  * ANDRO / Meta Facebook Instant Form -> Google Sheets -> ANDRO D1
  * Prepared in SAFE MODE. Never send entrants until rules and privacy are approved.
- * Paste into the Code.gs file that is bound to ANDRO GIVEAWAY spreadsheet.
+ * Paste into the Code.gs file that is bound to ANDRO NEW FINAL spreadsheet.
  *
  * Google Apps Script Project Settings > Script properties (not source code):
  *   ANDRO_SYNC_ENABLED = false
@@ -152,8 +152,8 @@ function androSyncLeads() {
 
 /**
  * Test the signed production connection without sending names, emails or phones,
- * creating an entry, or enabling scheduled sync. Requires the backend switches
- * to be on, but the Apps Script sync switch to remain OFF.
+ * creating an entry, or enabling scheduled sync. Keep all three switches OFF
+ * for this signed no-write check after the backend probe update is deployed.
  * Use only the explicitly identified, manually submitted owner test lead.
  */
 function androCheckConnection() {
