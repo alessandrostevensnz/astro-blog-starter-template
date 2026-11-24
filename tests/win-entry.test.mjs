@@ -114,8 +114,8 @@ test('the scheduled opening is 8 pm Auckland time and the end-of-Christmas-Eve c
 });
 
 test('draw-audit schema readiness prevents collecting entries into an unprepared database', async () => {
-  const queried: string[] = [];
-  const prepared = { WIN_DB: { prepare(statement: string) {
+  const queried = [];
+  const prepared = { WIN_DB: { prepare(statement) {
     queried.push(statement);
     return { all: async () => ({results: []}) };
   } } };
