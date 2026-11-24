@@ -33,6 +33,15 @@ function entry(overrides={}) {
   return form;
 }
 
+test('giveaway form has no repeated prize and Christmas Eve summary above the fields', () => {
+  const page = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
+  assert.ok(page.includes('class="win-key-conditions"'), 'Keep the prize-conditions notice');
+  assert.ok(page.includes('class="win-holiday-schedule"'), 'Keep the Christmas Eve and Christmas Day dates');
+  assert.ok(page.includes('<form id="win-entry"'), 'Keep the signup form');
+  assert.ok(!page.includes('class="win-panel-copy"'), 'Remove the repeated introductory paragraph');
+  assert.ok(!page.includes('.win-panel-copy{'), 'Remove unused styling');
+});
+
 test('competition remains closed when unconfigured', () => {
   assert.equal(winState({}, Date.now()).phase, 'setup');
   assert.equal(winState({ ...env, WIN_ENTRIES_ENABLED: 'false' }).phase, 'setup');
