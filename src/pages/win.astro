@@ -2,14 +2,14 @@
 export const prerender = false;
 import SiteLayout from '../components/SiteLayout.astro';
 import { responsivePhoto } from '../lib/optimized-images';
-import { winState, nzDate, winAuditReady } from '../lib/win';
+import { winState, nzDate, winAuditReady, type WinState } from '../lib/win';
 import winCopy from '../../content/pages/win.json';
 const env = (Astro.locals as any).runtime?.env ?? {};
 const configuredCampaign = winState(env);
 // Even with the scheduled activation switch on, never offer a form unless
 // the production D1 tables needed to document the draw are all available.
 const auditReady = configuredCampaign.phase === 'setup' ? false : await winAuditReady(env);
-const campaign = auditReady ? configuredCampaign : { phase: 'setup' as const };
+const campaign: WinState = auditReady ? configuredCampaign : { phase: 'setup' };
 const isOpen = campaign.phase === 'open';
 // Display the approved Christmas dates even while entries remain disabled.
 // The entry form and draw still depend only on winState's fail-closed checks.
