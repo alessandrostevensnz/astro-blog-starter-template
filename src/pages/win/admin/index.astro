@@ -3,6 +3,7 @@ export const prerender = false;
 import { winState, nzDate } from '../../../lib/win';
 const env = (Astro.locals as any).runtime?.env ?? {};
 const campaign = winState(env);
+const openTime = typeof env.WIN_OPEN_AT === 'string' && Number.isFinite(Date.parse(env.WIN_OPEN_AT)) ? env.WIN_OPEN_AT : undefined;
 const closeTime = typeof env.WIN_CLOSE_AT === 'string' && Number.isFinite(Date.parse(env.WIN_CLOSE_AT)) ? env.WIN_CLOSE_AT : undefined;
 const drawTime = typeof env.WIN_DRAW_AT === 'string' && Number.isFinite(Date.parse(env.WIN_DRAW_AT)) ? env.WIN_DRAW_AT : undefined;
 let entries: any[] = [];
@@ -39,7 +40,7 @@ try {
     auditReady = true;
   }
 } catch {
-  if (!error) error = 'Draw-audit database tables missing. Apply migration 0002 before opening the giveaway.';
+  if (!error) error = 'Draw-audit tables are missing. Prepare the database below before opening the giveaway.';
 }
 const canReview = campaign.phase === 'closed' && auditReady;
 const canDraw = canReview && !!campaign.drawAt && Date.now() >= Date.parse(campaign.drawAt) && eligibleCount > 0 && !winner;
@@ -53,7 +54,12 @@ const canDraw = canReview && !!campaign.drawAt && Date.now() >= Date.parse(campa
   <div class="stats"><div class="stat"><small>Total entries</small><strong>{total}</strong></div><div class="stat"><small>Marketing opt-ins</small><strong>{marketing}</strong></div><div class="stat"><small>Competition status</small><strong style="font-size:24px;text-transform:capitalize">{campaign.phase}</strong></div></div>
   <p class="muted">Eligible entries after documented exclusions: {auditReady ? eligibleCount : 'Audit migration required'}. A provisional selection is not a confirmed winner until eligibility is checked.</p>
   {error && <div class="notice error" role="alert">{error}</div>}
-  {closeTime && drawTime && <p class="notice">Entries close: {nzDate(closeTime)}. Christmas Day winner draw: {nzDate(drawTime)}. This is a manual draw; the Draw winner button becomes available after the scheduled time when entries have closed and the giveaway is enabled.</p>}
+  {!auditReady && typeof env.WIN_DB?.prepare === 'function' && <form method="POST" action="/api/win/admin/setup" class="notice">
+    <strong>One-time setup required before entries can open.</strong>
+    <p>This securely creates the two missing draw-audit tables in the existing ANDRO Cloudflare database. No competition entries are changed or removed.</p>
+    <button class="primary" type="submit">Prepare draw database</button>
+  </form>}
+  {openTime && closeTime && drawTime && <p class="notice">Scheduled entries open: {nzDate(openTime)}. Entries close at midnight at the end of Thursday 24 December 2026 (00:00 on Friday 25 December). Christmas Day winner draw: {nzDate(drawTime)}. The draw is manual; the Draw winner button becomes available after the scheduled time when entries have closed.</p>}
   {winner ? <div class="winner"><p class="eyebrow">PROVISIONALLY SELECTED ENTRANT</p><h2>{winner.full_name}</h2><p>{winner.email} · {winner.phone} · {winner.suburb}</p><p>{winner.service_type} — {winner.work_details}</p><p class="muted">Selected: {winner.selected_at ? nzDate(winner.selected_at) : 'Date unavailable'}. Check eligibility and owner permission. If this entrant declines, fails the published eligibility terms, or does not respond within seven days of first contact, record the reason below to permit a replacement draw.</p>
   {canReview && <form class="exclusion" method="POST" action="/api/win/admin/exclude" data-confirm-exclusion>
     <input type="hidden" name="entry_id" value={winner.id} />
