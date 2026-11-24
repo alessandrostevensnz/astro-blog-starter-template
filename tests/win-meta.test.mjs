@@ -39,9 +39,9 @@ const valid = (overrides = {}) => ({
   ...overrides,
 });
 
-test('Meta lead import is disabled by default in real deployment', () => {
+test('Direct Meta webhook remains disabled without its separate credentials', () => {
   const config = JSON.parse(readFileSync(new URL('../wrangler.json', import.meta.url), 'utf8'));
-  assert.equal(config.vars.WIN_META_IMPORT_ENABLED, 'false');
+  assert.equal(metaIntegrationConfigured(config.vars), false);
   assert.ok(!('WIN_META_PAGE_TOKEN' in config.vars), 'Never commit Meta access token to GitHub');
   assert.ok(!('WIN_META_APP_SECRET' in config.vars), 'Never commit Meta app secret to GitHub');
   assert.ok(!('WIN_META_VERIFY_TOKEN' in config.vars), 'Never commit webhook verification secret to GitHub');
