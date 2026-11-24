@@ -77,6 +77,13 @@ const canDraw = canReview && !!campaign.drawAt && Date.now() >= Date.parse(campa
     {metaImportReady && <> Facebook accepted: {metaAccepted}, duplicates: {metaDuplicates}, incomplete/rejected: {metaRejected}.</>}
     {!metaImportReady && <> Facebook import database not installed (optional migration 0003).</>}
   </p>
+  <p class="muted">Sheets connection configuration:
+    shared secret {typeof env.WIN_META_SHEETS_SYNC_SECRET === 'string' && env.WIN_META_SHEETS_SYNC_SECRET.length >= 32 ? 'configured' : 'missing or too short'} ·
+    form ID {/^[0-9]{5,25}$/.test(String(env.WIN_META_FORM_ID || '')) ? 'configured' : 'missing or invalid'} ·
+    database {auditReady && metaImportReady ? 'ready' : 'not ready'} ·
+    import switches {env.WIN_META_IMPORT_ENABLED === 'true' && env.WIN_META_SHEETS_SYNC_ENABLED === 'true' ? 'on' : 'off'}.
+    No secret values are displayed.
+  </p>
   {error && <div class="notice error" role="alert">{error}</div>}
   {!auditReady && typeof env.WIN_DB?.prepare === 'function' && <form method="POST" action="/api/win/admin/setup" class="notice">
     <strong>One-time setup required before entries can open.</strong>
