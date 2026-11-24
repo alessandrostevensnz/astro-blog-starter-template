@@ -21,23 +21,80 @@ try {
     winner = chosen;
   } else error = 'D1 database is not bound to this Worker.';
 } catch { error = 'Database not ready. Apply the giveaway migration.'; }
-const canDraw = campaign.phase === 'closed' && !!campaign.drawAt && Date.now() >= Date.parse(campaign.drawAt) && total > 0 && !winner;
+// Migration 0002 provides a permanent record of draws and exclusions.
+let excludedIds: string[] = [];
+let auditEvents: any[] = [];
+let auditReady = false;
+let eligibleCount = 0;
+try {
+  if (env.WIN_DB?.prepare) {
+    const [exclusions, history, remaining] = await Promise.all([
+      env.WIN_DB.prepare('SELECT entry_id FROM win_entry_exclusions').all(),
+      env.WIN_DB.prepare('SELECT a.event_type, a.recorded_at, a.reason, e.full_name FROM win_draw_events a JOIN win_entries e ON e.id = a.entry_id ORDER BY a.recorded_at DESC LIMIT 100').all(),
+      env.WIN_DB.prepare("SELECT count(*) AS n FROM win_entries e WHERE e.status='valid' AND NOT EXISTS (SELECT 1 FROM win_entry_exclusions x WHERE x.entry_id = e.id)").first(),
+    ]);
+    excludedIds = (exclusions.results || []).map((e: any) => e.entry_id);
+    auditEvents = history.results || [];
+    eligibleCount = Number(remaining?.n ?? 0);
+    auditReady = true;
+  }
+} catch {
+  if (!error) error = 'Draw-audit database tables missing. Apply migration 0002 before opening the giveaway.';
+}
+const canReview = campaign.phase === 'closed' && auditReady;
+const canDraw = canReview && !!campaign.drawAt && Date.now() >= Date.parse(campaign.drawAt) && eligibleCount > 0 && !winner;
 ---
 <!doctype html>
 <html lang="en-NZ"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="robots" content="noindex,nofollow" /><title>ANDRO | Giveaway Entries</title>
-<style>*,*:before,*:after{box-sizing:border-box}body{margin:0;font:14px/1.6 Arial,sans-serif;background:#f6f4f0;color:#272823}header{background:#262923;color:#fff;padding:24px max(20px,calc((100vw - 1220px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}.brand{font-size:26px;letter-spacing:.28em}.strap{display:block;font-size:9px;letter-spacing:.15em;color:#c3a77b}main{max-width:1220px;margin:42px auto;padding:0 20px}h1{font-size:42px;font-weight:300;letter-spacing:-.055em;margin:0 0 10px}h2{font-size:21px;font-weight:400}.muted{color:#777168}.eyebrow{color:#94794e;font-size:11px;letter-spacing:.13em}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:30px 0}.stat,.panel{background:#fff;border:1px solid #e5ded2;padding:23px}.stat strong{display:block;font-size:35px;font-weight:300}.stat small{color:#766f66}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:16px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}button,.btn{display:inline-flex;justify-content:center;align-items:center;border:1px solid #cfc4b4;color:#282923;background:#fff;padding:11px 15px;min-height:42px;font:inherit;text-decoration:none;cursor:pointer}.primary{background:#262923;border-color:#262923;color:white}button:disabled{opacity:.5;cursor:not-allowed}.notice{background:#f5efe2;padding:15px;margin:20px 0;border-left:3px solid #ad8f5b}.winner{border-left:4px solid #a48b58;padding:18px;margin:20px 0;background:white}.record{border-top:1px solid #e8e2d9;padding:20px 0;display:grid;grid-template-columns:1fr 1fr;gap:15px 30px}.record h3{font-size:18px;margin:0 0 5px}.record p{margin:5px 0}.record .description{grid-column:1/-1;white-space:pre-wrap;overflow-wrap:anywhere}.record a{text-decoration:underline}.empty{padding:30px;color:#6f6961;text-align:center}.error{color:#a12b25}.search{padding:11px 14px;min-height:42px;border:1px solid #ccc7be;width:min(100%,310px);font-size:16px}@media(max-width:670px){h1{font-size:34px}.stats{grid-template-columns:1fr 1fr}.stats>.stat:last-child{grid-column:1/-1}.record{grid-template-columns:1fr}.record .description{grid-column:auto}header{padding:20px}main{margin-top:25px}.stat,.panel{padding:17px}}</style></head>
+<style>*,*:before,*:after{box-sizing:border-box}body{margin:0;font:14px/1.6 Arial,sans-serif;background:#f6f4f0;color:#272823}header{background:#262923;color:#fff;padding:24px max(20px,calc((100vw - 1220px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}.brand{font-size:26px;letter-spacing:.28em}.strap{display:block;font-size:9px;letter-spacing:.15em;color:#c3a77b}main{max-width:1220px;margin:42px auto;padding:0 20px}h1{font-size:42px;font-weight:300;letter-spacing:-.055em;margin:0 0 10px}h2{font-size:21px;font-weight:400}.muted{color:#777168}.eyebrow{color:#94794e;font-size:11px;letter-spacing:.13em}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:30px 0}.stat,.panel{background:#fff;border:1px solid #e5ded2;padding:23px}.stat strong{display:block;font-size:35px;font-weight:300}.stat small{color:#766f66}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:16px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}button,.btn{display:inline-flex;justify-content:center;align-items:center;border:1px solid #cfc4b4;color:#282923;background:#fff;padding:11px 15px;min-height:42px;font:inherit;text-decoration:none;cursor:pointer}.primary{background:#262923;border-color:#262923;color:white}button:disabled{opacity:.5;cursor:not-allowed}.notice{background:#f5efe2;padding:15px;margin:20px 0;border-left:3px solid #ad8f5b}.winner{border-left:4px solid #a48b58;padding:18px;margin:20px 0;background:white}.exclusion{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}.exclusion select{max-width:340px;padding:9px;border:1px solid #d7cec0;background:white}.audit-log{margin-top:22px}.audit-log li{padding:8px 0;border-bottom:1px solid #e6e2d9}.record{border-top:1px solid #e8e2d9;padding:20px 0;display:grid;grid-template-columns:1fr 1fr;gap:15px 30px}.record h3{font-size:18px;margin:0 0 5px}.record p{margin:5px 0}.record .description{grid-column:1/-1;white-space:pre-wrap;overflow-wrap:anywhere}.record a{text-decoration:underline}.empty{padding:30px;color:#6f6961;text-align:center}.error{color:#a12b25}.search{padding:11px 14px;min-height:42px;border:1px solid #ccc7be;width:min(100%,310px);font-size:16px}@media(max-width:670px){h1{font-size:34px}.stats{grid-template-columns:1fr 1fr}.stats>.stat:last-child{grid-column:1/-1}.record{grid-template-columns:1fr}.record .description{grid-column:auto}header{padding:20px}main{margin-top:25px}.stat,.panel{padding:17px}}</style></head>
 <body><header><div><div class="brand">ANDRO</div><span class="strap">CONSTRUCTION + PROJECTS / PRIVATE GIVEAWAY DASHBOARD</span></div><form action="/api/win/admin/logout" method="POST"><button type="submit">Sign out</button></form></header>
 <main>
   <p class="eyebrow">COMPETITION CONTROL CENTRE</p><h1>Giveaway entries.</h1><p class="muted">Review submissions, export entries and conduct the draw. This area is protected and is not visible to visitors.</p>
   <div class="stats"><div class="stat"><small>Total entries</small><strong>{total}</strong></div><div class="stat"><small>Marketing opt-ins</small><strong>{marketing}</strong></div><div class="stat"><small>Competition status</small><strong style="font-size:24px;text-transform:capitalize">{campaign.phase}</strong></div></div>
+  <p class="muted">Eligible entries after documented exclusions: {auditReady ? eligibleCount : 'Audit migration required'}. A provisional selection is not a confirmed winner until eligibility is checked.</p>
   {error && <div class="notice error" role="alert">{error}</div>}
   {closeTime && drawTime && <p class="notice">Entries close: {nzDate(closeTime)}. Christmas Day winner draw: {nzDate(drawTime)}. This is a manual draw; the Draw winner button becomes available after the scheduled time when entries have closed and the giveaway is enabled.</p>}
-  {winner ? <div class="winner"><p class="eyebrow">SELECTED WINNER</p><h2>{winner.full_name}</h2><p>{winner.email} · {winner.phone} · {winner.suburb}</p><p>{winner.service_type} — {winner.work_details}</p><p class="muted">Drawn: {winner.selected_at ? nzDate(winner.selected_at) : 'Date unavailable'}. Verify eligibility and obtain owner permission before confirming the prize.</p></div> : <div class="notice">{canDraw ? 'The draw is ready. Eligible entries are selected randomly.' : 'The winner draw unlocks after the scheduled draw time. One winner can be selected.'}</div>}
+  {winner ? <div class="winner"><p class="eyebrow">PROVISIONALLY SELECTED ENTRANT</p><h2>{winner.full_name}</h2><p>{winner.email} · {winner.phone} · {winner.suburb}</p><p>{winner.service_type} — {winner.work_details}</p><p class="muted">Selected: {winner.selected_at ? nzDate(winner.selected_at) : 'Date unavailable'}. Check eligibility and owner permission. If this entrant declines, fails the published eligibility terms, or does not respond within seven days of first contact, record the reason below to permit a replacement draw.</p>
+  {canReview && <form class="exclusion" method="POST" action="/api/win/admin/exclude" data-confirm-exclusion>
+    <input type="hidden" name="entry_id" value={winner.id} />
+    <label for="winner-reason">Exclude this provisional selection:</label>
+    <select id="winner-reason" name="reason" required>
+      <option value="">Choose a documented reason</option>
+      <option>Selected entrant declined the prize</option>
+      <option>Selected entrant did not respond within seven days</option>
+      <option>Entrant under 18 or without property authority</option>
+      <option>Outside advertised Auckland area</option>
+      <option>Duplicate entry</option>
+      <option>Inaccurate or fraudulent entry</option>
+      <option>Unlawful or unsafe work scope with no suitable alternative</option>
+    </select>
+    <button type="submit">Record exclusion and allow redraw</button>
+  </form>}</div> : <div class="notice">{canDraw ? 'Eligible entries are ready for the documented random draw.' : 'The winner draw unlocks after the scheduled time, once the entry period is closed, migration 0002 has been applied and at least one eligible entry remains.'}</div>}
   <div class="toolbar"><h2>Recent entries <small class="muted">(latest 250)</small></h2><div class="actions"><input id="search" class="search" aria-label="Search loaded entries" placeholder="Search entries…" /><a class="btn" href="/api/win/admin/export">Export all entries (CSV)</a>{canDraw && <form id="draw-form" method="POST" action="/api/win/admin/draw"><button class="primary" type="submit">Draw winner</button></form>}</div></div>
-  <div class="panel" id="entries">{entries.length === 0 ? <p class="empty">No entries yet.</p> : entries.map((entry) => <article class="record" data-search={(entry.full_name+' '+entry.email+' '+entry.suburb+' '+entry.service_type).toLowerCase()}><div><h3>{entry.full_name}</h3><p><a href={'mailto:'+entry.email}>{entry.email}</a></p><p><a href={'tel:'+entry.phone}>{entry.phone}</a></p><p class="muted">{entry.suburb} · {entry.property_role}</p></div><div><p><strong>{entry.service_type}</strong></p><p class="muted">{nzDate(entry.created_at)}</p><p>Marketing: {entry.marketing_opt_in ? 'Opted in' : 'Not opted in'}</p><p>Status: {entry.status}</p></div><p class="description">{entry.work_details}</p></article>)}</div>
+  <div class="panel" id="entries">{entries.length === 0 ? <p class="empty">No entries yet.</p> : entries.map((entry) => <article class="record" data-search={(entry.full_name+' '+entry.email+' '+entry.suburb+' '+entry.service_type).toLowerCase()}><div><h3>{entry.full_name}</h3><p><a href={'mailto:'+entry.email}>{entry.email}</a></p><p><a href={'tel:'+entry.phone}>{entry.phone}</a></p><p class="muted">{entry.suburb} · {entry.property_role}</p></div><div><p><strong>{entry.service_type}</strong></p><p class="muted">{nzDate(entry.created_at)}</p><p>Marketing: {entry.marketing_opt_in ? 'Opted in' : 'Not opted in'}</p><p>Status: {excludedIds.includes(entry.id) ? 'Excluded from draw' : entry.status}</p></div><p class="description">{entry.work_details}</p>
+  {canReview && !excludedIds.includes(entry.id) && entry.status === 'valid' && <form class="exclusion" method="POST" action="/api/win/admin/exclude" data-confirm-exclusion>
+    <input type="hidden" name="entry_id" value={entry.id} />
+    <label>Exclude an invalid or duplicate entry:
+      <select name="reason" required>
+        <option value="">Choose a reason</option>
+        <option>Duplicate entry</option>
+        <option>Outside advertised Auckland area</option>
+        <option>Entrant under 18 or without property authority</option>
+        <option>Inaccurate or fraudulent entry</option>
+      </select>
+    </label>
+    <button type="submit">Record exclusion</button>
+  </form>}
+</article>)}</div>
+  <section class="panel audit-log"><h2>Draw and eligibility audit</h2><p class="muted">Keep records of the random selection and every reason for exclusion. Do not announce a winner before checking eligibility.</p>
+    {auditEvents.length ? <ol>{auditEvents.map(event => <li><strong>{event.event_type === 'selected' ? 'Random selection' : 'Exclusion'}</strong>: {event.full_name} — {nzDate(event.recorded_at)}{event.reason ? ' — '+event.reason : ''}</li>)}</ol> : <p>No recorded draw events yet.</p>}
+  </section>
 </main>
 <script>
 const search = document.querySelector<HTMLInputElement>('#search');
 search?.addEventListener('input', () => { const q = search.value.trim().toLowerCase(); document.querySelectorAll<HTMLElement>('[data-search]').forEach(node => { node.hidden = !node.dataset.search?.includes(q); }); });
 document.querySelector('#draw-form')?.addEventListener('submit', event => { if (!window.confirm('Draw one random winner now? This cannot be undone from this dashboard.')) event.preventDefault(); });
+document.querySelectorAll<HTMLFormElement>('[data-confirm-exclusion]').forEach(form => form.addEventListener('submit', event => {
+  if (!window.confirm('Permanently exclude this entry from this giveaway? You must have checked the reason and retained supporting evidence. This action is logged.')) event.preventDefault();
+}));
 </script></body></html>

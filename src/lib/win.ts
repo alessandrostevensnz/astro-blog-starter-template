@@ -27,25 +27,24 @@ export function winState(env: Record<string, any>, at = Date.now()): WinState {
   const closeAt = typeof env.WIN_CLOSE_AT === 'string' ? env.WIN_CLOSE_AT.trim() : '';
   const drawAt = typeof env.WIN_DRAW_AT === 'string' ? env.WIN_DRAW_AT.trim() : '';
   const dateWithZone = /^\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?(?:Z|[+-]\d\d:\d\d)$/;
-  // "launch" means public entries open as soon as the site is deployed and configured.
-  // This avoids showing a fictional opening date before the actual launch.
-  const onLaunch = openAt === 'launch';
-  const open = onLaunch ? Number.NEGATIVE_INFINITY : Date.parse(openAt);
+  // A fixed, published opening date with timezone is required before any entries.
+  // "launch" and other ambiguous values must fail closed.
+  const open = Date.parse(openAt);
   const close = Date.parse(closeAt), draw = Date.parse(drawAt);
-  // Fail closed until the promotion has been explicitly approved and enabled.
+  const contactAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' ? env.WIN_BUSINESS_POSTAL_ADDRESS.trim() : '';
   const ready = env.WIN_ENTRIES_ENABLED === 'true' &&
-    (onLaunch || dateWithZone.test(openAt)) &&
-    [closeAt, drawAt].every(x => dateWithZone.test(x)) &&
-    [close, draw].every(Number.isFinite) &&
-    (onLaunch || (Number.isFinite(open) && open < close)) && close <= draw &&
+    contactAddress.length >= 8 && contactAddress.toLowerCase() !== 'pending' &&
+    [openAt, closeAt, drawAt].every(x => dateWithZone.test(x)) &&
+    [open, close, draw].every(Number.isFinite) &&
+    open < close && close <= draw &&
     typeof env.WIN_TURNSTILE_SITE_KEY === 'string' && env.WIN_TURNSTILE_SITE_KEY.trim().length > 0 &&
     typeof env.WIN_TURNSTILE_SECRET_KEY === 'string' && env.WIN_TURNSTILE_SECRET_KEY.trim().length > 0 &&
     typeof env.WIN_DB?.prepare === 'function' &&
     typeof env.REPORT_PASSWORD === 'string' && env.REPORT_PASSWORD.length >= 10 &&
     typeof env.REPORT_SESSION_SECRET === 'string' && env.REPORT_SESSION_SECRET.length >= 32;
   if (!ready) return { phase: 'setup' };
-  const shared = { openAt: onLaunch ? undefined : openAt, closeAt, drawAt, turnstileSiteKey: env.WIN_TURNSTILE_SITE_KEY.trim() };
-  if (!onLaunch && at < open) return { phase: 'upcoming', ...shared };
+  const shared = { openAt, closeAt, drawAt, turnstileSiteKey: env.WIN_TURNSTILE_SITE_KEY.trim() };
+  if (at < open) return { phase: 'upcoming', ...shared };
   if (at >= close) return { phase: 'closed', ...shared };
   return { phase: 'open', ...shared };
 }
