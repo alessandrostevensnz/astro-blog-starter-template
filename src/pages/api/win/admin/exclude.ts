@@ -4,7 +4,7 @@ import { noStoreHeaders, sameOriginPost, winState } from '../../../../lib/win';
 export const prerender = false;
 const allowedReasons = new Set([
   'Duplicate entry', 'Outside advertised Auckland area',
-  'Entrant under 18 or without property authority', 'Inaccurate or fraudulent entry',
+  'Entrant under 18 or without property authority', 'ANDRO promoter, employee or immediate family', 'Inaccurate or fraudulent entry',
   'Selected entrant declined the prize', 'Selected entrant did not respond within seven days',
   'Unlawful or unsafe work scope with no suitable alternative',
 ]);
