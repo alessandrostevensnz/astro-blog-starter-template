@@ -13,35 +13,35 @@ Official guidance:
 - https://www.comcom.govt.nz/business/dealing-with-typical-situations/running-competitions-and-promotions/
 - https://www.privacy.org.nz/privacy-principles/3/
 
-## 2. Build a new, fully specified Meta Instant Form
+## 2. Build a three-field Meta Instant Form
 
-The current screenshots show an Instant Form with only contact details; **do not use it as a giveaway entry**. Duplicate it or make a new form before publishing. In Meta Ads Manager choose **Get more leads → Instant Form**, and use these fields. The labels matter because the connector normalises them into predictable Graph API keys:
+A separate yes/no age question is **not required** for this proposed intake. Show all eligibility conditions prominently and use **one required acknowledgement** of the full terms (including age and property authority), followed by verification of the provisional winner's age, Auckland property and permission to arrange work **before** awarding the prize. Set the ad audience to 18+, but do not treat Facebook age targeting as proof of eligibility.
 
-| Meta question | Type | Allowed responses / notes |
+Create a NEW Instant Form (do not reuse an earlier form with different questions). Choose **Get more leads → Instant Form** and ask for only:
+
+| Meta question | Type | Required |
 |---|---|---|
-| Full name | Standard contact | Required |
-| Email | Standard contact | Required |
-| Phone number | Standard contact | Required (same rule as website) |
-| Auckland suburb | Short text | Required |
-| Relationship to property | Multiple choice | `Owner` / `Property manager` / `Tenant with owner permission` |
-| Type of work | Multiple choice | `Property maintenance` / `Handyman work` / `Minor building repairs` / `Other eligible work` |
-| Are you 18 or older | Multiple choice | `Yes` / `No` — must answer Yes |
-| Do you have permission to arrange work at this property | Multiple choice | `Yes` / `No` — must answer Yes |
-| Optional work description | Short text | Optional; remove if Meta cannot make it optional |
+| Full name | Standard contact | Yes |
+| Email address | Standard contact | Yes |
+| Phone number | Standard contact | Yes |
 
-Include a **required custom-disclaimer consent checkbox** with text along these lines (to be approved before use):
+Include a **required, initially unticked custom disclaimer agreement checkbox** with this concise wording:
 
-> I have read and agree to ANDRO's giveaway terms and privacy notice, including the one-entry-per-person rule, the labour-only prize and the Auckland eligibility conditions.
+> I confirm I am 18 or older, have an eligible property in mainland Auckland and permission to arrange work there, and agree to ANDRO's giveaway terms and privacy notice. One entry per person.
 
-Include a **separate optional, initially unchecked custom-disclaimer checkbox**:
+This replaces multiple separate eligibility questions. It is **not proof** of age or property authority. The eventual provisional winner must pass the published verification process. The importer deliberately stores `suburb`, `property_role`, `service_type`, and `work_details` as **empty strings**, not fabricated values; the admin dashboard flags the missing details for later verification.
 
-> I would also like to receive optional marketing emails from ANDRO Construction + Projects. I can unsubscribe at any time.
+Include a **separate optional**, initially unchecked marketing consent checkbox if you want to use leads for news or offers:
 
-Do not require a Facebook follow, like, tag, share, or purchase. Make clear: **18+**, mainland Auckland Council area, one prize of **up to eight hours of one worker's labour**, materials/consent/specialist services excluded, and Christmas Eve entry deadline. Show prize details and the official entry rules at `https://andro.co.nz/win/#win-terms`.
+> Optional: I would like to receive occasional ANDRO news and offers by email. I can unsubscribe at any time.
 
-Set the Meta **privacy policy URL** to `https://andro.co.nz/win/privacy` (it draws from the same editable privacy notice as the website) and the completion message to **"Thanks for entering!"** only after the form-to-database integration has been fully verified. Until then, do not tell people their Meta form submission is an official current giveaway entry.
+If you omit the optional marketing checkbox, the integration will mark every Meta entrant as **not opted in**. No purchase, Facebook like, follow, tag or share is required.
 
-**Important:** Custom-disclaimer answers are not in Graph API `field_data`; they are retrieved separately as `custom_disclaimer_responses`, with a `checkbox_key` and `is_checked`. The required and optional keys must be discovered and tested using Meta's Lead Ads Testing Tool (do not guess their values).
+In the form's headline/description, make clear: **one prize of up to 8 hours of one worker's labour, materials excluded; 18+; eligible mainland Auckland property; one entry per person; entries close midnight at the end of 24 December 2026; manual draw on Christmas Day.** Link the full rules: `https://andro.co.nz/win/#win-terms`.
+
+Set Meta's **privacy policy URL** to `https://andro.co.nz/win/privacy`. The form completion text may say **"Thanks for entering"** only once the live integration is activated, its database acceptance is verified and legal approval for Facebook entries has been obtained.
+
+**Important:** Graph API `field_data` contains the three contact fields; a custom disclaimer agreement arrives separately in `custom_disclaimer_responses` with `checkbox_key` and `is_checked`. Discover the real keys using Meta's Lead Ads Testing Tool; do not guess them. The backend fails closed if the required checkbox is absent, even when all three contact fields are present.
 
 ## 3. Connect the Meta Page (requires action in Meta)
 
@@ -71,12 +71,12 @@ No Facebook API token is necessary to continue accepting normal website submissi
 
 ## 5. Verify end-to-end before advertising
 
-1. Use a test lead from the correct Page and form, created **inside** the published entry period and with every required checkbox affirmative.
-2. Confirm Meta sent a signed `leadgen` webhook. The Worker validates **HMAC SHA-256**, checks the exact Page and Form, fetches complete lead data (including custom-disclaimer answers) through Graph API and reuses the existing ANDRO entry validation.
+1. Use a test lead from the correct Page and form, created **inside** the published entry period, with name, email, phone and the single required eligibility/terms checkbox. No separate age/suburb/job questions should appear.
+2. Confirm Meta sent a signed `leadgen` webhook. The Worker validates **HMAC SHA-256**, checks the exact Page and Form, fetches complete lead data (including custom-disclaimer answers) through Graph API and applies the same contact-field validation as the ANDRO website form, leaving additional property information uncollected until winner verification.
 3. Check `/win/admin`: one new record appears with source **Facebook Instant Form**, and **Total entries** increases by one.
 4. Re-send the identical test lead: total must stay unchanged. Use an email already in the website signup: no duplicate entry may be added.
 5. Check with and without the optional marketing checkbox. Marketing opt-in must remain **off** unless the specific optional checkbox was actually ticked.
-6. Confirm incomplete/ineligible Meta forms are flagged as **rejected** in the Meta import status but **not counted as eligible entries**; fix the form and re-test before spending money.
+6. Confirm forms lacking name, email, phone or the required eligibility/terms agreement are **rejected** and **not** counted as entries. A self-declared eligible applicant may be selected provisionally, but the winner must verify age, mainland Auckland property and owner permission before the prize is confirmed.
 7. Before the Christmas Day draw, verify Meta's submission count and the imported/duplicate/rejected counts, and investigate any missing eligible leads. Meta webhooks can arrive late; the draw must not go ahead while valid entries are unprocessed.
 
 **Note:** Automatic transfer is conditional on Meta's permissions and Page integration. No connection to the owner's Facebook account has been made by committing code. Since the prize is a live competition, final legal and consent sign-off remains essential.
