@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { sameOriginPost, validateWinEntry, winState } from '../../../lib/win';
+import { sameOriginPost, validateWinEntry, winState, winAuditReady } from '../../../lib/win';
 export const prerender = false;
 
 const json = (value: object, status = 200) => new Response(JSON.stringify(value), {
@@ -9,6 +9,9 @@ const json = (value: object, status = 200) => new Response(JSON.stringify(value)
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = (locals as any).runtime?.env ?? {};
   if (winState(env).phase !== 'open') return json({ error: 'Entries are not currently open.' }, 503);
+  // Do not collect personal information unless the same D1 database also has
+  // the auditable random draw and exclusion tables installed.
+  if (!(await winAuditReady(env))) return json({ error: 'Entries are temporarily unavailable while the giveaway database is being prepared.' }, 503);
   if (!sameOriginPost(request)) return json({ error: 'Invalid submission origin.' }, 403);
   const size = Number(request.headers.get('content-length'));
   if (Number.isFinite(size) && size > 18000) return json({ error: 'Submission is too large.' }, 413);
