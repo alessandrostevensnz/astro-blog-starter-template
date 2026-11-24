@@ -111,3 +111,44 @@ test('The Sheets sync can never import directly without configured HMAC and an a
   assert.ok(script.includes("ScriptApp.newTrigger('androSyncLeads').timeBased().everyMinutes(5).create()"));
   assert.ok(!script.includes('function onEdit('));
 });
+
+
+test('Apps Script strips the Meta p: prefix and checks the signed endpoint without writing an entry', async () => {
+  const { runInNewContext } = await import('node:vm');
+  const script = readFileSync(new URL('../scripts/ANDRO_Facebook_Lead_Sync.gs', import.meta.url), 'utf8');
+  const grid = [
+    ['id','form_id','created_time','phone_number','email','full_name','terms'],
+    ['l:1234567890123456','f:113674087592221','2026-11-24T02:53:56-05:00','p:+64211234567','owner@example.test','Owner test','yes']
+  ];
+  const props = {
+    ANDRO_SYNC_ENABLED: 'false',
+    ANDRO_SYNC_SECRET: 'X'.repeat(64),
+    ANDRO_TEST_LEAD_ID: grid[1][0],
+    ANDRO_TERMS_COLUMN: 'terms'
+  };
+  let sent, logged = [];
+  const ctx = {
+    PropertiesService: {getScriptProperties: () => ({getProperty: key => props[key]})},
+    SpreadsheetApp: {getActiveSpreadsheet: () => ({getSheetByName: () => ({getDataRange: () => ({getDisplayValues: () => grid})})})},
+    Utilities: {Charset: {UTF_8: 'UTF-8'}, computeHmacSha256Signature: () => Array(32).fill(0)},
+    UrlFetchApp: {fetch: (url, opts) => {
+      sent = JSON.parse(opts.payload);
+      assert.match(opts.headers['X-ANDRO-Sheets-Signature'], /^sha256=[0-9a-f]{64}$/);
+      return {getResponseCode: () => 422, getContentText: () => JSON.stringify({error:'terms_acknowledgement_not_captured'})};
+    }},
+    Logger: {log: (...args) => logged.push(args.join(' '))}
+  };
+  runInNewContext(script, ctx);
+  assert.equal(ctx.androPhone_('p:+64211234567'), '+64211234567');
+  assert.equal(ctx.androPhone_('021 123 4567'), '021 123 4567');
+  ctx.androCheckConnection();
+  assert.equal(sent.lead.terms_accepted, false);
+  assert.equal(sent.lead.id, '1234567890123456');
+  assert.equal(sent.lead.form_id, '113674087592221');
+  for (const key of ['email','full_name','phone_number']) assert.ok(!(key in sent.lead));
+  assert.ok(logged.some(line => line.includes('SIGNED CONNECTION PASSED')));
+  props.ANDRO_SYNC_ENABLED = 'true';
+  assert.throws(() => ctx.androCheckConnection(), /explicitly false/);
+  assert.ok(script.includes("leadId === testLeadId"));
+  assert.ok(script.includes("phone_number: androPhone_(get('phone_number'))"));
+});
