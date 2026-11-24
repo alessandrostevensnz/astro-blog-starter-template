@@ -175,6 +175,15 @@ test('confirmation is shown only for a newly saved D1 giveaway entry', () => {
   assert.ok(!endpoint.includes('    await env.WIN_DB.prepare(\n      \'INSERT OR IGNORE'), 'Do not ignore D1 insert metadata');
 });
 
+test('promoter test entries can be excluded with a recorded reason after entries close', () => {
+  const endpoint = readFileSync(new URL('../src/pages/api/win/admin/exclude.ts', import.meta.url), 'utf8');
+  const dashboard = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
+  assert.ok(endpoint.includes("'ANDRO promoter, employee or immediate family'"));
+  assert.equal(dashboard.split('<option>ANDRO promoter, employee or immediate family</option>').length - 1, 2);
+  assert.ok(endpoint.includes("winState(env)"), 'The exclusion must remain restricted to the post-close period');
+  assert.ok(endpoint.includes("win_draw_events"), 'Keep an auditable exclusion history');
+});
+
 test('valid input normalizes email and does not assume marketing permission', () => {
   const result = validateWinEntry(entry());
   assert.equal(result.error, undefined);
