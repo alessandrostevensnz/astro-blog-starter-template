@@ -132,6 +132,20 @@ test('draw-audit schema readiness prevents collecting entries into an unprepared
   assert.ok(endpoint.includes('await winAuditReady(env)'), 'the server must refuse writes without migration 0002');
 });
 
+test('admin can prepare D1 audit tables without user-controlled SQL or deleting entries', () => {
+  const setup = readFileSync(new URL('../src/pages/api/win/admin/setup.ts', import.meta.url), 'utf8');
+  const dashboard = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
+  assert.match(setup, /sameOriginPost\(request\)/);
+  assert.match(setup, /db\.batch\(\[/);
+  assert.match(setup, /CREATE TABLE IF NOT EXISTS win_entry_exclusions/);
+  assert.match(setup, /CREATE TABLE IF NOT EXISTS win_draw_events/);
+  assert.match(setup, /await winAuditReady\(env\)/);
+  assert.ok(!/\b(?:DROP|DELETE|TRUNCATE)\s+(?:TABLE|FROM)\b/i.test(setup), 'Setup must not remove existing records');
+  assert.ok(dashboard.includes('action="/api/win/admin/setup"'));
+  assert.ok(dashboard.includes('Prepare draw database'));
+  assert.ok(dashboard.includes("!auditReady && typeof env.WIN_DB?.prepare === 'function'"));
+});
+
 test('valid input normalizes email and does not assume marketing permission', () => {
   const result = validateWinEntry(entry());
   assert.equal(result.error, undefined);
