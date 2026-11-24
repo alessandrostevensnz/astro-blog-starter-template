@@ -111,6 +111,12 @@ export function validateWinEntry(form: FormData): { error?: string; entry?: {
   } };
 }
 
+/** D1 can successfully execute INSERT OR IGNORE without inserting a row.
+ * Only an acknowledged single-row write counts as a new giveaway entry. */
+export function winEntryWasCreated(result: { success?: boolean; meta?: { changes?: number } } | null | undefined): boolean {
+  return result?.success === true && result?.meta?.changes === 1;
+}
+
 export function noStoreHeaders(): Record<string, string> {
   return {
     'Cache-Control': 'private, no-store, max-age=0',
