@@ -131,7 +131,7 @@ form?.addEventListener('submit', async event => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Please try again.');
     form.reset();
-    status.textContent = 'Thanks for entering! Your submission has been received. Only the selected winner will be contacted.';
+    status.textContent = 'Thanks for entering! Your submission has been received.';
     status.classList.add('win-success');
     if (typeof (window as any).turnstile?.reset === 'function') (window as any).turnstile.reset();
   } catch (error) {
