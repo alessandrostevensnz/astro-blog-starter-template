@@ -5,6 +5,7 @@ import { winState, validateWinEntry, sameOriginPost, randomOffset } from '../src
 
 const env = {
   WIN_ENTRIES_ENABLED: 'true',
+  WIN_BUSINESS_POSTAL_ADDRESS: 'Unit 3, 123 Example Road, Auckland, New Zealand',
   WIN_OPEN_AT: '2026-11-20T09:00:00+13:00',
   WIN_CLOSE_AT: '2026-12-24T23:59:59+13:00',
   WIN_DRAW_AT: '2026-12-25T12:00:00+13:00',
@@ -36,6 +37,8 @@ test('competition remains closed when unconfigured', () => {
   assert.equal(winState({}, Date.now()).phase, 'setup');
   assert.equal(winState({ ...env, WIN_ENTRIES_ENABLED: 'false' }).phase, 'setup');
   assert.equal(winState({ ...env, WIN_ENTRIES_ENABLED: undefined }).phase, 'setup');
+  assert.equal(winState({ ...env, WIN_BUSINESS_POSTAL_ADDRESS: 'pending' }).phase, 'setup');
+  assert.equal(winState({ ...env, WIN_BUSINESS_POSTAL_ADDRESS: '' }).phase, 'setup');
   assert.equal(winState({ ...env, WIN_TURNSTILE_SECRET_KEY: '' }).phase, 'setup');
   assert.equal(winState({ ...env, WIN_DB: undefined }).phase, 'setup');
   assert.equal(winState({ ...env, WIN_OPEN_AT:'2026-11-20T09:00:00' }).phase, 'setup');
@@ -62,6 +65,8 @@ test('Christmas dates are advertised even before launch and the draw stays manua
   const publicPage = readFileSync(new URL('../src/pages/win.astro', import.meta.url), 'utf8');
   const adminPage = readFileSync(new URL('../src/pages/win/admin/index.astro', import.meta.url), 'utf8');
   assert.ok(publicPage.includes('Entries close on Christmas Eve:'));
+  assert.ok(publicPage.includes('promoterAddress'));
+  assert.ok(publicPage.includes('correspondence address'));
   assert.ok(publicPage.includes('Christmas Day winner draw:'));
   assert.ok(publicPage.includes('campaign.openAt ?? configuredDate(env.WIN_OPEN_AT)'));
   assert.ok(publicPage.includes('campaign.closeAt ?? configuredDate(env.WIN_CLOSE_AT)'));
@@ -144,6 +149,7 @@ test('Cloudflare config contains the intended ANDRO D1 binding', () => {
   assert.equal(config.vars?.WIN_TURNSTILE_SITE_KEY, '0x4AAAAAAGBnK_eVlihsb2dT');
   assert.equal(config.vars?.WIN_ENTRIES_ENABLED, 'false', 'giveaway must remain disabled before approval');
   assert.equal(config.vars?.WIN_OPEN_AT, 'pending');
+  assert.equal(config.vars?.WIN_BUSINESS_POSTAL_ADDRESS, 'pending');
   assert.equal(config.vars?.WIN_CLOSE_AT, '2026-12-24T23:59:59+13:00');
   assert.equal(config.vars?.WIN_DRAW_AT, '2026-12-25T12:00:00+13:00');
   assert.ok(!Object.keys(config.vars ?? {}).some(key => /turnstile_secret|report_password/i.test(key)), 'private secrets must not be committed to wrangler vars');
