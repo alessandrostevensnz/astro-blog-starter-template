@@ -73,8 +73,8 @@ export function mapMetaWinLead(lead: MetaLead, env: Record<string, any>): MetaMa
   const email = read('email', 'email_address').toLowerCase();
   const phone = read('phone_number', 'phone');
   if (full_name.length < 2 || full_name.length > 100 ||
-      email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) ||
-      phone.length < 6 || phone.length > 30 || !/^[+()0-9\\s.-]+$/.test(phone)) {
+      email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone)) {
     return { ...start, error: 'missing_or_invalid_contact_information' };
   }
   // NO fabricated Auckland suburb, work category or property relationship.
