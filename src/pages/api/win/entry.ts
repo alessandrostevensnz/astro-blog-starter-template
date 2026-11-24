@@ -38,6 +38,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   } catch {
     return json({ error: 'Security check temporarily unavailable.' }, 503);
   }
+  // The challenge may be solved before 11:59:59 but verified after closing.
+  // Re-check immediately before writing so a late request cannot create an entry.
+  if (winState(env).phase !== 'open') return json({ error: 'Entry period has ended. Late entries cannot be accepted.' }, 403);
   const entry = parsed.entry;
   try {
     await env.WIN_DB.prepare(
