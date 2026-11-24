@@ -1,12 +1,12 @@
 # Google Sheets → ANDRO lead-sync bridge (SAFE MODE / OFF)
 
-For the business-owner-created Meta Lead Ads form **ANDRO WIN NEW**, delivered to Google spreadsheet **ANDRO GIVEAWAY**, tab **Sheet1**. The Google Sheet already contains a **Meta-generated test lead** (email `test@meta.com`), not a genuine competition entry.
+For the final Meta Lead Ads form **ANDRO WIN final**, delivered to Google spreadsheet **ANDRO NEW FINAL**, tab **Sheet1**. The sheet contains Meta-generated sample leads and an owner-controlled manual test. None is an eligible competition entry.
 
-**Not live:** This bridge is provided for inspection and setup. Do NOT count a Facebook form as an official entry, publish the Instant Form ad, activate scheduled sync, or enable Cloudflare import until a NZ promotion-law/consent review has approved adding a second method to the already-running giveaway. The current official entry method is `https://andro.co.nz/win`. This does not alter existing website entries or the Christmas draw.
+**Not live:** This bridge is provided for inspection and setup. Do NOT count a Facebook form as an official entry, publish the Instant Form ad, activate scheduled sync, or enable Cloudflare import until a NZ promotion-law/consent review has approved adding a second method to the already-running giveaway. The published website rules provide for Facebook entries once ANDRO makes the final form available; live imports remain disabled until verification and approval. This does not alter existing website entries or the Christmas draw.
 
 ## What to do in Apps Script right now
 
-1. In **ANDRO GIVEAWAY → Extensions → Apps Script** rename `Untitled project` to **ANDRO Facebook Lead Sync**.
+1. In **ANDRO NEW FINAL → Extensions → Apps Script** rename `Untitled project` to **ANDRO Facebook Lead Sync**.
 2. Open `Code.gs`, delete the starter `myFunction()` code, and paste all of `scripts/ANDRO_Facebook_Lead_Sync.gs` from this repository.
 3. Press **Save** (Cmd+S). In the function selector near **Run**, choose **androPreview**, then click **Run** once. Google may ask you to authorise this *your own* script to access your private sheet. Inspect the permissions before allowing access.
 4. Open **Execution log**. It prints the number of Meta leads, the number of sample rows, and whether the expected consent column exists. **It never transfers personal information, creates entries or sends a network request.**
@@ -21,13 +21,15 @@ Do **not** click the Apps Script **Deploy** button. This is not a public web app
 3. In Cloudflare D1 **andro-win** apply the idempotent `migrations/0003_win_meta_leads.sql` after separately reviewing it. Never drop/recreate `win_entries` or the original database.
 4. In the Cloudflare Worker **astro-blog-starter-template**:
    - Production **secret** `WIN_META_SHEETS_SYNC_SECRET`: a unique 32+-character secret, created securely by the owner. NEVER paste into ChatGPT, emails or GitHub.
-   - Non-secret `WIN_META_FORM_ID`: the exact numeric ID of the approved Meta Instant Form, not the Page ID; verify the `form_id` field in the sheet.
+   - Non-secret `WIN_META_FORM_ID`: the final form ID is stored in `wrangler.json`, so it survives GitHub deployments. Verify it against the sheet's `form_id` field. Wrangler is the source of truth for the import switches; do not rely on dashboard-only changes surviving deployments.
    - **Only after** legal/consent checks, D1 migration and successful isolated test: `WIN_META_IMPORT_ENABLED="true"` and `WIN_META_SHEETS_SYNC_ENABLED="true"` in `wrangler.json`. Both are currently deliberately false. Do not alter the website's `WIN_ENTRIES_ENABLED` or the giveaway dates.
 5. In **Apps Script → Project Settings → Script properties** (NOT in source code):
    - `ANDRO_SYNC_SECRET`: same secret as the Cloudflare `WIN_META_SHEETS_SYNC_SECRET`.
    - `ANDRO_TERMS_COLUMN`: the precise **Meta-provided column heading** containing each entrant's affirmative agreement to age, eligibility, permission, and full terms. Do not create a fabricated consent column.
    - `ANDRO_MARKETING_COLUMN` (optional): the *separate* Meta-generated opt-in column, if present; otherwise consent is OFF.
    - `ANDRO_SYNC_ENABLED`: set to **false** during setup; enable only after all checks and approval.
+   - `ANDRO_TEST_LEAD_ID`: exact owner-controlled manual test lead ID; that row will always be skipped.
+   - With all three switches still false, run `androCheckConnection`. It sends a signed, no-contact-details probe with terms deliberately false, expecting HTTP 422 and `terms_acknowledgement_not_captured`. It cannot create a competition entry. Check the private admin dashboard for missing configuration if necessary.
 6. With an approved genuine test lead and both systems enabled, manually run `androSyncLeads` and confirm one new entry in `/win/admin`, correct source, no duplicate email and no inadvertent marketing permission. **The Meta-generated `test@meta.com` row is always skipped.** The script records only lead IDs, results and timestamps in an additional `ANDRO Sync Log` tab; it never copies full contact details to the log. A failed request is not marked as processed so it can be retried.
 7. Only after end-to-end verification, select `androInstallFiveMinuteTrigger` and Run. This creates one five-minute scheduled sync. App Script **Deploy** is not used. Monitor Apps Script **Executions** and the status labels in `/win/admin`; reconcile Facebook lead counts before any draw.
 

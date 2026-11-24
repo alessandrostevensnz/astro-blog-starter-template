@@ -1,13 +1,14 @@
 /**
  * ANDRO / Meta Facebook Instant Form -> Google Sheets -> ANDRO D1
  * Prepared in SAFE MODE. Never send entrants until rules and privacy are approved.
- * Paste into the Code.gs file that is bound to ANDRO GIVEAWAY spreadsheet.
+ * Paste into the Code.gs file that is bound to ANDRO NEW FINAL spreadsheet.
  *
  * Google Apps Script Project Settings > Script properties (not source code):
  *   ANDRO_SYNC_ENABLED = false
  *   ANDRO_SYNC_SECRET = (long random secret; MATCH Cloudflare secret)
  *   ANDRO_TERMS_COLUMN = (exact Meta-generated column heading with affirmative agreement)
  *   ANDRO_MARKETING_COLUMN = (optional separate Meta-generated marketing checkbox column)
+ *   ANDRO_TEST_LEAD_ID = (exact ID of the owner's manually submitted test; never import it)
  *
  * In Cloudflare the matching secret is WIN_META_SHEETS_SYNC_SECRET.
  * ANDRO sync remains disabled separately on Cloudflare until legal approval.
@@ -55,6 +56,8 @@ function androSyncLeads() {
   if (!secret || secret.length < 32) throw new Error('ANDRO_SYNC_SECRET missing or too short');
   const termsName = androNormalize_(props.getProperty('ANDRO_TERMS_COLUMN') || '');
   if (!termsName) throw new Error('Missing actual Meta-generated consent column; sync refused');
+  const testLeadId = String(props.getProperty('ANDRO_TEST_LEAD_ID') || '').trim().replace(/^l:/i, '');
+  if (testLeadId && !/^\d{5,25}$/.test(testLeadId)) throw new Error('Invalid ANDRO_TEST_LEAD_ID');
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(10000)) return;
   try {
@@ -88,6 +91,12 @@ function androSyncLeads() {
       if (!/^\d{5,25}$/.test(leadId) || seen.has(leadId)) continue;
       const email = get('email');
       const name = get('full_name');
+      // Exclude only the explicitly identified owner-controlled test, never a broad email/name pattern.
+      if (testLeadId && leadId === testLeadId) {
+        log.appendRow([leadId, 'skipped_owner_test', new Date().toISOString()]);
+        seen.add(leadId);
+        continue;
+      }
       // Do not count Meta's generated sample lead or move test data to the D1 entrants table.
       if (/^test@meta\.com$/i.test(email) || /<test lead:/i.test(name)) {
         log.appendRow([leadId, 'skipped_test', new Date().toISOString()]);
@@ -108,7 +117,7 @@ function androSyncLeads() {
           created_time: get('created_time'),
           full_name: name,
           email: email,
-          phone_number: get('phone_number'),
+          phone_number: androPhone_(get('phone_number')),
           terms_accepted: true,
           marketing_consent: Boolean(marketingName && androAffirmative_(get(marketingName)))
         }
@@ -139,6 +148,74 @@ function androSyncLeads() {
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Test the signed production connection without sending names, emails or phones,
+ * creating an entry, or enabling scheduled sync. Keep all three switches OFF
+ * for this signed no-write check after the backend probe update is deployed.
+ * Use only the explicitly identified, manually submitted owner test lead.
+ */
+function androCheckConnection() {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('ANDRO_SYNC_ENABLED') !== 'false')
+    throw new Error('Keep ANDRO_SYNC_ENABLED explicitly false during this check.');
+  const secret = props.getProperty('ANDRO_SYNC_SECRET') || '';
+  if (secret.length < 32) throw new Error('ANDRO_SYNC_SECRET missing or too short');
+  const testId = String(props.getProperty('ANDRO_TEST_LEAD_ID') || '').trim().replace(/^l:/i, '');
+  if (!/^\d{5,25}$/.test(testId)) throw new Error('Set ANDRO_TEST_LEAD_ID to the exact manual test lead ID.');
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ANDRO_SYNC.sheetName);
+  if (!sheet) throw new Error('Sheet1 not found');
+  const grid = sheet.getDataRange().getDisplayValues();
+  const heads = grid[0].map(androNormalize_);
+  const termsName = androNormalize_(props.getProperty('ANDRO_TERMS_COLUMN') || '');
+  if (!termsName || !heads.includes(termsName)) throw new Error('Terms column missing');
+  const idx = key => heads.indexOf(androNormalize_(key));
+  for (const col of ['id','form_id','created_time','phone_number']) {
+    if (idx(col) < 0) throw new Error('Missing Meta source column: ' + col);
+  }
+  const matches = grid.slice(1).filter(row =>
+    String(row[idx('id')] || '').trim().replace(/^l:/i, '') === testId);
+  if (matches.length !== 1) throw new Error('The manual test lead ID must match exactly one source row.');
+  const row = matches[0];
+  const get = key => String(row[idx(key)] || '').trim();
+  if (!androAffirmative_(get(termsName))) throw new Error('The owner test did not record a Yes response.');
+  const phone = androPhone_(get('phone_number'));
+  if (phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone))
+    throw new Error('Phone format still invalid after normalisation.');
+  Logger.log('Manual test: Yes response recognised; phone format valid; test lead excluded from normal sync.');
+  // Deliberately refuse terms in the PROBE, not in the source sheet.
+  // No contact details are sent, and the server must reject this payload before storage.
+  const data = JSON.stringify({
+    source: 'meta_google_sheets',
+    sent_at: new Date().toISOString(),
+    lead: {
+      id: testId,
+      form_id: get('form_id').replace(/^f:/i, ''),
+      created_time: get('created_time'),
+      terms_accepted: false
+    }
+  });
+  const digest = Utilities.computeHmacSha256Signature(data, secret, Utilities.Charset.UTF_8)
+    .map(b => ('0' + (b & 255).toString(16)).slice(-2)).join('');
+  const reply = UrlFetchApp.fetch(ANDRO_SYNC.url, {
+    method: 'post',
+    contentType: 'application/json; charset=utf-8',
+    headers: { 'X-ANDRO-Sheets-Signature': 'sha256=' + digest },
+    payload: data,
+    followRedirects: false,
+    muteHttpExceptions: true
+  });
+  const status = reply.getResponseCode();
+  let result = {};
+  try { result = JSON.parse(reply.getContentText()); } catch (_) {}
+  if (status !== 422 || result.error !== 'terms_acknowledgement_not_captured')
+    throw new Error('Connection check did not pass (HTTP ' + status + '). Keep sync disabled.');
+  Logger.log('SIGNED CONNECTION PASSED: expected HTTP 422; secret, form ID, submission time and database checks passed. No entry created.');
+}
+
+function androPhone_(value) {
+  return String(value || '').trim().replace(/^p:/i, '').trim();
 }
 
 /** Run ONLY after legal review, a real consent column and backend connection. */
