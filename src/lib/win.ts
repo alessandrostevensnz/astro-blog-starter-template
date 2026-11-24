@@ -97,7 +97,7 @@ export function validateWinEntry(form: FormData): { error?: string; entry?: {
 
   if (full_name.length < 2 || full_name.length > 100) return { error: 'Please enter your full name.' };
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: 'Please enter a valid email address.' };
-  if (phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone)) return { error: 'Please enter a valid phone number.' };
+  if (phone && (phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone))) return { error: 'Please enter a valid phone number, or leave it blank.' };
   if (suburb.length < 2 || suburb.length > 80) return { error: 'Please enter your Auckland suburb.' };
   if (!['Owner', 'Property manager', 'Tenant with owner permission'].includes(property_role)) return { error: 'Please choose your relationship to the property.' };
   if (!['Property maintenance', 'Handyman work', 'Minor building repairs', 'Other eligible work'].includes(service_type)) return { error: 'Please choose the work category.' };
