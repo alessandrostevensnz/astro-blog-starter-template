@@ -1,5 +1,7 @@
 /** Meta Instant Form lead validation for the ANDRO giveaway.
- * Deliberately fail-closed: every field/affirmative consent is required for an entry.
+ * Only three contact questions are required. A separately acknowledged, linked
+ * terms/eligibility statement replaces individual age/property questions.
+ * The eventual winner still needs eligibility and property authority verification.
  * The official Facebook form must be configured to match docs/win-facebook-instant-form.md.
  */
 import { validateWinEntry, winState } from './win.ts';
@@ -23,7 +25,6 @@ export type MetaMapped = {
 };
 
 const slug = (x: string): string => x.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-const yes = (x: string) => ['yes', 'yes_i_am_18_or_older', 'yes_i_have_permission', 'i_agree'].includes(slug(x));
 const id = (x: unknown) => typeof x === 'string' && /^\d{5,25}$/.test(x);
 const check = (value: unknown) => value === '1' || value === 1 || value === true;
 
@@ -64,25 +65,30 @@ export function mapMetaWinLead(lead: MetaLead, env: Record<string, any>): MetaMa
       if (typeof row?.checkbox_key === 'string') boxes.set(row.checkbox_key, row.is_checked);
     }
   }
-  const terms = check(boxes.get(env.WIN_META_TERMS_KEY));
-  const form = new FormData();
-  form.set('full_name', read('full_name'));
-  form.set('email', read('email', 'email_address'));
-  form.set('phone', read('phone_number', 'phone'));
-  form.set('suburb', read('auckland_suburb'));
-  form.set('property_role', read('relationship_to_property'));
-  form.set('service_type', read('type_of_work'));
-  form.set('work_details', read('optional_work_description'));
-  form.set('age', yes(read('are_you_18_or_older')) ? 'yes' : 'no');
-  form.set('authority', yes(read('do_you_have_permission_to_arrange_work_at_this_property')) ? 'yes' : 'no');
-  form.set('terms', terms ? 'yes' : 'no');
-  // If the optional checkbox key is absent/misconfigured, marketing stays OFF.
-  form.set('marketing', typeof env.WIN_META_MARKETING_KEY === 'string' &&
-    env.WIN_META_MARKETING_KEY !== env.WIN_META_TERMS_KEY &&
-    check(boxes.get(env.WIN_META_MARKETING_KEY)) ? 'yes' : 'no');
-  const result = validateWinEntry(form);
-  if (result.error || !result.entry) return { ...start, error: 'missing_or_invalid_entry_or_consent' };
-  return { ...start, entry: result.entry };
+  // The mandatory checkbox must clearly state 18+, eligible mainland Auckland
+  // property/authority, prize terms and one-entry rule (see integration guide).
+  // It is a self-declaration, NOT independent proof of age or authority.
+  if (!check(boxes.get(env.WIN_META_TERMS_KEY))) return { ...start, error: 'missing_terms_and_eligibility_agreement' };
+  const full_name = read('full_name');
+  const email = read('email', 'email_address').toLowerCase();
+  const phone = read('phone_number', 'phone');
+  if (full_name.length < 2 || full_name.length > 100 ||
+      email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) ||
+      phone.length < 6 || phone.length > 30 || !/^[+()0-9\\s.-]+$/.test(phone)) {
+    return { ...start, error: 'missing_or_invalid_contact_information' };
+  }
+  // NO fabricated Auckland suburb, work category or property relationship.
+  // Unlike the more detailed website form, Meta only collects three contact fields.
+  // Empty values are legitimate in the existing D1 TEXT NOT NULL columns and must
+  // be checked against the published eligibility conditions before the prize is awarded.
+  const entry = {
+    full_name, email, phone,
+    suburb: '', property_role: '', service_type: '', work_details: '',
+    marketing_opt_in: typeof env.WIN_META_MARKETING_KEY === 'string' &&
+      env.WIN_META_MARKETING_KEY !== env.WIN_META_TERMS_KEY &&
+      check(boxes.get(env.WIN_META_MARKETING_KEY)) ? 1 : 0,
+  };
+  return { ...start, entry };
 }
 
 /** Meta sends an HMAC SHA-256 over the *raw* request bytes. */
