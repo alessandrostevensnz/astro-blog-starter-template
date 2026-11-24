@@ -97,8 +97,8 @@ test('The Sheets sync can never import directly without configured HMAC and an a
   assert.ok(endpoint.includes('sheetsImportConfigured(env)'));
   assert.ok(endpoint.includes('winAuditReady(env)'));
   assert.ok(endpoint.includes('verifyMetaSignature(body,'));
-  assert.ok(endpoint.includes('sheetsPayloadIsRecent(payload)'));
-  assert.ok(endpoint.includes('mapSheetsWinLead(payload, env)'));
+  assert.ok(endpoint.includes('sheetsPayloadIsRecent(payload as MetaSheetsPayload)'));
+  assert.ok(endpoint.includes('mapSheetsWinLead(payload as MetaSheetsPayload, env)'));
   assert.ok(endpoint.includes("status='winner'"));
   assert.ok(endpoint.includes('storeMetaLead(lead, env.WIN_DB)'));
   assert.ok(!endpoint.includes('console.log('));
