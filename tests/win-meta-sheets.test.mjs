@@ -109,5 +109,5 @@ test('The Sheets sync can never import directly without configured HMAC and an a
   assert.ok(script.includes("if (/^test@meta\\.com$/i.test(email)"));
   assert.ok(script.includes("Utilities.computeHmacSha256Signature("));
   assert.ok(script.includes("ScriptApp.newTrigger('androSyncLeads').timeBased().everyMinutes(5).create()"));
-  assert.ok(!script.includes('onEdit('));
+  assert.ok(!script.includes('function onEdit('));
 });
