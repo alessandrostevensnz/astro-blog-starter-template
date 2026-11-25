@@ -44,7 +44,7 @@ export const siteFooter = footerSettings;
 
 export const navigation = [
   { label: 'Construction', href: '/construction/' },
-  { label: 'Asset maintenance', href: '/property-maintenance/' },
+  // Temporarily hidden: { label: 'Asset maintenance', href: '/property-maintenance/' },
   { label: 'Projects', href: '/projects/' },
   { label: 'About', href: '/about/' },
   { label: 'Contact', href: '/contact/' },

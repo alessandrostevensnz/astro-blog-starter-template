@@ -1,7 +1,9 @@
 ---
+export const prerender = false;
 import SiteLayout from '../components/SiteLayout.astro';
 import { siteContent } from '../data/site';
 import { responsivePhoto } from '../lib/optimized-images';
+if (/^\/property-maintenance\/?$/.test(Astro.url.pathname)) return Astro.redirect('/', 302);
 const photos = siteContent.maintenance.photos;
 const services = siteContent.maintenance.services;
 const maintenanceHeroVideo = siteContent.maintenance.heroVideo?.trim() || '';
