@@ -25,6 +25,30 @@ const currentPath = Astro.url.pathname;
       {navigation.map((item) => <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>{item.label}</a>)}
     </nav>
   </header>
+  {!/^\/win\/?$/.test(currentPath) && <div class="win-promo" id="win-promo" hidden>
+    <a class="win-promo-link" href="/win" aria-label="Win a day on us. Free entry, mainland Auckland, terms apply.">
+      <span class="win-promo-track" aria-hidden="true">
+        {Array.from({length: 4}, () => <span class="win-promo-repeat"><strong>WIN A DAY <em>ON US.</em></strong><span>ANDRO CONSTRUCTION + PROJECTS</span><span>FREE ENTRY · AUCKLAND · CLOSES CHRISTMAS EVE · T&Cs APPLY</span><span>ENTER NOW</span></span>)}
+      </span>
+    </a>
+    <button type="button" class="win-promo-pause" aria-label="Pause scrolling promotion">Ⅱ</button>
+  </div>}
+  <script is:inline>
+    (() => {
+      const promo = document.getElementById('win-promo');
+      if (!promo) return;
+      const close = Date.parse('2026-12-25T00:00:00+13:00');
+      const refresh = () => { promo.hidden = Date.now() >= close; };
+      refresh();
+      setInterval(refresh, 30000);
+      const button = promo.querySelector('button');
+      button.addEventListener('click', () => {
+        const paused = promo.classList.toggle('is-paused');
+        button.textContent = paused ? '▶' : 'Ⅱ';
+        button.setAttribute('aria-label', paused ? 'Resume scrolling promotion' : 'Pause scrolling promotion');
+      });
+    })();
+  </script>
   <main><slot /></main>
   <footer class="site-footer">
     <div class="footer-credentials" aria-label="ANDRO Construction logo">
@@ -93,6 +117,19 @@ const currentPath = Astro.url.pathname;
 </body>
 
 <style is:global>
+  .win-promo[hidden]{display:none!important}
+  .win-promo{display:flex;align-items:stretch;background:#1e211f;color:#f7f4ec;height:76px;overflow:hidden;width:100%}
+  .win-promo-link{display:flex;align-items:center;overflow:hidden;flex:1;min-width:0;color:inherit;text-decoration:none}
+  .win-promo-track{display:flex;width:max-content;flex:none;animation:win-promo-scroll 48s linear infinite}
+  .win-promo-repeat{display:flex;align-items:center;gap:38px;padding-right:38px;white-space:nowrap;font-size:11px;letter-spacing:.15em;color:#bda67e}
+  .win-promo-repeat strong{font-family:Manrope,sans-serif;font-size:32px;font-weight:300;letter-spacing:-.045em;color:#f7f4ec}
+  .win-promo-repeat em{font-family:Georgia,serif;color:#bda67e;font-weight:400}
+  .win-promo-pause{background:transparent;color:#bda67e;border:0;border-left:1px solid #ffffff30;width:44px;flex:none;cursor:pointer}
+  .win-promo.is-paused .win-promo-track{animation-play-state:paused}
+  @keyframes win-promo-scroll{to{transform:translateX(-50%)}}
+  @media(max-width:680px){.win-promo{height:60px}.win-promo-repeat strong{font-size:25px}.win-promo-repeat{gap:24px;padding-right:24px}}
+  @media(prefers-reduced-motion:reduce){.win-promo-track{animation:none}.win-promo-pause{display:none}}
+
   /* Mirror the plain-text fields in /admin throughout all six pages.
      Return keeps a line break; a blank line keeps a paragraph gap.
      Scope this to editor-managed copy so navigation/layout whitespace
