@@ -65,7 +65,10 @@ export function mapSheetsWinLead(payload: MetaSheetsPayload, env: Record<string,
   const submittedAt = Date.parse(stamp);
   const timestamp = Number.isFinite(submittedAt) ? new Date(submittedAt).toISOString() : '';
   const base = { leadId: leadKey, formId: formKey, timestamp };
-  if (!leadKey || !formKey || formKey !== String(env.WIN_META_FORM_ID) ||
+  const originalForm = leadId(env.WIN_META_FORM_ID);
+  const v2Form = leadId(env.WIN_META_SHEETS_V2_FORM_ID);
+  const isV2 = Boolean(v2Form && v2Form !== originalForm && formKey === v2Form);
+  if (!leadKey || !formKey || (formKey !== originalForm && !isV2) ||
       !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d)$/.test(stamp) ||
       !timestamp) return { ...base, error: 'invalid_lead_metadata' };
   // Validate original form-submission time, never the delayed Sheet sync time.
@@ -85,7 +88,9 @@ export function mapSheetsWinLead(payload: MetaSheetsPayload, env: Record<string,
   return { ...base, entry: {
     full_name, email, phone,
     suburb: '', property_role: '', service_type: '', work_details: '',
-    marketing_opt_in: lead.marketing_consent === true ? 1 : 0,
+    // The original Instant Form never asked for marketing permission.
+    // Only an affirmative response to the approved V2 question can opt in.
+    marketing_opt_in: isV2 && lead.marketing_consent === true ? 1 : 0,
   } };
 }
 

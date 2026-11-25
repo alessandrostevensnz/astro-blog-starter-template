@@ -47,11 +47,12 @@ try {
 let metaImportReady = false;
 let metaAccepted = 0, metaDuplicates = 0, metaRejected = 0;
 let metaEntryIds: string[] = [];
+let metaEntryForms: Record<string, string> = {};
 try {
   if (env.WIN_DB?.prepare) {
     const [counts, ids] = await Promise.all([
       env.WIN_DB.prepare("SELECT status, count(*) AS n FROM win_meta_leads GROUP BY status").all(),
-      env.WIN_DB.prepare("SELECT entry_id FROM win_meta_leads WHERE status='accepted'").all(),
+      env.WIN_DB.prepare("SELECT entry_id, form_id FROM win_meta_leads WHERE status='accepted'").all(),
     ]);
     for (const row of counts.results || []) {
       if (row.status === 'accepted') metaAccepted = Number(row.n);
@@ -59,6 +60,7 @@ try {
       if (row.status === 'rejected') metaRejected = Number(row.n);
     }
     metaEntryIds = (ids.results || []).map((r: any) => r.entry_id);
+    metaEntryForms = Object.fromEntries((ids.results || []).map((r: any) => [r.entry_id, r.form_id]));
     metaImportReady = true;
   }
 } catch { /* Meta migration 0003 is optional and not active yet. */ }
@@ -79,7 +81,8 @@ const canDraw = canReview && !!campaign.drawAt && Date.now() >= Date.parse(campa
   </p>
   <p class="muted">Sheets connection configuration:
     shared secret {typeof env.WIN_META_SHEETS_SYNC_SECRET === 'string' && env.WIN_META_SHEETS_SYNC_SECRET.length >= 32 ? 'configured' : 'missing or too short'} ·
-    form ID {/^[0-9]{5,25}$/.test(String(env.WIN_META_FORM_ID || '')) ? 'configured' : 'missing or invalid'} ·
+    original form ID {/^[0-9]{5,25}$/.test(String(env.WIN_META_FORM_ID || '')) ? 'configured' : 'missing or invalid'} ·
+    V2 form ID {/^[0-9]{5,25}$/.test(String(env.WIN_META_SHEETS_V2_FORM_ID || '')) && env.WIN_META_SHEETS_V2_FORM_ID !== env.WIN_META_FORM_ID ? 'configured' : 'not configured'} ·
     database {auditReady && metaImportReady ? 'ready' : 'not ready'} ·
     import switches {env.WIN_META_IMPORT_ENABLED === 'true' && env.WIN_META_SHEETS_SYNC_ENABLED === 'true' ? 'on' : 'off'}.
     No secret values are displayed.
@@ -109,7 +112,7 @@ const canDraw = canReview && !!campaign.drawAt && Date.now() >= Date.parse(campa
     <button type="submit">Record exclusion and allow redraw</button>
   </form>}</div> : <div class="notice">{canDraw ? 'Eligible entries are ready for the documented random draw.' : 'The winner draw unlocks after the scheduled time, once the entry period is closed, migration 0002 has been applied and at least one eligible entry remains.'}</div>}
   <div class="toolbar"><h2>Recent entries <small class="muted">(latest 250)</small></h2><div class="actions"><input id="search" class="search" aria-label="Search loaded entries" placeholder="Search entries…" /><a class="btn" href="/api/win/admin/export">Export all entries (CSV)</a>{canDraw && <form id="draw-form" method="POST" action="/api/win/admin/draw"><button class="primary" type="submit">Draw winner</button></form>}</div></div>
-  <div class="panel" id="entries">{entries.length === 0 ? <p class="empty">No entries yet.</p> : entries.map((entry) => <article class="record" data-search={(entry.full_name+' '+entry.email+' '+entry.suburb+' '+entry.service_type).toLowerCase()}><div><h3>{entry.full_name}</h3><p><a href={'mailto:'+entry.email}>{entry.email}</a></p>{entry.phone && <p><a href={'tel:'+entry.phone}>{entry.phone}</a></p>}<p class="muted">{entry.suburb || 'Auckland eligibility to verify'} · {entry.property_role || 'Property authority to verify'}</p></div><div><p><strong>{entry.service_type || 'Work category not collected (Facebook)'}</strong></p><p class="muted">{nzDate(entry.created_at)}</p><p>Source: {metaEntryIds.includes(entry.id) ? 'Facebook Instant Form' : 'ANDRO website'}</p><p>Marketing: {entry.marketing_opt_in ? 'Opted in' : 'Not opted in'}</p><p>Status: {excludedIds.includes(entry.id) ? 'Excluded from draw' : entry.status}</p></div><p class="description">{entry.work_details || "No work description provided"}</p>
+  <div class="panel" id="entries">{entries.length === 0 ? <p class="empty">No entries yet.</p> : entries.map((entry) => <article class="record" data-search={(entry.full_name+' '+entry.email+' '+entry.suburb+' '+entry.service_type).toLowerCase()}><div><h3>{entry.full_name}</h3><p><a href={'mailto:'+entry.email}>{entry.email}</a></p>{entry.phone && <p><a href={'tel:'+entry.phone}>{entry.phone}</a></p>}<p class="muted">{entry.suburb || 'Auckland eligibility to verify'} · {entry.property_role || 'Property authority to verify'}</p></div><div><p><strong>{entry.service_type || 'Work category not collected (Facebook)'}</strong></p><p class="muted">{nzDate(entry.created_at)}</p><p>Source: {metaEntryIds.includes(entry.id) ? 'Facebook Instant Form' : 'ANDRO website'}</p><p>Marketing: {entry.marketing_opt_in ? 'Opted in' : (metaEntryForms[entry.id] && metaEntryForms[entry.id] === String(env.WIN_META_FORM_ID) ? 'Not collected (original Facebook form)' : 'Not opted in')}</p><p>Status: {excludedIds.includes(entry.id) ? 'Excluded from draw' : entry.status}</p></div><p class="description">{entry.work_details || "No work description provided"}</p>
   {canReview && !excludedIds.includes(entry.id) && entry.status === 'valid' && <form class="exclusion" method="POST" action="/api/win/admin/exclude" data-confirm-exclusion>
     <input type="hidden" name="entry_id" value={entry.id} />
     <label>Exclude an invalid or duplicate entry:
