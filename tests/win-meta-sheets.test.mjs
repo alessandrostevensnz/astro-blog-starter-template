@@ -8,6 +8,7 @@ const env = {
   WIN_META_IMPORT_ENABLED: 'true',
   WIN_META_SHEETS_SYNC_ENABLED: 'true',
   WIN_META_FORM_ID: '113674087592221',
+  WIN_META_SHEETS_V2_FORM_ID: '1141546835024978',
   WIN_META_SHEETS_SYNC_SECRET: 'a-strong-test-secret-which-will-never-be-used-in-production',
   WIN_OPEN_AT: '2026-11-24T17:50:00+13:00',
   WIN_CLOSE_AT: '2026-12-25T00:00:00+13:00',
@@ -42,6 +43,8 @@ test('Production Sheets rollout uses both independent switches and still require
   assert.equal(sheetsImportConfigured(config.vars), false);
   assert.ok(!('WIN_META_SHEETS_SYNC_SECRET' in config.vars));
   assert.match(config.vars.WIN_META_FORM_ID, /^\d{5,25}$/);
+  assert.equal(config.vars.WIN_META_FORM_ID, '1173477798975717');
+  assert.equal(config.vars.WIN_META_SHEETS_V2_FORM_ID, '1141546835024978');
   assert.equal(sheetsImportConfigured(env), true);
   assert.equal(sheetsImportConfigured({...env,WIN_META_IMPORT_ENABLED:'false'}), false);
   assert.equal(sheetsImportConfigured({...env,WIN_META_SHEETS_SYNC_ENABLED:'false'}), false);
@@ -74,7 +77,13 @@ test('No unverified Meta terms acknowledgement, no entry', () => {
 
 test('Preserves separate marketing permission but never infers it from giveaway terms', () => {
   assert.equal(mapSheetsWinLead(lead({marketing_consent:false}),env).entry.marketing_opt_in,0);
-  assert.equal(mapSheetsWinLead(lead({marketing_consent:true}),env).entry.marketing_opt_in,1);
+  assert.equal(mapSheetsWinLead(lead({marketing_consent:true}),env).entry.marketing_opt_in,0);
+  const v2 = (marketing_consent) => lead({form_id:'f:'+env.WIN_META_SHEETS_V2_FORM_ID, marketing_consent});
+  assert.equal(mapSheetsWinLead(v2(true),env).entry.marketing_opt_in,1);
+  for (const value of [false, undefined, null, 'yes']) assert.equal(mapSheetsWinLead(v2(value),env).entry.marketing_opt_in,0);
+  assert.equal(mapSheetsWinLead(v2(true), {...env, WIN_META_SHEETS_V2_FORM_ID:''}).error, 'invalid_lead_metadata');
+  assert.equal(mapSheetsWinLead(v2(true), {...env, WIN_META_SHEETS_V2_FORM_ID:env.WIN_META_FORM_ID}).error, 'invalid_lead_metadata');
+  assert.equal(mapSheetsWinLead(lead({form_id:'f:'+env.WIN_META_SHEETS_V2_FORM_ID,terms_accepted:false}),env).error,'terms_acknowledgement_not_captured');
   assert.equal(mapSheetsWinLead(lead({marketing_consent:'yes'}),env).entry.marketing_opt_in,0);
   assert.equal(mapSheetsWinLead(lead({marketing_consent:undefined}),env).entry.marketing_opt_in,0);
 });
@@ -274,5 +283,17 @@ test('Signed production-shaped Sheets import accepts one valid entry and dedupes
     assert.equal(count(),1);
     const ledger = sqlite.prepare('SELECT status FROM win_meta_leads ORDER BY status').all().map(r=>r.status);
     assert.deepEqual(ledger,['accepted','duplicate']);
+    const v2Form = 'f:'+config.vars.WIN_META_SHEETS_V2_FORM_ID;
+    const v2Accepted = await send({form_id:v2Form,id:'l:777777777777771',email:'v2@example.nz',marketing_consent:true});
+    assert.equal(v2Accepted.status,200);
+    assert.deepEqual(await v2Accepted.json(),{status:'accepted'});
+    assert.equal(sqlite.prepare('SELECT marketing_opt_in FROM win_entries WHERE email=?').get('v2@example.nz').marketing_opt_in,1);
+    const v2Duplicate = await send({form_id:v2Form,id:'l:777777777777772',marketing_consent:true});
+    assert.deepEqual(await v2Duplicate.json(),{status:'duplicate'});
+    assert.equal(sqlite.prepare('SELECT marketing_opt_in FROM win_entries WHERE email=?').get('resident@example.nz').marketing_opt_in,0);
+    assert.equal(count(),2);
+    const sample = await send({form_id:v2Form,id:'l:777777777777773',email:'test@meta.com',marketing_consent:true});
+    assert.equal(sample.status,422);
+    assert.equal(count(),2);
   } finally { sqlite.close(); }
 });
