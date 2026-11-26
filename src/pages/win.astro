@@ -24,7 +24,7 @@ const closeLabel = closeTime === '2026-12-25T00:00:00+13:00'
 const promoterAddress = typeof env.WIN_BUSINESS_POSTAL_ADDRESS === 'string' && env.WIN_BUSINESS_POSTAL_ADDRESS.trim().length >= 8 && env.WIN_BUSINESS_POSTAL_ADDRESS.trim().toLowerCase() !== 'pending'
   ? env.WIN_BUSINESS_POSTAL_ADDRESS.trim() : undefined;
 ---
-<SiteLayout title="Win a Day of Property Maintenance | ANDRO Construction + Projects" description="Enter ANDRO's free Auckland property maintenance and handyman labour giveaway. See eligibility and promotion terms.">
+<SiteLayout title="Win a Day" description="Enter ANDRO's free Auckland property maintenance and handyman labour giveaway. See eligibility and promotion terms.">
 <section class="win-hero">
   <img class="win-hero-photo" data-cms-image="win.photos.hero" {...responsivePhoto(winCopy.photos.hero.src, '100vw', 'hero')} alt={winCopy.photos.hero.alt} fetchpriority="high" />
   <div class="shell">
