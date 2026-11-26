@@ -6,7 +6,12 @@
     <meta name="robots" content="noindex" />
     <!-- Versioned configuration prevents stale photo-only fields when the editor changes. -->
     <link href="/admin/config.yml?v=win-photo-removal-v3" type="text/yaml" rel="cms-config-url" />
-    <title>ANDRO site editor</title>
+    <title>ANDRO Admin</title>
+    <script>
+      if (!location.hash && new URLSearchParams(location.search).get('view') !== 'editor') {
+        document.documentElement.classList.add('andro-hub-open');
+      }
+    </script>
     <meta name="andro-login-version" content="6" />
     <style>
       /* ANDRO editor appearance; no changes to CMS data or form behaviour. */
@@ -37,9 +42,50 @@
       #andro-real-preview iframe { display: block; flex: 1; width: 100%; border: 0; background: #fff; }
       @media (max-width: 1000px) { #andro-real-preview { width: 45%; } }
       @media (max-width: 700px) { #andro-real-preview { width: 48%; } #andro-real-preview .andro-preview-bar span { display: none; } }
+
+      /* Central admin launcher. Keep Decap, its hash routes, and OAuth unchanged. */
+      #andro-admin-hub { display:none; position:fixed; inset:0; z-index:2147483000; overflow:auto; background:#f8f7f4; color:#252723; font:15px/1.65 Inter,Arial,sans-serif; }
+      .andro-hub-open #andro-admin-hub { display:block; }
+      #andro-admin-hub * { box-sizing:border-box; }
+      #andro-admin-hub .hub-header { background:#252723; color:#f8f7f4; padding:25px max(6vw,24px); display:flex; justify-content:space-between; align-items:center; gap:20px; }
+      #andro-admin-hub .hub-brand { font-size:29px; font-weight:300; letter-spacing:.3em; line-height:1.15; }
+      #andro-admin-hub .hub-brand small { display:block; font-size:9px; letter-spacing:.14em; color:#bda67e; margin-top:6px; }
+      #andro-admin-hub .hub-header a { color:#e6d8bc; text-decoration:none; font-size:13px; }
+      #andro-admin-hub .hub-main { max-width:1120px; margin:auto; padding:clamp(40px,7vw,90px) 24px; }
+      #andro-admin-hub .hub-kicker { font-size:11px; letter-spacing:.2em; color:#95794d; }
+      #andro-admin-hub h1 { font-size:clamp(39px,5vw,65px); line-height:1.08; font-weight:300; letter-spacing:-.05em; margin:12px 0; }
+      #andro-admin-hub .hub-intro { color:#68665e; margin-bottom:32px; }
+      #andro-admin-hub .hub-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+      #andro-admin-hub .hub-card { display:flex; flex-direction:column; align-items:flex-start; min-height:240px; padding:26px; border:1px solid #e1dbd0; background:#fff; text-decoration:none; color:#252723; }
+      #andro-admin-hub .hub-card:hover { border-color:#a88b5b; background:#fffefa; }
+      #andro-admin-hub .hub-card:focus-visible,#andro-admin-home:focus-visible { outline:3px solid #a88b5b; outline-offset:3px; }
+      #andro-admin-hub .hub-num { font-size:11px; letter-spacing:.15em; color:#95794d; }
+      #andro-admin-hub h2 { font-size:25px; font-weight:400; line-height:1.2; margin:17px 0 9px; letter-spacing:-.035em; }
+      #andro-admin-hub .hub-card p { color:#68665e; font-size:14px; margin:0 0 24px; }
+      #andro-admin-hub .hub-action { margin-top:auto; font-size:13px; color:#80663c; border-bottom:1px solid #bda67e; padding-bottom:3px; }
+      #andro-admin-hub .hub-note { font-size:13px; color:#68665e; margin-top:25px; }
+      #andro-admin-home { position:fixed; z-index:2147482000; bottom:14px; left:50%; transform:translateX(-50%); background:#252723; color:#fff; border:1px solid #bda67e; border-radius:4px; padding:9px 16px; font:12px Inter,Arial,sans-serif; text-decoration:none; box-shadow:0 2px 9px #25272324; }
+      .andro-hub-open #andro-admin-home { display:none; }
+      @media(max-width:760px) { #andro-admin-hub .hub-grid { grid-template-columns:1fr; } #andro-admin-hub .hub-card { min-height:0; padding:22px; } #andro-admin-hub .hub-header { padding:20px 24px; } }
     </style>
   </head>
   <body>
+    <section id="andro-admin-hub" aria-label="ANDRO administration dashboard">
+      <header class="hub-header"><div class="hub-brand">ANDRO<small>CONSTRUCTION + PROJECTS · EST. 2020</small></div><a href="/">View website</a></header>
+      <main class="hub-main">
+        <p class="hub-kicker">PRIVATE ADMINISTRATION</p>
+        <h1>ANDRO control centre.</h1>
+        <p class="hub-intro">Manage your website, understand visitor traffic and administer the giveaway from one place.</p>
+        <div class="hub-grid">
+          <a class="hub-card" href="/admin/?view=editor"><span class="hub-num">01 / WEBSITE</span><h2>Website editor</h2><p>Update website text, photography, page content and settings. Publish through your existing GitHub connection.</p><span class="hub-action">Open website editor</span></a>
+          <a class="hub-card" href="/analytics"><span class="hub-num">02 / TRAFFIC</span><h2>Website analytics</h2><p>Page visits, traffic sources, competition conversions and owner-device tracking.</p><span class="hub-action">Open analytics</span></a>
+          <a class="hub-card" href="/win/admin"><span class="hub-num">03 / GIVEAWAY</span><h2>Win a Day admin</h2><p>Review competition entries, marketing opt-ins, exports and the winner draw.</p><span class="hub-action">Manage competition</span></a>
+        </div>
+        <p class="hub-note">Analytics and giveaway administration share your existing site reports password. Website editing continues to use GitHub authentication. No private records are shown on this launcher.</p>
+      </main>
+    </section>
+    <a id="andro-admin-home" href="/admin/">ANDRO admin home</a>
+
     <!-- Install before Decap opens its named GitHub authentication popup. -->
     <script src="/admin/oauth-popup.js?v=6"></script>
     <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.8.3/dist/decap-cms.js"></script>

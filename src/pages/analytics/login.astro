@@ -14,8 +14,12 @@ if (Astro.request.method === 'POST') {
     const password = String(form.get('password') ?? '');
     if (await checkPassword(password, env.REPORT_PASSWORD)) {
       const session = await issueSession(env.REPORT_SESSION_SECRET);
+      // Both operational areas already require the same reports password.
       Astro.cookies.set('andro_analytics_session', session, {
         path: '/analytics', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 8 * 60 * 60,
+      });
+      Astro.cookies.set('andro_win_admin', session, {
+        path: '/', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 8 * 60 * 60,
       });
       return Astro.redirect('/analytics', 303);
     }
@@ -27,4 +31,4 @@ if (Astro.request.method === 'POST') {
 <html lang="en-NZ">
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="robots" content="noindex,nofollow" /><title>ANDRO | Analytics Sign In</title>
 <style>*,*:before,*:after{box-sizing:border-box}body{margin:0;background:#f7f5f0;color:#242622;font-family:Arial,sans-serif;min-height:100dvh;display:grid;place-items:center;padding:24px}.panel{width:min(100%,425px);background:#fff;border:1px solid #e4ded4;padding:38px}.brand{font-size:32px;letter-spacing:.3em;font-weight:300}.strap{font-size:10px;letter-spacing:.14em;color:#a08860;margin:9px 0 40px}h1{font-weight:400;font-size:24px;margin-bottom:13px}p{color:#67635e;line-height:1.7}label{font-size:13px;display:block;margin:25px 0 9px}input,button{font:inherit;width:100%;padding:14px;min-height:48px}input{border:1px solid #c6c1b8}button{background:#252722;color:#fff;border:0;margin-top:18px;cursor:pointer}.error{color:#a03428}.back{font-size:12px;text-decoration:none;color:#896f4a;display:block;margin-top:24px}</style></head>
-<body><main class="panel"><div class="brand">ANDRO</div><p class="strap">CONSTRUCTION + PROJECTS · EST. 2020</p><h1>Website analytics</h1><p>Private access. Use your existing ANDRO site reports password.</p><form method="POST" action="/analytics/login"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" autofocus required /><button type="submit">Sign in securely</button></form>{error && <p class="error" role="alert">{error}</p>}<a class="back" href="/">Back to ANDRO</a></main></body></html>
+<body><main class="panel"><div class="brand">ANDRO</div><p class="strap">CONSTRUCTION + PROJECTS · EST. 2020</p><h1>Website analytics</h1><p>Private access. Use your existing ANDRO site reports password.</p><form method="POST" action="/analytics/login"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" autofocus required /><button type="submit">Sign in securely</button></form>{error && <p class="error" role="alert">{error}</p>}<a class="back" href="/admin/">Back to ANDRO admin</a></main></body></html>

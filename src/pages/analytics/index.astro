@@ -12,7 +12,8 @@ if (Astro.request.method === 'POST') {
   const action = String((await Astro.request.formData()).get('action') || '');
   if (action === 'logout') {
     Astro.cookies.delete(AUTH_COOKIE,{path:'/analytics'});
-    return Astro.redirect('/analytics/login',303);
+    Astro.cookies.delete('andro_win_admin',{path:'/'});
+    return Astro.redirect('/admin/',303);
   }
   if (action === 'mark' || action === 'unmark') {
     if (action === 'mark') Astro.cookies.set(OWNER_COOKIE,'1',{path:'/',httpOnly:true,secure:true,sameSite:'lax',maxAge:180*24*60*60});
@@ -64,7 +65,8 @@ const dayRows = Array.from({length:days},(_,i)=>{const day=dayBefore(today,days-
 <html lang="en-NZ">
 <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="robots" content="noindex,nofollow"/><title>ANDRO | Website analytics</title></head>
 <body>
-<header><a href="/" class="brand">ANDRO <small>CONSTRUCTION + PROJECTS</small></a><form method="POST"><button name="action" value="logout" class="secondary">Sign out</button></form></header>
+<header><a href="/admin/" class="brand">ANDRO <small>CONSTRUCTION + PROJECTS</small></a><form method="POST"><button name="action" value="logout" class="secondary">Sign out of dashboards</button></form></header>
+<div class="admin-tabs" aria-label="Admin navigation"><a href="/admin/">Admin home</a><a href="/admin/?view=editor">Website editor</a><a href="/analytics" aria-current="page">Analytics</a><a href="/win/admin">Win a Day admin</a></div>
 <main>
 <p class="eyebrow">PRIVATE DASHBOARD / AUCKLAND TIME</p><h1>Website analytics.</h1><p class="muted">Understand your traffic without storing individual visitor profiles.</p>
 {message && <p class="notice" role="status">{message}</p>}{problem && <p class="notice" role="alert">{problem}</p>}
@@ -83,6 +85,8 @@ const dayRows = Array.from({length:days},(_,i)=>{const day=dayBefore(today,days-
 </main>
 <script is:inline>if(new URLSearchParams(location.search).has('device')){try{localStorage.removeItem('andro_analytics_visit')}catch{}}</script>
 <style>
+.admin-tabs{display:flex;flex-wrap:wrap;gap:12px 22px;background:#fff;border-bottom:1px solid #e1dbd0;padding:14px max(5vw,20px);font:13px/1.5 Arial,sans-serif}.admin-tabs a{color:#6e5735;text-decoration:none}.admin-tabs a[aria-current="page"]{color:#252723;font-weight:700;border-bottom:1px solid #bda67e}
+
 *{box-sizing:border-box}body{margin:0;background:#f7f5f0;color:#252722;font:15px/1.65 Arial,sans-serif}header{display:flex;align-items:center;justify-content:space-between;padding:22px max(5vw,20px);background:#242622;color:#fff;gap:16px}a{color:#80663c}.brand{color:#f4efe6;text-decoration:none;letter-spacing:.3em;font-size:25px}.brand small{display:block;letter-spacing:.12em;font-size:9px;color:#bda67e}main{max-width:1250px;margin:auto;padding:40px 22px 65px}h1{font-size:clamp(36px,5vw,62px);font-weight:300;letter-spacing:-.045em;line-height:1.1;margin:8px 0}h2{font-size:20px;font-weight:400;margin:0 0 10px}.eyebrow{font-size:11px;letter-spacing:.18em;color:#95784d}.muted{color:#66635d;font-size:13px}.owner,.panel{background:white;border:1px solid #e1dbd0;padding:24px;margin:20px 0}.owner{display:flex;align-items:center;justify-content:space-between;gap:24px}.owner p{margin:0;max-width:650px}.notice{border-left:3px solid #bda67e;padding:14px;background:#fff}button,.range{display:inline-block;border:0;background:#242622;color:#fff;padding:12px 18px;font:inherit;text-decoration:none;cursor:pointer;text-align:center}.secondary,.range{background:#eee9df;color:#252722}.range.selected{background:#bda67e;color:#242622}nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.metrics article{background:white;border:1px solid #e1dbd0;padding:16px}.metrics p{font-size:12px;color:#68645b;margin:0 0 8px}.metrics strong{font-size:32px;font-weight:400}.tables{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.tables .panel{margin:0}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px 4px;border-bottom:1px solid #eee8de}th:not(:first-child),td:not(:first-child){text-align:right}.chart{display:grid;gap:4px;max-height:420px;overflow:auto}.bar-row{display:grid;grid-template-columns:48px 1fr 45px;align-items:center;gap:10px;font-size:12px}.bar-track{height:12px;background:#f2eee5}.bar{height:100%;background:#bda67e}.bar-row b{text-align:right;font-weight:400}form{margin:0}@media(max-width:800px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.tables{grid-template-columns:1fr}.owner{align-items:stretch;flex-direction:column}.owner button{width:100%}}
 </style>
 </body></html>
