@@ -1,12 +1,20 @@
 ---
 export const prerender = false;
-import { CREATE_TABLE, OWNER_COOKIE, AUTH_COOKIE, nzDay, dayBefore } from '../../lib/analytics';
+import { CREATE_TABLE, OWNER_COOKIE, LEGACY_OWNER_COOKIE, AUTH_COOKIE, ownerCookieScope, ownerMarked, nzDay, dayBefore } from '../../lib/analytics';
 import { sameOriginPost } from '../../lib/win';
 const env = (Astro.locals as any).runtime?.env ?? {};
 const db = env.WIN_DB;
 let message = '';
 let problem = '';
-const owner = Astro.cookies.get(OWNER_COOKIE)?.value === '1';
+const ownerScope = ownerCookieScope(Astro.url.hostname);
+const ownerOptions = {...ownerScope,httpOnly:true,secure:true,sameSite:'lax' as const,maxAge:180*24*60*60};
+let owner = ownerMarked(Astro.request);
+// Upgrade an already marked browser without changing its authentication session.
+if (!owner && Astro.request.method === 'GET' && Astro.cookies.get(LEGACY_OWNER_COOKIE)?.value === '1') {
+  Astro.cookies.set(OWNER_COOKIE,'1',ownerOptions);
+  Astro.cookies.delete(LEGACY_OWNER_COOKIE,{path:'/'});
+  owner = true;
+}
 if (Astro.request.method === 'POST') {
   if (!sameOriginPost(Astro.request)) return new Response('Invalid request',{status:403});
   const action = String((await Astro.request.formData()).get('action') || '');
@@ -15,9 +23,10 @@ if (Astro.request.method === 'POST') {
     Astro.cookies.delete('andro_win_admin',{path:'/'});
     return Astro.redirect('/admin/',303);
   }
-  if (action === 'mark' || action === 'unmark') {
-    if (action === 'mark') Astro.cookies.set(OWNER_COOKIE,'1',{path:'/',httpOnly:true,secure:true,sameSite:'lax',maxAge:180*24*60*60});
-    else Astro.cookies.delete(OWNER_COOKIE,{path:'/'});
+  if (action === 'mark' || action === 'unmark' || action === 'refresh-owner') {
+    Astro.cookies.delete(LEGACY_OWNER_COOKIE,{path:'/'});
+    if (action === 'mark' || action === 'refresh-owner') Astro.cookies.set(OWNER_COOKIE,'1',ownerOptions);
+    else Astro.cookies.delete(OWNER_COOKIE,ownerScope);
     return Astro.redirect('/analytics?device=updated',303);
   }
   if (action === 'setup') {
@@ -49,7 +58,7 @@ try {
   firstDay = (await db.prepare('SELECT MIN(day) AS first_day FROM andro_analytics_daily').first())?.first_day || '';
   ready = true;
   for (const r of result.results as Daily[]) {
-    if (r.owner === 1) add(ownerTotals,r);
+    if (Number(r.owner) === 1) add(ownerTotals,r);
     else {
       add(publicTotals,r);group(pages,r.page,r);group(sources,r.source,r);group(devices,r.device,r);group(daily,r.day,r);
       if(r.page==='Win a Day') winViews += Number(r.views);
@@ -70,7 +79,7 @@ const dayRows = Array.from({length:days},(_,i)=>{const day=dayBefore(today,days-
 <main>
 <p class="eyebrow">PRIVATE DASHBOARD / AUCKLAND TIME</p><h1>Website analytics.</h1><p class="muted">Understand your traffic without storing individual visitor profiles.</p>
 {message && <p class="notice" role="status">{message}</p>}{problem && <p class="notice" role="alert">{problem}</p>}
-<section class="owner"><div><h2>This browser: {owner?'Owner device':'Unmarked device'}</h2><p>Mark your own Mac, iPhone and any other testing browsers separately. Only future visits from a marked browser are classified as yours.</p></div><form method="POST"><button name="action" value={owner?'unmark':'mark'}>{owner?'Unmark this browser':'Mark this as my device'}</button></form></section>
+<section class="owner"><div><h2>This browser: {owner?'Owner device':'Unmarked device'}</h2><p>Mark your own Mac, iPhone and other testing browsers separately. Your owner marker works on andro.co.nz and www.andro.co.nz. Only future visits can be classified.</p><p id="owner-check" role="status" data-expected={owner?'1':'0'} style="margin-top:9px;font-size:13px;color:#68645b">Checking tracking endpoint…</p></div><form method="POST"><button name="action" value={owner?'refresh-owner':'mark'}>{owner?'Refresh owner marker':'Mark this as my device'}</button>{owner&&<button name="action" value="unmark" class="secondary" style="margin-top:8px">Unmark this browser</button>}</form></section>
 {!ready ? <section class="panel"><h2>Activate analytics</h2><p>Initialise the separate aggregate analytics table in the existing Cloudflare database. This does not change the competition entries.</p><form method="POST"><button name="action" value="setup">Activate tracking</button></form></section> : <>
 <nav aria-label="Date range">{[7,30,90].map(n=><a class:list={['range',{selected:n===days}]} href={'/analytics?days='+n}>Last {n} days</a>)}</nav>
 <p class="muted">{from} — {today} · {firstDay?'First tracked date: '+firstDay:'No visits recorded yet.'}</p>
@@ -83,7 +92,22 @@ const dayRows = Array.from({length:days},(_,i)=>{const day=dayBefore(today,days-
 </>}
 <p class="muted"><a href="/website-privacy/">Public analytics privacy notice</a> · <a href="/">Open website</a></p>
 </main>
-<script is:inline>if(new URLSearchParams(location.search).has('device')){try{localStorage.removeItem('andro_analytics_visit')}catch{}}</script>
+<script is:inline>
+if(new URLSearchParams(location.search).has('device')){try{localStorage.removeItem('andro_analytics_visit')}catch{}}
+(async()=>{
+  const el=document.getElementById('owner-check');
+  if(!el)return;
+  try{
+    const r=await fetch('/api/analytics/event',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});
+    if(!r.ok)throw Error('Unavailable');
+    const data=await r.json();
+    if(typeof data.owner!=='boolean')throw Error('Invalid response');
+    const expected=el.dataset.expected==='1';
+    el.textContent=data.owner===expected?(data.owner?'Tracking check: owner recognised. Your future views go into owner totals.':'Tracking check: this browser is unmarked.'):'Tracking check: marker mismatch. Use Refresh owner marker, then reload this page.';
+    if(data.owner!==expected)el.style.color='#a03428';
+  }catch{el.textContent='Tracking check unavailable. Reload after deployment.';}
+})();
+</script>
 <style>
 .admin-tabs{display:flex;flex-wrap:wrap;gap:12px 22px;background:#fff;border-bottom:1px solid #e1dbd0;padding:14px max(5vw,20px);font:13px/1.5 Arial,sans-serif}.admin-tabs a{color:#6e5735;text-decoration:none}.admin-tabs a[aria-current="page"]{color:#252723;font-weight:700;border-bottom:1px solid #bda67e}
 

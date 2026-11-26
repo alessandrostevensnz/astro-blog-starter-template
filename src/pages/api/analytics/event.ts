@@ -1,9 +1,14 @@
 import type { APIRoute } from 'astro';
-import { PAGES, SOURCES, DEVICES, OWNER_COOKIE, nzDay, noTracking } from '../../../lib/analytics';
+import { PAGES, SOURCES, DEVICES, ownerMarked, nzDay, noTracking } from '../../../lib/analytics';
 import { sameOriginPost } from '../../../lib/win';
 export const prerender = false;
 const reply = (status = 204) => new Response(null,{status,headers:{'Cache-Control':'no-store'}});
-export const POST: APIRoute = async ({request, locals, cookies}) => {
+// Non-mutating diagnostic: expose only the current browser's analytics flag,
+// never private statistics, cookies, sessions or other users' data.
+export const GET: APIRoute = ({request}) => new Response(JSON.stringify({owner:ownerMarked(request)}), {
+  headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'private, no-store, max-age=0','X-Robots-Tag':'noindex, nofollow'}
+});
+export const POST: APIRoute = async ({request, locals}) => {
   if (!sameOriginPost(request)) return reply(403);
   if (noTracking(request) || (request as any).cf?.botManagement?.verifiedBot) return reply();
   if (!request.headers.get('content-type')?.startsWith('application/json')) return reply(415);
@@ -36,7 +41,7 @@ export const POST: APIRoute = async ({request, locals, cookies}) => {
     if (!event || !PAGES.includes(event.page) || !SOURCES.includes(event.source) || !DEVICES.includes(event.device)) return reply(400);
     if (event.kind !== 'view' && !(event.kind === 'entry' && event.page === 'Win a Day')) return reply(400);
     const view = event.kind === 'view' ? 1 : 0;
-    const owner = cookies.get(OWNER_COOKIE)?.value === '1' ? 1 : 0;
+    const owner = ownerMarked(request) ? 1 : 0;
     await env.WIN_DB.prepare(`INSERT INTO andro_analytics_daily(day,page,source,device,owner,views,sessions,entries)
       VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(day,page,source,device,owner) DO UPDATE SET
       views=views+excluded.views,sessions=sessions+excluded.sessions,entries=entries+excluded.entries`)
