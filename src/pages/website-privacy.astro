@@ -1,0 +1,23 @@
+---
+import SiteLayout from '../components/SiteLayout.astro';
+---
+<SiteLayout title="Website privacy | ANDRO" description="Information about ANDRO's aggregate website analytics and your choices.">
+<section style="max-width:850px;margin:auto;padding:70px 24px">
+  <h1>Website privacy &amp; analytics.</h1>
+  <p>Andro Construction Limited uses first-party website analytics to understand which pages are viewed, broad traffic sources, approximate device types and competition form completions. Analytics stores daily aggregate counts, not visitor names, contact details, full referring URLs, individual browsing profiles or IP addresses. Cloudflare processes web requests and uses IP addresses for security and abuse prevention.</p>
+  <p>Your browser stores a short inactivity timer and a broad traffic-source category to estimate visits, plus your analytics preference if you choose one. Your browser's Global Privacy Control or Do Not Track setting is respected. Analytics data is not used to link your browsing activity to your competition entry or contact details.</p>
+  <p>Opt out of this analytics on this browser at any time:</p>
+  <button id="privacy-toggle" type="button" style="background:#242622;color:white;border:0;padding:14px 20px;cursor:pointer">Turn off analytics</button>
+  <p id="privacy-state" role="status"></p>
+  <p>See our <a href="/win/privacy/">competition privacy notice</a> for information about competition entries and marketing consent. For privacy questions, <a href="/contact/">contact ANDRO</a>.</p>
+</section>
+<script is:inline>
+(() => {
+  const button=document.getElementById('privacy-toggle'),state=document.getElementById('privacy-state');
+  try {
+    const refresh=()=>{const off=localStorage.getItem('andro_analytics_optout')==='1';button.textContent=off?'Allow analytics':'Turn off analytics';state.textContent=(navigator.globalPrivacyControl===true||navigator.doNotTrack==='1'||window.doNotTrack==='1')?'Your browser privacy signal disables analytics.':off?'Analytics is disabled on this browser.':'Analytics is allowed on this browser.';};
+    button.addEventListener('click',()=>{if(localStorage.getItem('andro_analytics_optout')==='1')localStorage.removeItem('andro_analytics_optout');else localStorage.setItem('andro_analytics_optout','1');localStorage.removeItem('andro_analytics_visit');refresh();});refresh();
+  } catch {button.disabled=true;state.textContent='Browser storage is unavailable; website analytics will not run.';}
+})();
+</script>
+</SiteLayout>

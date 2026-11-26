@@ -57,7 +57,9 @@ const currentPath = Astro.url.pathname;
     <p class="footer-company">{siteFooter.companyName}</p>
     <a class="footer-domain" href={siteFooter.domainUrl}>{siteFooter.domainText}</a>
     <p class="footer-established">{siteFooter.establishedText}</p>
+    <a href="/website-privacy/" style="font-size:11px;color:#8e7547;text-decoration:underline">Website privacy &amp; analytics</a>
   </footer>
+  <script is:inline src="/andro-analytics.js" defer></script>
   <script is:inline>
     // Only enabled inside the same-origin CMS iframe; no effect on public visitors.
     if (new URLSearchParams(location.search).has('androCmsPreview') && window.parent !== window) {

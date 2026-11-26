@@ -15,7 +15,7 @@ const projectGalleryOptimizer = {
 // https://astro.build/config
 export default defineConfig({
 	site: "https://andro.co.nz",
-	integrations: [projectGalleryOptimizer, mdx(), sitemap({ filter: (page) => !/\/property-maintenance\/?$/.test(new URL(page).pathname) })],
+	integrations: [projectGalleryOptimizer, mdx(), sitemap({ filter: (page) => !/\/(?:property-maintenance|analytics(?:\/login)?)\/?$/.test(new URL(page).pathname) })],
 	adapter: cloudflare({
 		platformProxy: {
 			enabled: true,

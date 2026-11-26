@@ -133,6 +133,7 @@ form?.addEventListener('submit', async event => {
     form.reset();
     status.textContent = 'Thanks for entering! Your submission has been received.';
     status.classList.add('win-success');
+    if (data.success === true) document.dispatchEvent(new Event('andro:win-entry-saved'));
     if (typeof (window as any).turnstile?.reset === 'function') (window as any).turnstile.reset();
   } catch (error) {
     status.textContent = error instanceof Error ? error.message : 'Unable to submit right now.';

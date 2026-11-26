@@ -1,0 +1,88 @@
+---
+export const prerender = false;
+import { CREATE_TABLE, OWNER_COOKIE, AUTH_COOKIE, nzDay, dayBefore } from '../../lib/analytics';
+import { sameOriginPost } from '../../lib/win';
+const env = (Astro.locals as any).runtime?.env ?? {};
+const db = env.WIN_DB;
+let message = '';
+let problem = '';
+const owner = Astro.cookies.get(OWNER_COOKIE)?.value === '1';
+if (Astro.request.method === 'POST') {
+  if (!sameOriginPost(Astro.request)) return new Response('Invalid request',{status:403});
+  const action = String((await Astro.request.formData()).get('action') || '');
+  if (action === 'logout') {
+    Astro.cookies.delete(AUTH_COOKIE,{path:'/analytics'});
+    return Astro.redirect('/analytics/login',303);
+  }
+  if (action === 'mark' || action === 'unmark') {
+    if (action === 'mark') Astro.cookies.set(OWNER_COOKIE,'1',{path:'/',httpOnly:true,secure:true,sameSite:'lax',maxAge:180*24*60*60});
+    else Astro.cookies.delete(OWNER_COOKIE,{path:'/'});
+    return Astro.redirect('/analytics?device=updated',303);
+  }
+  if (action === 'setup') {
+    try {
+      if (!db) throw new Error('Missing database');
+      await db.prepare(CREATE_TABLE).run();
+      return Astro.redirect('/analytics?setup=complete',303);
+    } catch { problem = 'Unable to initialise analytics. Check the Cloudflare database binding.'; }
+  }
+}
+if (Astro.url.searchParams.get('device') === 'updated') message = 'This browser’s owner-device setting has been updated.';
+if (Astro.url.searchParams.get('setup') === 'complete') message = 'Analytics is ready. New tracked visits will appear here.';
+const days = [7,30,90].includes(Number(Astro.url.searchParams.get('days'))) ? Number(Astro.url.searchParams.get('days')) : 7;
+const today = nzDay();
+const from = dayBefore(today,days-1);
+type Metric = {views:number,sessions:number,entries:number};
+type Daily = Metric & {day:string,page:string,source:string,device:string,owner:number};
+const blank = (): Metric => ({views:0,sessions:0,entries:0});
+const publicTotals = blank(), ownerTotals = blank();
+const pages = new Map<string,Metric>(), sources = new Map<string,Metric>(), devices = new Map<string,Metric>(), daily = new Map<string,Metric>();
+let ready = false;
+let firstDay = '';
+let winViews = 0;
+function add(target: Metric, r: Metric) {target.views += Number(r.views);target.sessions += Number(r.sessions);target.entries += Number(r.entries);}
+function group(map: Map<string,Metric>, key: string, r: Metric) {const m = map.get(key) || blank();add(m,r);map.set(key,m);}
+try {
+  const result = await db.prepare('SELECT day,page,source,device,owner,views,sessions,entries FROM andro_analytics_daily WHERE day >= ? AND day <= ?').bind(from,today).all();
+  if (!result.success) throw new Error('Analytics query failed');
+  firstDay = (await db.prepare('SELECT MIN(day) AS first_day FROM andro_analytics_daily').first())?.first_day || '';
+  ready = true;
+  for (const r of result.results as Daily[]) {
+    if (r.owner === 1) add(ownerTotals,r);
+    else {
+      add(publicTotals,r);group(pages,r.page,r);group(sources,r.source,r);group(devices,r.device,r);group(daily,r.day,r);
+      if(r.page==='Win a Day') winViews += Number(r.views);
+    }
+  }
+} catch { /* The private setup action creates only the analytics table. */ }
+const sorted = (map:Map<string,Metric>) => [...map.entries()].sort((a,b)=>b[1].views-a[1].views);
+const rate = winViews ? (100*publicTotals.entries/winViews).toFixed(1)+'%' : '—';
+const maxDaily = Math.max(1,...[...daily.values()].map(r=>r.views));
+const dayRows = Array.from({length:days},(_,i)=>{const day=dayBefore(today,days-1-i);return {day,views:daily.get(day)?.views || 0};});
+---
+<!doctype html>
+<html lang="en-NZ">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="robots" content="noindex,nofollow"/><title>ANDRO | Website analytics</title></head>
+<body>
+<header><a href="/" class="brand">ANDRO <small>CONSTRUCTION + PROJECTS</small></a><form method="POST"><button name="action" value="logout" class="secondary">Sign out</button></form></header>
+<main>
+<p class="eyebrow">PRIVATE DASHBOARD / AUCKLAND TIME</p><h1>Website analytics.</h1><p class="muted">Understand your traffic without storing individual visitor profiles.</p>
+{message && <p class="notice" role="status">{message}</p>}{problem && <p class="notice" role="alert">{problem}</p>}
+<section class="owner"><div><h2>This browser: {owner?'Owner device':'Unmarked device'}</h2><p>Mark your own Mac, iPhone and any other testing browsers separately. Only future visits from a marked browser are classified as yours.</p></div><form method="POST"><button name="action" value={owner?'unmark':'mark'}>{owner?'Unmark this browser':'Mark this as my device'}</button></form></section>
+{!ready ? <section class="panel"><h2>Activate analytics</h2><p>Initialise the separate aggregate analytics table in the existing Cloudflare database. This does not change the competition entries.</p><form method="POST"><button name="action" value="setup">Activate tracking</button></form></section> : <>
+<nav aria-label="Date range">{[7,30,90].map(n=><a class:list={['range',{selected:n===days}]} href={'/analytics?days='+n}>Last {n} days</a>)}</nav>
+<p class="muted">{from} — {today} · {firstDay?'First tracked date: '+firstDay:'No visits recorded yet.'}</p>
+<div class="metrics">
+{[['Unmarked sessions',publicTotals.sessions],['Unmarked page views',publicTotals.views],['Owner sessions',ownerTotals.sessions],['Owner page views',ownerTotals.views],['Facebook / Instagram sessions',sources.get('Facebook / Instagram')?.sessions || 0],['Tracked web entries',publicTotals.entries],['Win page views',winViews],['Entries per Win page view',rate]].map(([label,value])=><article><p>{label}</p><strong>{value}</strong></article>)}
+</div>
+<section class="panel"><h2>Daily unmarked page views</h2><div class="chart">{dayRows.map(r=><div class="bar-row"><span>{r.day.slice(5)}</span><div class="bar-track"><div class="bar" style={'width:'+100*r.views/maxDaily+'%'}></div></div><b>{r.views}</b></div>)}</div></section>
+<div class="tables">{[['Pages',sorted(pages)],['Traffic sources',sorted(sources)],['Devices',sorted(devices)]].map(([heading,rows])=><section class="panel"><h2>{heading}</h2><table><thead><tr><th>Category</th><th>Views</th><th>Sessions</th></tr></thead><tbody>{(rows as [string,Metric][]).map(([label,r])=><tr><td>{label}</td><td>{r.views}</td><td>{r.sessions}</td></tr>)}</tbody></table>{(rows as [string,Metric][]).length===0&&<p class="muted">No recorded traffic yet.</p>}</section>)}</div>
+<p class="muted">Unmarked traffic is not verified unique people: it includes unmarked owner devices and may include automated traffic. Sessions are estimated from 30 minutes of browser inactivity; page views include reloads. Facebook referrals are detected from referrer or campaign parameters. Tracked website entries exclude Facebook instant forms and may undercount blocked or opted-out browsers. Conversion is entries divided by Win page views, not unique-person conversion. Owner traffic is excluded from the breakdowns above.</p>
+</>}
+<p class="muted"><a href="/website-privacy/">Public analytics privacy notice</a> · <a href="/">Open website</a></p>
+</main>
+<script is:inline>if(new URLSearchParams(location.search).has('device')){try{localStorage.removeItem('andro_analytics_visit')}catch{}}</script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f5f0;color:#252722;font:15px/1.65 Arial,sans-serif}header{display:flex;align-items:center;justify-content:space-between;padding:22px max(5vw,20px);background:#242622;color:#fff;gap:16px}a{color:#80663c}.brand{color:#f4efe6;text-decoration:none;letter-spacing:.3em;font-size:25px}.brand small{display:block;letter-spacing:.12em;font-size:9px;color:#bda67e}main{max-width:1250px;margin:auto;padding:40px 22px 65px}h1{font-size:clamp(36px,5vw,62px);font-weight:300;letter-spacing:-.045em;line-height:1.1;margin:8px 0}h2{font-size:20px;font-weight:400;margin:0 0 10px}.eyebrow{font-size:11px;letter-spacing:.18em;color:#95784d}.muted{color:#66635d;font-size:13px}.owner,.panel{background:white;border:1px solid #e1dbd0;padding:24px;margin:20px 0}.owner{display:flex;align-items:center;justify-content:space-between;gap:24px}.owner p{margin:0;max-width:650px}.notice{border-left:3px solid #bda67e;padding:14px;background:#fff}button,.range{display:inline-block;border:0;background:#242622;color:#fff;padding:12px 18px;font:inherit;text-decoration:none;cursor:pointer;text-align:center}.secondary,.range{background:#eee9df;color:#252722}.range.selected{background:#bda67e;color:#242622}nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.metrics article{background:white;border:1px solid #e1dbd0;padding:16px}.metrics p{font-size:12px;color:#68645b;margin:0 0 8px}.metrics strong{font-size:32px;font-weight:400}.tables{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.tables .panel{margin:0}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px 4px;border-bottom:1px solid #eee8de}th:not(:first-child),td:not(:first-child){text-align:right}.chart{display:grid;gap:4px;max-height:420px;overflow:auto}.bar-row{display:grid;grid-template-columns:48px 1fr 45px;align-items:center;gap:10px;font-size:12px}.bar-track{height:12px;background:#f2eee5}.bar{height:100%;background:#bda67e}.bar-row b{text-align:right;font-weight:400}form{margin:0}@media(max-width:800px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.tables{grid-template-columns:1fr}.owner{align-items:stretch;flex-direction:column}.owner button{width:100%}}
+</style>
+</body></html>

@@ -16,6 +16,30 @@ function failClosed(message: string): Response {
 export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
 
+  // Analytics is private, independent of giveaway and report sessions.
+  if (path === '/analytics' || path.startsWith('/analytics/')) {
+    const env = (context.locals as any).runtime?.env ?? {};
+    if (!configured(env)) return failClosed('Analytics sign-in is not configured.');
+    const login = /^\/analytics\/login\/?$/.test(path);
+    if (login && context.request.method === 'POST') {
+      try {
+        if (!env.REPORT_LOGIN_IP_LIMITER || !env.REPORT_LOGIN_GLOBAL_LIMITER) return failClosed('Login protection unavailable.');
+        const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown-client';
+        const [a,b] = await Promise.all([
+          env.REPORT_LOGIN_IP_LIMITER.limit({key:'analytics-login:' + ip}),
+          env.REPORT_LOGIN_GLOBAL_LIMITER.limit({key:'analytics-login-global'})
+        ]);
+        if (!a.success || !b.success) return new Response('Too many sign-in attempts. Please retry later.',{status:429,headers:{...protectedHeaders,'Retry-After':'60'}});
+      } catch { return failClosed('Login protection unavailable.'); }
+    }
+    if (!login && !(await validSession(context.cookies.get('andro_analytics_session')?.value,env.REPORT_SESSION_SECRET))) {
+      return context.redirect('/analytics/login',303);
+    }
+    const response = await next();
+    Object.entries(protectedHeaders).forEach(([key,value]) => response.headers.set(key,value));
+    return response;
+  }
+
   // Protect the giveaway administration HTML and API, without changing public /win.
   const winPrivate = path === '/win/admin' || path === '/win/admin/' || path.startsWith('/win/admin/') || path.startsWith('/api/win/admin/');
   if (winPrivate) {
