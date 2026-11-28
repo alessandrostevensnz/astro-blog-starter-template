@@ -310,5 +310,6 @@ test('V3 maps construction and future project answers; test lead and missing ter
   assert.equal(mapSheetsWinLead(lead({...v3,marketing_consent:'true'}),v3env).entry.marketing_opt_in,0);
   assert.equal(mapSheetsWinLead(lead({...v3,terms_accepted:false}),v3env).error,'terms_acknowledgement_not_captured');
   assert.equal(mapSheetsWinLead(lead({...v3,id:'l:2345261342938853'}),v3env).error,'meta_sample_lead');
+  assert.equal(mapSheetsWinLead(lead({...v3,id:'l:1181041557665874',marketing_consent:false}),v3env).error,'meta_sample_lead');
   assert.equal(mapSheetsWinLead(lead({construction_work:'Deck',future_project:'Yes'}),v3env).entry.work_details,'');
 });

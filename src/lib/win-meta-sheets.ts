@@ -81,7 +81,7 @@ export function mapSheetsWinLead(payload: MetaSheetsPayload, env: Record<string,
   const full_name = typeof lead.full_name === 'string' ? lead.full_name.trim() : '';
   const email = typeof lead.email === 'string' ? lead.email.trim().toLowerCase() : '';
   const phone = typeof lead.phone_number === 'string' ? lead.phone_number.trim() : '';
-  if (leadKey === '2345261342938853' || email === 'test@meta.com' || /<test lead:/i.test(full_name)) return { ...base, error: 'meta_sample_lead' };
+  if (['2345261342938853', '1181041557665874'].includes(leadKey) || email === 'test@meta.com' || /<test lead:/i.test(full_name)) return { ...base, error: 'meta_sample_lead' };
   if (full_name.length < 2 || full_name.length > 100 ||
       email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
       phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone)) {

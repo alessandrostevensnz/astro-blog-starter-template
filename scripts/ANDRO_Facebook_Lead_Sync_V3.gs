@@ -5,7 +5,7 @@
  */
 const ANDRO_V3_CFG = Object.freeze({
   sheet:'Facebook Leads V3', log:'ANDRO V3 Sync Log', form:'2055955115103853',
-  test:'2345261342938853', url:'https://andro.co.nz/api/win/meta/sheets',
+  test:'2345261342938853', optOutTest:'1181041557665874', url:'https://andro.co.nz/api/win/meta/sheets',
   work:'what_would_you_use_your_8_hours_of_construction_labour_for?',
   future:'are_you_planning_any_larger_renovations,_extensions_or_outdoor_projects_in_the_next_12_months?',
   marketing:"yes!_let_me_know_when_the_next_opportunity_to_win_or_save_money_on_my_property_comes_around._i'd_hate_to_miss_out_on_exclusive_offers_from_andro_by_email._i_can_unsubscribe_at_any_time.",
@@ -39,9 +39,13 @@ function androV3Check(){
   if(form!==ANDRO_V3_CFG.form)throw Error('Unexpected form ID');
   if(!androV3True_(read(r,ANDRO_V3_CFG.terms)))throw Error('Required terms response not affirmative');
   if(!androV3True_(read(r,ANDRO_V3_CFG.marketing)))throw Error('Test marketing response not affirmative');
+  const optOut=rows.filter(r=>read(r,'id').replace(/^l:/i,'')===ANDRO_V3_CFG.optOutTest);
+  if(optOut.length!==1)throw Error('Expected exactly one opt-out test row');
+  if(read(optOut[0],'form_id').replace(/^f:/i,'')!==form||!androV3True_(read(optOut[0],ANDRO_V3_CFG.terms)))throw Error('Opt-out test form or terms mismatch');
+  if(!['false',''].includes(read(optOut[0],ANDRO_V3_CFG.marketing).toLowerCase()))throw Error('Opt-out test must record false or blank marketing consent');
   const result=androV3Send_({id:ANDRO_V3_CFG.test,form_id:form,created_time:read(r,'created_time'),terms_accepted:false});
   if(result.status!==422||result.data.error!=='terms_acknowledgement_not_captured')throw Error('V3 connection not ready (HTTP '+result.status+'): '+String(result.data.error||'unexpected response'));
-  Logger.log('V3 CHECK PASSED: all question columns found, both test consents recognised, signed backend verified. No entry created.');
+  Logger.log('V3 CHECK PASSED: all question columns found, opt-in and opt-out tests verified, signed backend verified. No entry created.');
 }
 function androV3Sync(){
   const props=PropertiesService.getScriptProperties();
@@ -58,7 +62,7 @@ function androV3Sync(){
       const id=read(r,'id').replace(/^l:/i,''),form=read(r,'form_id').replace(/^f:/i,'');
       if(!/^\d{5,25}$/.test(id)||seen.has(id)||form!==ANDRO_V3_CFG.form)continue;
       const finish=status=>{log.appendRow(['l:'+id,status,new Date().toISOString()]);seen.add(id);};
-      if(id===ANDRO_V3_CFG.test||/^test@meta\.com$/i.test(read(r,'email'))||/<test lead:/i.test(read(r,'full_name'))){finish('skipped_test');continue;}
+      if(id===ANDRO_V3_CFG.test||id===ANDRO_V3_CFG.optOutTest||/^test@meta\.com$/i.test(read(r,'email'))||/<test lead:/i.test(read(r,'full_name'))){finish('skipped_test');continue;}
       if(!androV3True_(read(r,ANDRO_V3_CFG.terms))){Logger.log('V3 row lacks terms agreement; not imported.');continue;}
       const reply=androV3Send_({id,form_id:form,created_time:read(r,'created_time'),full_name:read(r,'full_name'),email:read(r,'email'),phone_number:read(r,'phone_number').replace(/^p:/i,'').trim(),terms_accepted:true,marketing_consent:androV3True_(read(r,ANDRO_V3_CFG.marketing)),construction_work:read(r,ANDRO_V3_CFG.work),future_project:read(r,ANDRO_V3_CFG.future)});
       if(reply.status!==200||!['accepted','duplicate','already_seen'].includes(reply.data.status)){Logger.log('V3 import stopped (HTTP %s); row not marked processed.',reply.status);return;}
