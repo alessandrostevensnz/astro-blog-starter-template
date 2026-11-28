@@ -77,7 +77,7 @@
       "category": "Construction · Residential "
     },
     {
-      "image": "/images/img_2648.jpg",
+      "image": "/images/modern-chrome-and-glass-shower-bathroom.png",
       "title": "New Shower · Auckland",
       "alt": "Construction · Residential ",
       "category": "Construction · Residential "
@@ -151,6 +151,12 @@
     {
       "title": "New Kitchen · Auckland ",
       "image": "/images/modern-white-and-charcoal-kitchen.png",
+      "alt": "Construction · Residential ",
+      "category": "Construction · Residential "
+    },
+    {
+      "title": "Full Renovation · Manukau ",
+      "image": "/images/cosy-living-room-with-fireplace.png",
       "alt": "Construction · Residential ",
       "category": "Construction · Residential "
     }
