@@ -297,3 +297,18 @@ test('Signed production-shaped Sheets import accepts one valid entry and dedupes
     assert.equal(count(),2);
   } finally { sqlite.close(); }
 });
+
+test('V3 maps construction and future project answers; test lead and missing terms rejected',()=>{
+  const v3env={...env,WIN_META_SHEETS_V3_FORM_ID:'2055955115103853'};
+  const v3={form_id:'f:2055955115103853',construction_work:'decking_and_deck_repairs',future_project:'maybe'};
+  const a=mapSheetsWinLead(lead({...v3,marketing_consent:true}),v3env);
+  assert.equal(a.error,undefined);
+  assert.equal(a.entry.service_type,'decking and deck repairs');
+  assert.equal(a.entry.work_details,'Maybe');
+  assert.equal(a.entry.marketing_opt_in,1);
+  assert.equal(mapSheetsWinLead(lead({...v3,marketing_consent:false}),v3env).entry.marketing_opt_in,0);
+  assert.equal(mapSheetsWinLead(lead({...v3,marketing_consent:'true'}),v3env).entry.marketing_opt_in,0);
+  assert.equal(mapSheetsWinLead(lead({...v3,terms_accepted:false}),v3env).error,'terms_acknowledgement_not_captured');
+  assert.equal(mapSheetsWinLead(lead({...v3,id:'l:2345261342938853'}),v3env).error,'meta_sample_lead');
+  assert.equal(mapSheetsWinLead(lead({construction_work:'Deck',future_project:'Yes'}),v3env).entry.work_details,'');
+});

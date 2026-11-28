@@ -17,6 +17,8 @@ export type MetaSheetsPayload = {
     phone_number?: unknown;
     terms_accepted?: unknown;
     marketing_consent?: unknown;
+    construction_work?: unknown;
+    future_project?: unknown;
   };
 };
 
@@ -68,7 +70,9 @@ export function mapSheetsWinLead(payload: MetaSheetsPayload, env: Record<string,
   const originalForm = leadId(env.WIN_META_FORM_ID);
   const v2Form = leadId(env.WIN_META_SHEETS_V2_FORM_ID);
   const isV2 = Boolean(v2Form && v2Form !== originalForm && formKey === v2Form);
-  if (!leadKey || !formKey || (formKey !== originalForm && !isV2) ||
+  const v3Form = leadId(env.WIN_META_SHEETS_V3_FORM_ID);
+  const isV3 = Boolean(v3Form && v3Form !== originalForm && v3Form !== v2Form && formKey === v3Form);
+  if (!leadKey || !formKey || (formKey !== originalForm && !isV2 && !isV3) ||
       !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d)$/.test(stamp) ||
       !timestamp) return { ...base, error: 'invalid_lead_metadata' };
   // Validate original form-submission time, never the delayed Sheet sync time.
@@ -77,20 +81,28 @@ export function mapSheetsWinLead(payload: MetaSheetsPayload, env: Record<string,
   const full_name = typeof lead.full_name === 'string' ? lead.full_name.trim() : '';
   const email = typeof lead.email === 'string' ? lead.email.trim().toLowerCase() : '';
   const phone = typeof lead.phone_number === 'string' ? lead.phone_number.trim() : '';
-  if (email === 'test@meta.com' || /<test lead:/i.test(full_name)) return { ...base, error: 'meta_sample_lead' };
+  if (leadKey === '2345261342938853' || email === 'test@meta.com' || /<test lead:/i.test(full_name)) return { ...base, error: 'meta_sample_lead' };
   if (full_name.length < 2 || full_name.length > 100 ||
       email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
       phone.length < 6 || phone.length > 30 || !/^[+()0-9\s.-]+$/.test(phone)) {
     return { ...base, error: 'invalid_contact_details' };
   }
-  // These weren't collected by the three-field Instant Form. Never invent them.
+  // V3's first answer fits service_type. For V3 ONLY, work_details stores the
+  // second (12-month project intent) answer. The admin and CSV label both
+  // separately by form ID; no database migration or reinterpretation of old rows.
+  const construction = isV3 && typeof lead.construction_work === 'string'
+    ? lead.construction_work.trim().replace(/_/g,' ').replace(/\s+/g,' ').slice(0,200) : '';
+  const rawFuture = isV3 && typeof lead.future_project === 'string'
+    ? lead.future_project.trim().replace(/_/g,' ').toLowerCase() : '';
+  const future = ({yes:'Yes',maybe:'Maybe',no:'No','prefer not to say':'Prefer not to say'} as Record<string,string>)[rawFuture] || '';
+  // Never invent suburb, property relationship, or uncollected answers.
   // They must be verified for the provisional winner before awarding the prize.
   return { ...base, entry: {
     full_name, email, phone,
-    suburb: '', property_role: '', service_type: '', work_details: '',
+    suburb: '', property_role: '', service_type: construction, work_details: future,
     // The original Instant Form never asked for marketing permission.
     // Only an affirmative response to the approved V2 question can opt in.
-    marketing_opt_in: isV2 && lead.marketing_consent === true ? 1 : 0,
+    marketing_opt_in: (isV2 || isV3) && lead.marketing_consent === true ? 1 : 0,
   } };
 }
 
