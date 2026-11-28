@@ -94,7 +94,7 @@ export function mapSheetsWinLead(payload: MetaSheetsPayload, env: Record<string,
     ? lead.construction_work.trim().replace(/_/g,' ').replace(/\s+/g,' ').slice(0,200) : '';
   const rawFuture = isV3 && typeof lead.future_project === 'string'
     ? lead.future_project.trim().replace(/_/g,' ').toLowerCase() : '';
-  const future = ({yes:'Yes',maybe:'Maybe',no:'No','prefer not to say':'Prefer not to say'} as Record<string,string>)[rawFuture] || '';
+  const future = ['Yes','Maybe','No','Prefer not to say'].find(answer => answer.toLowerCase() === rawFuture) || '';
   // Never invent suburb, property relationship, or uncollected answers.
   // They must be verified for the provisional winner before awarding the prize.
   return { ...base, entry: {
