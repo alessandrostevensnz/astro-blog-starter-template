@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
-import { site, siteContent } from '../data/site';
+import { siteContent } from '../data/site';
 import { responsivePhoto } from '../lib/optimized-images';
 const photos = siteContent.about.photos;
 const aboutHeroVideo = siteContent.about.heroVideo?.trim() || '';
@@ -15,7 +15,7 @@ const aboutHeroVideo = siteContent.about.heroVideo?.trim() || '';
       </video>
     )}
     <div class="about-hero-content">
-      <p class="eyebrow inverse">ABOUT ANDRO · EST. {site.established}</p>
+      <p class="eyebrow inverse">ABOUT ANDRO</p>
       <h1>Built on care.<br />Grounded in craft.</h1>
       <p class="lead" data-style-key="about.heroIntro">{siteContent.about.heroIntro}</p>
     </div>

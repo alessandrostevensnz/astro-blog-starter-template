@@ -46,7 +46,7 @@
   }
   function build(r) {
     const result=[];
-    result.push('<div class="pdf-header"><div><div class="pdf-brand">ANDRO</div><div class="pdf-brand-sub">CONSTRUCTION + PROJECTS · EST. 2020</div></div><div class="pdf-heading"><strong>Job Safety Analysis</strong><span>DATE: '+escapeHtml(dateNZ(r.date))+'</span><span>JOB NAME: '+escapeHtml(shown(r.jobName))+'</span><span>JOB NO: '+escapeHtml(shown(r.jobNumber))+'</span></div></div>');
+    result.push('<div class="pdf-header"><div><div class="pdf-brand">ANDRO</div><div class="pdf-brand-sub">CONSTRUCTION + PROJECTS</div></div><div class="pdf-heading"><strong>Job Safety Analysis</strong><span>DATE: '+escapeHtml(dateNZ(r.date))+'</span><span>JOB NAME: '+escapeHtml(shown(r.jobName))+'</span><span>JOB NO: '+escapeHtml(shown(r.jobNumber))+'</span></div></div>');
     result.push('<div class="notice" style="font-size:9pt">Site-specific JSA and risk assessment. All entries require confirmation by the workers and supervisor before the task begins. Blank values mean not recorded, not automatically checked or approved.</div>');
     result.push('<div class="pdf-meta">'+field('JSA prepared by',r.preparedBy)+field('Site / location',r.site)+field('Company / branch',r.branch)+field('Work area / building',r.building)+'</div>');
     result.push(sec("1. Job information"));
@@ -109,7 +109,7 @@
     ]));
     const photo=validImage(r.permitPhoto);
     if(photo){result.push(sec("Permit photograph"));result.push('<img class="permit" src="'+photo+'" alt="Attached work permit photograph"/>');}
-    result.push('<div class="pdf-footer">ANDRO CONSTRUCTION LIMITED · ANDRO.CO.NZ · EST. 2020<br/>This PDF records the entered JSA. It is not evidence of WorkSafe notification, permit approval, training or compliance on its own.</div>');
+    result.push('<div class="pdf-footer">ANDRO CONSTRUCTION LIMITED · ANDRO.CO.NZ<br/>This PDF records the entered JSA. It is not evidence of WorkSafe notification, permit approval, training or compliance on its own.</div>');
     return result.join("");
   }
   window.ANDROJsaPdf={

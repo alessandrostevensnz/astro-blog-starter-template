@@ -394,7 +394,6 @@ export const cmsConfig = {
         field('companyName','Company name displayed in footer','string'),
         field('domainText','Website address displayed in footer','string'),
         field('domainUrl','Website link address','string'),
-        field('establishedText','Established wording (e.g. EST. 2020)','string'),
       ],
     }]},
   ],

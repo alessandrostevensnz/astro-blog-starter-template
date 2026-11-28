@@ -4,7 +4,7 @@ import { responsivePhoto } from '../lib/optimized-images';
 import { navigation, siteContent, pageContent, siteFooter } from '../data/site';
 import { typographyCss } from '../lib/typography';
 interface Props { title?: string; description?: string; }
-const { title = 'ANDRO Construction + Projects — EST. 2020', description = 'Auckland construction, renovation, property maintenance and asset maintenance by ANDRO Construction + Projects.' } = Astro.props;
+const { title = 'ANDRO Construction + Projects', description = 'Auckland construction, renovation, property maintenance and asset maintenance by ANDRO Construction + Projects.' } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 <BaseHead title={title} description={description} />
@@ -14,7 +14,7 @@ const currentPath = Astro.url.pathname;
   <header class="site-header">
     <a class="brand-lockup" href="/" aria-label="ANDRO home">
       <span class="brand-word">ANDRO</span>
-      <span class="brand-sub">Construction + Projects · Est. 2020</span>
+      <span class="brand-sub">Construction + Projects</span>
     </a>
     <nav class="desktop-nav" aria-label="Main navigation">
       {navigation.map((item) => <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>{item.label}</a>)}
@@ -56,7 +56,6 @@ const currentPath = Astro.url.pathname;
     </div>
     <p class="footer-company">{siteFooter.companyName}</p>
     <a class="footer-domain" href={siteFooter.domainUrl}>{siteFooter.domainText}</a>
-    <p class="footer-established">{siteFooter.establishedText}</p>
     <a href="/website-privacy/" style="font-size:11px;color:#8e7547;text-decoration:underline">Website privacy &amp; analytics</a>
   </footer>
   <script is:inline src="/andro-analytics.js" defer></script>
@@ -194,10 +193,9 @@ const currentPath = Astro.url.pathname;
   .footer-credentials { display: flex; align-items: center; justify-content: center; gap: 28px; width: 100%; margin-bottom: 12px; }
   .footer-credentials img { display: block; width: auto; height: 82px; max-width: 130px; object-fit: contain; }
   .footer-credentials img:first-child { height: 96px; max-width: 130px; }
-  .footer-company, .footer-domain, .footer-established { margin: 0; color: #b19a6c; font-weight: 400; letter-spacing: .28em; text-transform: uppercase; }
+  .footer-company, .footer-domain { margin: 0; color: #b19a6c; font-weight: 400; letter-spacing: .28em; text-transform: uppercase; }
   .footer-company { font-size: clamp(14px, 2vw, 20px); }
   .footer-domain { font-size: clamp(13px, 1.8vw, 18px); text-decoration: none; }
-  .footer-established { font-size: 12px; letter-spacing: .38em; }
   .footer-domain:hover { color: #8e7547; }
 
   /* The site photos are supplied photos of ANDRO work; remove old stock-photo disclaimers. */

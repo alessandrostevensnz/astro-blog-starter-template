@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../components/SiteLayout.astro';
-import { site, siteContent } from '../data/site';
+import { siteContent } from '../data/site';
 import { responsivePhoto } from '../lib/optimized-images';
 const photos = siteContent.home.photos;
 const homeHeroVideo = siteContent.home.heroVideo?.trim() || '';
@@ -16,7 +16,7 @@ const homeHeroVideo = siteContent.home.heroVideo?.trim() || '';
     )}
     <div class="hero-shade"></div>
     <div class="hero-copy reveal">
-      <p class="eyebrow inverse">AUCKLAND · NEW ZEALAND · EST. {site.established}</p>
+      <p class="eyebrow inverse">AUCKLAND · NEW ZEALAND</p>
       <h1 id="hero-title"><span data-style-key="home.title">{siteContent.home.title}</span></h1>
       <div class="hero-bottom"><p class="hero-subtitle"><span data-style-key="home.subtitle">{siteContent.home.subtitle}</span></p></div>
     </div>

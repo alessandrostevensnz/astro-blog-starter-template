@@ -12,7 +12,6 @@ export const site = {
   name: 'ANDRO',
   descriptor: 'Construction + Projects',
   legalName: 'Andro Construction Limited',
-  established: '2020',
   location: 'Auckland, New Zealand',
   email: '',
 };

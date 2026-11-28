@@ -146,16 +146,18 @@ test('All six pages share ONE editable footer with no Site Safe badge field', ()
   const layout=read('../src/components/SiteLayout.astro');
   const siteData=read('../src/data/site.ts');
   assert(layout.includes('siteFooter.logo.src') && layout.includes('siteFooter.companyName'));
-  assert(layout.includes('siteFooter.establishedText') && layout.includes('siteFooter.domainText'));
+  assert(layout.includes('siteFooter.domainText'));
+  assert(!layout.includes('siteFooter.establishedText'));
+  assert.equal(shared.establishedText, undefined);
   assert(!layout.includes('footerImages.badge') && !layout.includes('footerImagesForPath'));
   assert(siteData.includes("import footerSettings from '../../content/site-footer.json'"));
   assert(!siteData.includes('footerImagesForPath'));
   const settings=cmsConfig.collections.find(c=>c.name==='settings');
   const footer=settings.files.find(f=>f.name==='footer');
   assert.equal(footer.file,'content/site-footer.json');
-  for(const name of ['logo','companyName','domainText','domainUrl','establishedText'])
+  for(const name of ['logo','companyName','domainText','domainUrl'])
     assert(footer.fields.some(f=>f.name===name));
-  assert(!footer.fields.some(f=>f.name==='badge'));
+  assert(!footer.fields.some(f=>f.name==='badge' || f.name==='establishedText'));
   for(const page of cmsConfig.collections.find(c=>c.name==='pages').files)
     assert(!page.fields.some(f=>f.name==='footerImages'), 'Legacy footer editor remains on '+page.name);
   assert(!read('../src/lib/cms-config.ts').includes("photo('badge'"));

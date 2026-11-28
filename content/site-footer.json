@@ -1,10 +1,9 @@
 {
   "logo": {
-    "src": "/images/andro-caps.png",
-    "alt": "ANDRO Construction + Projects circular A emblem — Est. 2020"
+    "src": "/images/andro-construction-logo.svg",
+    "alt": "ANDRO Construction + Projects circular logo"
   },
   "companyName": "Andro Construction Limited",
   "domainText": "ANDRO.CO.NZ",
-  "domainUrl": "https://andro.co.nz",
-  "establishedText": "EST. 2020"
+  "domainUrl": "https://andro.co.nz"
 }
