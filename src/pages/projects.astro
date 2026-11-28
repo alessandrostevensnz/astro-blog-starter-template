@@ -62,8 +62,8 @@ const featuredPhoto = projectCopy.featurePhoto;
         </div>
       </nav>
     </div>
-    <div class="andro-projects-viewport" data-project-viewport tabindex="0" role="region" aria-label="Project photographs, arranged three rows high; use arrow buttons or swipe to browse">
-      <div class="andro-projects-grid" data-project-gallery aria-label="Slowly moving project showcase, three rows of photographs">
+    <div class="andro-projects-viewport" data-project-viewport tabindex="0" role="region" aria-label="Project photographs, arranged two rows high; use arrow buttons or swipe to browse">
+      <div class="andro-projects-grid" data-project-gallery aria-label="Slowly moving project showcase, two rows of photographs">
       {siteContent.projects.map((entry) => (
         <figure class="andro-project-tile" data-project-tile>
           <img
@@ -121,7 +121,7 @@ const featuredPhoto = projectCopy.featurePhoto;
   const smallScreen = window.matchMedia('(max-width: 760px)');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // A column contains three photos. Duplicating each complete cycle permits
+  // A column contains two photos. Duplicating each complete cycle permits
   // continuously moving through projects without a visible jump at the end.
   if (gallery && viewport && controls && prev && next && counter && uniqueTiles.length) {
     // Randomise the Projects gallery on each visit without changing the saved
@@ -140,7 +140,7 @@ const featuredPhoto = projectCopy.featurePhoto;
     gallery.replaceChildren(...uniqueTiles);
 
     const uniquePhotoCount = uniqueTiles.length;
-    const rows = 3;
+    const rows = 2;
     const totalColumns = Math.ceil(uniquePhotoCount / rows);
     const columnsPerClick = () => smallScreen.matches ? 1 : 3;
     const decorate = (tile: HTMLElement) => {
@@ -149,7 +149,7 @@ const featuredPhoto = projectCopy.featurePhoto;
       return tile;
     };
     // If more photos are added in /admin, pad the last column so that
-    // all three rows stay aligned when the continuous gallery repeats.
+    // both rows stay aligned when the continuous gallery repeats.
     // The originals remain untouched and decorative copies are hidden.
     const remaining = uniquePhotoCount % rows;
     if (remaining > 0) {
@@ -330,7 +330,7 @@ const featuredPhoto = projectCopy.featurePhoto;
   .andro-gallery-arrow:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 3px; }
   .andro-gallery-arrow:disabled { opacity: .32; cursor: not-allowed; }
   .andro-gallery-arrow svg { display: block; }
-  /* Three rows x five columns. Native horizontal scrolling provides smooth sliding
+  /* Two rows x five columns. Native horizontal scrolling provides smooth sliding
      and preserves two columns of photos when three new columns enter. */
   .andro-projects-viewport {
     --project-gap: 14px;
@@ -347,7 +347,7 @@ const featuredPhoto = projectCopy.featurePhoto;
     display: grid;
     position: relative;
     width: 100%;
-    grid-template-rows: repeat(3, auto);
+    grid-template-rows: repeat(2, auto);
     grid-auto-flow: column;
     grid-auto-columns: calc((100% - 4 * var(--project-gap)) / 5);
     gap: var(--project-gap);

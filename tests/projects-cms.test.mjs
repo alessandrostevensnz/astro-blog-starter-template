@@ -80,15 +80,15 @@ test('Projects styles and live text preview work without impacting other pages',
 });
 
 
-test('Projects auto-scrolls slowly with readable captions and 3x5 manual navigation', () => {
+test('Projects auto-scrolls slowly with readable captions and 2x5 manual navigation', () => {
   const source=read('../src/pages/projects.astro');
   assert(source.includes('siteContent.projects.map'), 'All CMS project photos must remain');
   assert(source.includes('data-project-prev') && source.includes('data-project-next'), 'Manual arrows must remain');
-  assert(source.includes('grid-template-rows: repeat(3, auto)'), 'Three rows are required');
+  assert(source.includes('grid-template-rows: repeat(2, auto)'), 'Two rows are required');
   assert(source.includes('grid-auto-columns: calc((100% - 4 * var(--project-gap)) / 5)'), 'Five columns must remain visible');
-  assert(source.includes('const columnsPerClick = () => smallScreen.matches ? 1 : 3'), 'Desktop arrow must move three columns (nine photos)');
-  assert(source.includes('const rows = 3'), 'Each gallery column must contain three photos');
-  assert(source.includes('columnWidth = firstCopy[rows]'), 'Column width must account for the three-row layout');
+  assert(source.includes('const columnsPerClick = () => smallScreen.matches ? 1 : 3'), 'Desktop arrow must move three columns (six photos)');
+  assert(source.includes('const rows = 2'), 'Each gallery column must contain two photos');
+  assert(source.includes('columnWidth = firstCopy[rows]'), 'Column width must account for the two-row layout');
   assert(source.includes('const remaining = uniquePhotoCount % rows'), 'Incomplete future gallery columns must be padded');
   assert(source.includes('padding-bottom: clamp(26px, 3vw, 44px)'), 'Reduce the gap below the gallery');
   assert(source.includes('padding: clamp(38px, 4vw, 58px) 7%'), 'Reduce empty space above featured Projects');
@@ -125,7 +125,7 @@ test('Projects gallery is independently shuffled each visit without altering the
   assert(projectsPage.includes('gallery.replaceChildren(...uniqueTiles)'), 'Apply the shuffled order to the Projects gallery only');
   assert(projectsPage.indexOf('gallery.replaceChildren(...uniqueTiles)') < projectsPage.indexOf('const firstCopy ='),
     'Shuffle must happen before the repeat slides are generated');
-  assert(projectsPage.includes('const rows = 3'), 'Keep the existing three-row layout');
+  assert(projectsPage.includes('const rows = 2'), 'Keep the existing two-row layout');
   assert(projectsPage.includes('const columnsPerClick = () => smallScreen.matches ? 1 : 3'), 'Keep manual navigation intact');
   assert(projectsPage.includes('viewport.scrollLeft += pixelsPerSecond * elapsed'), 'Keep gentle automatic movement intact');
   assert(contents.projects.length > 0, 'The saved gallery must retain its photos');
